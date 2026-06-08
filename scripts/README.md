@@ -20,6 +20,8 @@ The current helpers understand the YAS service catalog format, including `worklo
 - `resolve-branch-tags.sh`
 - `generate-values.ps1`
 - `generate-values.sh`
+- `generate-gitops-values.ps1`
+- `generate-gitops-values.sh`
 - `update-manifest-values.ps1`
 - `update-manifest-values.sh`
 
@@ -36,6 +38,7 @@ powershell -ExecutionPolicy Bypass -File scripts\validate-services-catalog.ps1
 powershell -ExecutionPolicy Bypass -File scripts\report-status.ps1 -SkipCommandChecks
 powershell -ExecutionPolicy Bypass -File scripts\resolve-branch-tags.ps1
 powershell -ExecutionPolicy Bypass -File scripts\generate-values.ps1 -DockerhubNamespace your-dockerhub-namespace
+powershell -ExecutionPolicy Bypass -File scripts\generate-gitops-values.ps1 -EnvironmentName dev -OutputFile argocd\values\dev-values.yaml
 powershell -ExecutionPolicy Bypass -File scripts\update-manifest-values.ps1 -ValuesFile argocd\values\dev-values.yaml -Tag main
 ```
 
@@ -50,5 +53,6 @@ sh scripts/validate-services-catalog.sh
 sh scripts/report-status.sh --skip-command-checks
 sh scripts/resolve-branch-tags.sh
 DOCKERHUB_NAMESPACE=your-dockerhub-namespace sh scripts/generate-values.sh
+ENVIRONMENT=dev OUTPUT_FILE=argocd/values/dev-values.yaml sh scripts/generate-gitops-values.sh
 sh scripts/update-manifest-values.sh argocd/values/dev-values.yaml main
 ```

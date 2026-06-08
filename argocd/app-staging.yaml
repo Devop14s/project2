@@ -6,7 +6,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/example/yas-delivery.git
+    repoURL: https://github.com/Devop14s/project2.git
     targetRevision: main
     path: helm/yas
     helm:
@@ -18,4 +18,3 @@ spec:
   syncPolicy:
     syncOptions:
       - CreateNamespace=true
-

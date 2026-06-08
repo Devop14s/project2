@@ -7,7 +7,7 @@ Use Jenkins only for build-and-update, then let ArgoCD reconcile the runtime sta
 ## Proposed flow
 
 1. Jenkins builds and pushes images.
-2. Jenkins updates the environment values file under `argocd/values/`.
+2. Jenkins regenerates the environment values file under `argocd/values/` from `jenkins/services.env`.
 3. Jenkins commits and pushes that manifest change.
 4. ArgoCD watches the repo and syncs the target namespace.
 
@@ -20,10 +20,11 @@ Use Jenkins only for build-and-update, then let ArgoCD reconcile the runtime sta
 - `jenkins/pipelines/dev_gitops.groovy`
 - `jenkins/pipelines/staging_gitops.groovy`
 - `jenkins/scripts/update-manifest-repo.sh`
+- `scripts/generate-gitops-values.ps1`
+- `scripts/generate-gitops-values.sh`
 
 ## Still required for real execution
 
 - a reachable ArgoCD installation
 - a Git repository that ArgoCD can watch
 - credentials for Jenkins to push manifest updates
-

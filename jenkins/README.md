@@ -40,7 +40,11 @@ Example:
 
 ## Recommended first validation
 
-1. Replace `replace-me` in `Jenkinsfile`.
+1. Provide `DOCKERHUB_NAMESPACE` either as a Jenkins parameter or job environment value.
 2. Update `jenkins/services.env` to match the real repo.
 3. Run `jenkins/scripts/build-images.sh` locally in the agent environment.
 4. Run `helm template demo helm/yas -f helm/yas/values.yaml`.
+
+## GitOps note
+
+`jenkins/scripts/update-manifest-repo.sh` now regenerates the full `argocd/values/*.yaml` file from the service catalog instead of editing only a few existing tag lines.

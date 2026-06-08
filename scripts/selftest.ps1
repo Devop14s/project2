@@ -10,6 +10,7 @@ New-Item -ItemType Directory -Path $tempDir -Force | Out-Null
 
 $branchTagsFile = Join-Path $tempDir 'branch-tags.env'
 $generatedValuesFile = Join-Path $tempDir 'generated-values.yaml'
+$gitopsValuesFile = Join-Path $tempDir 'gitops-values.yaml'
 $manifestValuesFile = Join-Path $tempDir 'dev-values.yaml'
 
 try {
@@ -21,12 +22,17 @@ try {
         -TagsFile $branchTagsFile `
         -OutputFile $generatedValuesFile `
         -DockerhubNamespace $DockerhubNamespace | Out-Null
+    powershell -ExecutionPolicy Bypass -File scripts\generate-gitops-values.ps1 `
+        -TagsFile $branchTagsFile `
+        -OutputFile $gitopsValuesFile `
+        -EnvironmentName dev | Out-Null
     powershell -ExecutionPolicy Bypass -File scripts\update-manifest-values.ps1 `
         -ValuesFile $manifestValuesFile `
         -Tag test-tag | Out-Null
 
     $branchTags = Get-Content $branchTagsFile -Raw
     $generatedValues = Get-Content $generatedValuesFile -Raw
+    $gitopsValues = Get-Content $gitopsValuesFile -Raw
     $manifestValues = Get-Content $manifestValuesFile -Raw
 
     if ($branchTags -notmatch 'TAX_TAG=main') {
@@ -47,6 +53,14 @@ try {
 
     if ($generatedValues -notmatch 'type: NodePort') {
         throw 'Generated values are missing NodePort exposure.'
+    }
+
+    if ($gitopsValues -notmatch 'environment: dev') {
+        throw 'Generated GitOps values are missing the expected environment.'
+    }
+
+    if ($gitopsValues -notmatch 'payment-paypal:') {
+        throw 'Generated GitOps values are missing payment-paypal.'
     }
 
     if ($manifestValues -notmatch 'tag: test-tag') {

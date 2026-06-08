@@ -25,6 +25,7 @@ The actual YAS application source repository is not present in this workspace. T
 
 1. Clone `nashtech-garage/yas` into this workspace or merge these files into the real delivery repo.
 2. Replace sample entries in `jenkins/services.env` and `helm/yas/values.yaml` with the real service list.
+   The current entries are upstream-derived from the public YAS repo, but still need verification against the exact source tree you will deploy.
 3. Validate one service end-to-end: Docker build, image push, Helm deploy.
 4. Expand from one service to the full required YAS baseline.
 
@@ -50,4 +51,5 @@ Local helper scripts are provided in both `ps1` and `.sh` form under `scripts/` 
 - local developer-build dry run
 - branch-tag resolution
 - generated-values rendering
+- GitOps values generation
 - GitOps values updates

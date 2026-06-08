@@ -30,6 +30,8 @@ scripts/resolve-branch-tags.ps1
 scripts/resolve-branch-tags.sh
 scripts/generate-values.ps1
 scripts/generate-values.sh
+scripts/generate-gitops-values.ps1
+scripts/generate-gitops-values.sh
 scripts/update-manifest-values.ps1
 scripts/update-manifest-values.sh
 "

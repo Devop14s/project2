@@ -13,16 +13,28 @@ pipeline {
       choices: ['ci', 'developer_build', 'developer_cleanup', 'dev_cd', 'staging_release', 'dev_gitops', 'staging_gitops'],
       description: 'Pipeline entrypoint to execute'
     )
-  }
-
-  environment {
-    DOCKERHUB_NAMESPACE = 'replace-me'
+    string(
+      name: 'DOCKERHUB_NAMESPACE',
+      defaultValue: '',
+      description: 'Docker registry namespace, for example docker.io/your-org'
+    )
   }
 
   stages {
     stage('Dispatch') {
       steps {
         script {
+          def dockerhubNamespace = params.DOCKERHUB_NAMESPACE?.trim()
+          if (!dockerhubNamespace) {
+            dockerhubNamespace = env.DOCKERHUB_NAMESPACE?.trim()
+          }
+
+          if (!dockerhubNamespace) {
+            error('DOCKERHUB_NAMESPACE must be provided as a parameter or Jenkins job environment value.')
+          }
+
+          env.DOCKERHUB_NAMESPACE = dockerhubNamespace
+
           def scriptPath = [
             ci: 'jenkins/pipelines/ci.groovy',
             developer_build: 'jenkins/pipelines/developer_build.groovy',

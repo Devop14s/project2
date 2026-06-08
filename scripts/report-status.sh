@@ -93,6 +93,7 @@ fi
   printf '%s\n' '- PowerShell selftest is available.'
   printf '%s\n' '- Cross-platform dry-run helpers exist in both `ps1` and `.sh` form.'
   printf '%s\n' '- Generated values include workload-aware fields such as `workloadType` and backend `metricPort`.'
+  printf '%s\n' '- GitOps values generation is available for the full service catalog.'
   printf '\n'
   printf '## Still Blocked In This Workspace\n'
   printf '%s\n' '- Real YAS source tree is not present.'

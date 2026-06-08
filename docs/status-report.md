@@ -21,6 +21,7 @@
 - Cross-platform service catalog validation and generated status reporting.
 - Upstream-derived YAS service catalog with 18 services and 2 public entrypoints.
 - Workload-aware catalog split between upstream-style `ui` and `backend` services.
+- Cross-platform GitOps values generation for the full service catalog.
 
 ## Not implementable yet in this workspace
 

@@ -4,13 +4,57 @@ global:
   domainName: storefront-staging.yas.local
 
 services:
-  tax:
+  storefront:
     image:
       tag: v1.0.0
-  product:
+  backoffice:
     image:
       tag: v1.0.0
   storefront-bff:
     image:
       tag: v1.0.0
-
+  backoffice-bff:
+    image:
+      tag: v1.0.0
+  product:
+    image:
+      tag: v1.0.0
+  media:
+    image:
+      tag: v1.0.0
+  cart:
+    image:
+      tag: v1.0.0
+  customer:
+    image:
+      tag: v1.0.0
+  rating:
+    image:
+      tag: v1.0.0
+  location:
+    image:
+      tag: v1.0.0
+  order:
+    image:
+      tag: v1.0.0
+  inventory:
+    image:
+      tag: v1.0.0
+  tax:
+    image:
+      tag: v1.0.0
+  search:
+    image:
+      tag: v1.0.0
+  promotion:
+    image:
+      tag: v1.0.0
+  payment:
+    image:
+      tag: v1.0.0
+  payment-paypal:
+    image:
+      tag: v1.0.0
+  webhook:
+    image:
+      tag: v1.0.0

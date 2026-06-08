@@ -4,13 +4,57 @@ global:
   domainName: storefront-dev.yas.local
 
 services:
-  tax:
+  storefront:
     image:
       tag: main
-  product:
+  backoffice:
     image:
       tag: main
   storefront-bff:
     image:
       tag: main
-
+  backoffice-bff:
+    image:
+      tag: main
+  product:
+    image:
+      tag: main
+  media:
+    image:
+      tag: main
+  cart:
+    image:
+      tag: main
+  customer:
+    image:
+      tag: main
+  rating:
+    image:
+      tag: main
+  location:
+    image:
+      tag: main
+  order:
+    image:
+      tag: main
+  inventory:
+    image:
+      tag: main
+  tax:
+    image:
+      tag: main
+  search:
+    image:
+      tag: main
+  promotion:
+    image:
+      tag: main
+  payment:
+    image:
+      tag: main
+  payment-paypal:
+    image:
+      tag: main
+  webhook:
+    image:
+      tag: main
