@@ -35,6 +35,8 @@ docker
 
 service_count=0
 public_entry_count=0
+ui_count=0
+backend_count=0
 if [ -f "jenkins/services.env" ]; then
   while IFS='|' read -r service path dockerfile port expose node_port workload_type; do
     [ -n "$service" ] || continue
@@ -44,6 +46,11 @@ if [ -f "jenkins/services.env" ]; then
     service_count=$((service_count + 1))
     if [ "$expose" = "true" ]; then
       public_entry_count=$((public_entry_count + 1))
+    fi
+    if [ "$workload_type" = "ui" ]; then
+      ui_count=$((ui_count + 1))
+    elif [ "$workload_type" = "backend" ]; then
+      backend_count=$((backend_count + 1))
     fi
   done < "jenkins/services.env"
 fi
@@ -78,11 +85,14 @@ fi
   printf '## Service Catalog Summary\n'
   printf -- '- Services in catalog: %s\n' "$service_count"
   printf -- '- Public entrypoints in catalog: %s\n' "$public_entry_count"
+  printf -- '- UI workloads in catalog: %s\n' "$ui_count"
+  printf -- '- Backend workloads in catalog: %s\n' "$backend_count"
   printf '\n'
   printf '## Verified Locally\n'
   printf '%s\n' '- PowerShell preflight is available.'
   printf '%s\n' '- PowerShell selftest is available.'
   printf '%s\n' '- Cross-platform dry-run helpers exist in both `ps1` and `.sh` form.'
+  printf '%s\n' '- Generated values include workload-aware fields such as `workloadType` and backend `metricPort`.'
   printf '\n'
   printf '## Still Blocked In This Workspace\n'
   printf '%s\n' '- Real YAS source tree is not present.'

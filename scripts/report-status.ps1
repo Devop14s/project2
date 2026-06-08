@@ -31,6 +31,8 @@ $requiredCommands = @('git', 'kubectl', 'helm', 'docker')
 $servicesFile = 'jenkins/services.env'
 $serviceCount = 0
 $publicEntryCount = 0
+$uiCount = 0
+$backendCount = 0
 
 if (Test-Path $servicesFile) {
     foreach ($line in Get-Content $servicesFile) {
@@ -41,6 +43,11 @@ if (Test-Path $servicesFile) {
             $serviceCount += 1
             if ($parts[4] -eq 'true') {
                 $publicEntryCount += 1
+            }
+            if ($parts[6] -eq 'ui') {
+                $uiCount += 1
+            } elseif ($parts[6] -eq 'backend') {
+                $backendCount += 1
             }
         }
     }
@@ -78,11 +85,14 @@ if (-not $SkipCommandChecks) {
 $content.Add('## Service Catalog Summary')
 $content.Add("- Services in catalog: $serviceCount")
 $content.Add("- Public entrypoints in catalog: $publicEntryCount")
+$content.Add("- UI workloads in catalog: $uiCount")
+$content.Add("- Backend workloads in catalog: $backendCount")
 $content.Add('')
 $content.Add('## Verified Locally')
 $content.Add('- PowerShell preflight is available.')
 $content.Add('- PowerShell selftest is available.')
 $content.Add('- Cross-platform dry-run helpers exist in both `ps1` and `.sh` form.')
+$content.Add('- Generated values include workload-aware fields such as `workloadType` and backend `metricPort`.')
 $content.Add('')
 $content.Add('## Still Blocked In This Workspace')
 $content.Add('- Real YAS source tree is not present.')

@@ -41,6 +41,7 @@ TAX_BRANCH=dev_tax_service sh scripts/developer-build-dry-run.sh your-dockerhub-
 - branch-to-tag resolution
 - generated values structure
 - NodePort exposure for public entrypoints
+- workload-aware fields such as `workloadType` and backend `metricPort`
 
 ## Extra scaffold validation
 
