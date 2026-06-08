@@ -1,0 +1,5 @@
+global:
+  environment: staging
+  namespace: yas-staging
+  domainName: storefront-staging.yas.local
+

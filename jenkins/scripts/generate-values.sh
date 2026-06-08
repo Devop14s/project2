@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+set -euo pipefail
+source jenkins/scripts/common.sh
+
+ENVIRONMENT="${ENVIRONMENT:-developer}"
+DEPLOYER_ID="${DEPLOYER_ID:-dev1}"
+DOMAIN_NAME="${DOMAIN_NAME:-storefront-${DEPLOYER_ID}.yas.local}"
+NAMESPACE="${NAMESPACE:-$(namespace_for "$DEPLOYER_ID")}"
+RELEASE_NAME="${RELEASE_NAME:-$(release_name_for "$DEPLOYER_ID")}"
+OUTPUT_FILE="work/generated-values.yaml"
+require_env DOCKERHUB_NAMESPACE
+
+ENVIRONMENT="$ENVIRONMENT" \
+DEPLOYER_ID="$DEPLOYER_ID" \
+DOMAIN_NAME="$DOMAIN_NAME" \
+NAMESPACE="$NAMESPACE" \
+RELEASE_NAME="$RELEASE_NAME" \
+OUTPUT_FILE="$OUTPUT_FILE" \
+DOCKERHUB_NAMESPACE="$DOCKERHUB_NAMESPACE" \
+scripts/generate-values.sh

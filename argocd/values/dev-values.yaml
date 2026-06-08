@@ -1,0 +1,16 @@
+global:
+  environment: dev
+  namespace: yas-dev
+  domainName: storefront-dev.yas.local
+
+services:
+  tax:
+    image:
+      tag: main
+  product:
+    image:
+      tag: main
+  storefront-bff:
+    image:
+      tag: main
+

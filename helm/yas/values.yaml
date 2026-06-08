@@ -1,0 +1,245 @@
+global:
+  environment: default
+  namespace: default
+  domainName: yas.local
+
+services:
+  storefront:
+    enabled: true
+    workloadType: ui
+    image:
+      repository: docker.io/example/yas-storefront
+      tag: main
+      pullPolicy: IfNotPresent
+    containerPort: 3000
+    service:
+      type: NodePort
+      port: 3000
+      nodePort: 32080
+    ingress:
+      enabled: true
+      host: storefront.yas.local
+
+  backoffice:
+    enabled: true
+    workloadType: ui
+    image:
+      repository: docker.io/example/yas-backoffice
+      tag: main
+      pullPolicy: IfNotPresent
+    containerPort: 3000
+    service:
+      type: NodePort
+      port: 3000
+      nodePort: 32081
+    ingress:
+      enabled: true
+      host: backoffice.yas.local
+
+  storefront-bff:
+    enabled: true
+    workloadType: backend
+    image:
+      repository: docker.io/example/yas-storefront-bff
+      tag: main
+      pullPolicy: IfNotPresent
+    containerPort: 80
+    metricPort: 8090
+    service:
+      type: ClusterIP
+      port: 80
+
+  backoffice-bff:
+    enabled: true
+    workloadType: backend
+    image:
+      repository: docker.io/example/yas-backoffice-bff
+      tag: main
+      pullPolicy: IfNotPresent
+    containerPort: 80
+    metricPort: 8090
+    service:
+      type: ClusterIP
+      port: 80
+
+  product:
+    enabled: true
+    workloadType: backend
+    image:
+      repository: docker.io/example/yas-product
+      tag: main
+      pullPolicy: IfNotPresent
+    containerPort: 80
+    metricPort: 8090
+    service:
+      type: ClusterIP
+      port: 80
+
+  media:
+    enabled: true
+    workloadType: backend
+    image:
+      repository: docker.io/example/yas-media
+      tag: main
+      pullPolicy: IfNotPresent
+    containerPort: 80
+    metricPort: 8090
+    service:
+      type: ClusterIP
+      port: 80
+
+  cart:
+    enabled: true
+    workloadType: backend
+    image:
+      repository: docker.io/example/yas-cart
+      tag: main
+      pullPolicy: IfNotPresent
+    containerPort: 80
+    metricPort: 8090
+    service:
+      type: ClusterIP
+      port: 80
+
+  customer:
+    enabled: true
+    workloadType: backend
+    image:
+      repository: docker.io/example/yas-customer
+      tag: main
+      pullPolicy: IfNotPresent
+    containerPort: 80
+    metricPort: 8090
+    service:
+      type: ClusterIP
+      port: 80
+
+  rating:
+    enabled: true
+    workloadType: backend
+    image:
+      repository: docker.io/example/yas-rating
+      tag: main
+      pullPolicy: IfNotPresent
+    containerPort: 80
+    metricPort: 8090
+    service:
+      type: ClusterIP
+      port: 80
+
+  location:
+    enabled: true
+    workloadType: backend
+    image:
+      repository: docker.io/example/yas-location
+      tag: main
+      pullPolicy: IfNotPresent
+    containerPort: 80
+    metricPort: 8090
+    service:
+      type: ClusterIP
+      port: 80
+
+  order:
+    enabled: true
+    workloadType: backend
+    image:
+      repository: docker.io/example/yas-order
+      tag: main
+      pullPolicy: IfNotPresent
+    containerPort: 80
+    metricPort: 8090
+    service:
+      type: ClusterIP
+      port: 80
+
+  inventory:
+    enabled: true
+    workloadType: backend
+    image:
+      repository: docker.io/example/yas-inventory
+      tag: main
+      pullPolicy: IfNotPresent
+    containerPort: 80
+    metricPort: 8090
+    service:
+      type: ClusterIP
+      port: 80
+
+  tax:
+    enabled: true
+    workloadType: backend
+    image:
+      repository: docker.io/example/yas-tax
+      tag: main
+      pullPolicy: IfNotPresent
+    containerPort: 80
+    metricPort: 8090
+    service:
+      type: ClusterIP
+      port: 80
+
+  search:
+    enabled: true
+    workloadType: backend
+    image:
+      repository: docker.io/example/yas-search
+      tag: main
+      pullPolicy: IfNotPresent
+    containerPort: 80
+    metricPort: 8090
+    service:
+      type: ClusterIP
+      port: 80
+
+  promotion:
+    enabled: true
+    workloadType: backend
+    image:
+      repository: docker.io/example/yas-promotion
+      tag: main
+      pullPolicy: IfNotPresent
+    containerPort: 80
+    metricPort: 8090
+    service:
+      type: ClusterIP
+      port: 80
+
+  payment:
+    enabled: true
+    workloadType: backend
+    image:
+      repository: docker.io/example/yas-payment
+      tag: main
+      pullPolicy: IfNotPresent
+    containerPort: 80
+    metricPort: 8090
+    service:
+      type: ClusterIP
+      port: 80
+
+  payment-paypal:
+    enabled: true
+    workloadType: backend
+    image:
+      repository: docker.io/example/yas-payment-paypal
+      tag: main
+      pullPolicy: IfNotPresent
+    containerPort: 80
+    metricPort: 8090
+    service:
+      type: ClusterIP
+      port: 80
+
+  webhook:
+    enabled: true
+    workloadType: backend
+    image:
+      repository: docker.io/example/yas-webhook
+      tag: main
+      pullPolicy: IfNotPresent
+    containerPort: 80
+    metricPort: 8090
+    service:
+      type: ClusterIP
+      port: 80

@@ -1,0 +1,16 @@
+global:
+  environment: staging
+  namespace: yas-staging
+  domainName: storefront-staging.yas.local
+
+services:
+  tax:
+    image:
+      tag: v1.0.0
+  product:
+    image:
+      tag: v1.0.0
+  storefront-bff:
+    image:
+      tag: v1.0.0
+
