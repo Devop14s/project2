@@ -3,6 +3,7 @@ set -eu
 
 dockerhub_namespace="${1:-demo-ns}"
 temp_dir="${TMPDIR:-/tmp}/yas-scaffold-selftest.$$"
+repo_root="$(pwd)"
 
 mkdir -p "$temp_dir"
 branch_tags_file="${temp_dir}/branch-tags.env"
@@ -94,6 +95,7 @@ sh scripts/generate-gitops-values.sh >/dev/null
 OUTPUT_FILE="$chart_values_file" \
 sh scripts/generate-chart-values.sh >/dev/null
 sh scripts/update-manifest-values.sh "$manifest_values_file" test-tag >/dev/null
+powershell -ExecutionPolicy Bypass -File scripts/preflight.ps1 -AsJson -SkipCommandChecks >/dev/null
 sh scripts/report-status.sh "$status_report_file" --skip-command-checks >/dev/null
 if command -v helm >/dev/null 2>&1; then
   helm lint helm/yas >/dev/null
@@ -128,6 +130,10 @@ grep -q 'default_namespace "$ENVIRONMENT" "$DEPLOYER_ID"' jenkins/scripts/cleanu
 grep -q 'BACKOFFICE_DOMAIN_NAME="${BACKOFFICE_DOMAIN_NAME:-backoffice-${ENVIRONMENT}.yas.local}"' jenkins/scripts/update-manifest-repo.sh
 grep -q 'docker version' scripts/preflight.sh
 grep -q 'present but daemon inaccessible' scripts/preflight.sh
+if (cd "$temp_dir" && powershell -ExecutionPolicy Bypass -File "${repo_root}/scripts/preflight.ps1" -AsJson >/dev/null 2>&1); then
+  printf 'preflight.ps1 -AsJson should fail outside the repo root when scaffold files are missing.\n' >&2
+  exit 1
+fi
 grep -q 'domainName: storefront-dev.yas.local' "$dev_generated_values_file"
 grep -q 'host: backoffice-dev.yas.local' "$dev_generated_values_file"
 grep -q 'namespace: yas-dev' "$dev_generated_values_file"

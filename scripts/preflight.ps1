@@ -120,14 +120,18 @@ if (-not $SkipCommandChecks) {
     $results += $commandResults
 }
 
+$missing = $results | Where-Object { $_.status -ne 'ok' }
+
 if ($AsJson) {
     $results | ConvertTo-Json -Depth 3
+    if ($missing) {
+        exit 1
+    }
     exit 0
 }
 
 $results | Format-Table -AutoSize
 
-$missing = $results | Where-Object { $_.status -ne 'ok' }
 if ($missing) {
     Write-Host ''
     Write-Host 'Missing items detected.' -ForegroundColor Yellow

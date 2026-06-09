@@ -87,6 +87,12 @@ try {
     powershell -ExecutionPolicy Bypass -File scripts\update-manifest-values.ps1 `
         -ValuesFile $manifestValuesFile `
         -Tag test-tag | Out-Null
+    powershell -ExecutionPolicy Bypass -File scripts\preflight.ps1 `
+        -AsJson `
+        -SkipCommandChecks *> $null
+    if ($LASTEXITCODE -ne 0) {
+        throw 'preflight.ps1 -AsJson -SkipCommandChecks should succeed in the repo root.'
+    }
     powershell -ExecutionPolicy Bypass -File scripts\report-status.ps1 `
         -OutputFile $statusReportFile `
         -SkipCommandChecks | Out-Null
@@ -236,6 +242,16 @@ try {
 
     if ($preflightScript -notmatch 'present but daemon inaccessible') {
         throw 'preflight.ps1 is missing the Docker daemon accessibility status message.'
+    }
+
+    Push-Location $tempDir
+    try {
+        powershell -ExecutionPolicy Bypass -File "$PSScriptRoot\preflight.ps1" -AsJson *> $null
+        if ($LASTEXITCODE -eq 0) {
+            throw 'preflight.ps1 -AsJson should fail outside the repo root when scaffold files are missing.'
+        }
+    } finally {
+        Pop-Location
     }
 
     if ($devGeneratedValues -notmatch 'domainName: storefront-dev.yas.local') {
