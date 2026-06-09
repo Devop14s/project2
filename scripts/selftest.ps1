@@ -546,6 +546,14 @@ try {
         throw 'verify-image-tags.sh is missing the verified image list artifact.'
     }
 
+    if ($verifyImageTagsScript -notmatch 'mkdir -p "\$\(dirname "\$VERIFY_METADATA_FILE"\)"') {
+        throw 'verify-image-tags.sh should create the metadata directory when VERIFY_METADATA_FILE is overridden.'
+    }
+
+    if ($verifyImageTagsScript -notmatch 'Tags file not found: \$\{TAGS_FILE\}') {
+        throw 'verify-image-tags.sh should fail fast when an explicit TAGS_FILE path is provided but missing.'
+    }
+
     if ($verifyImageTagsScript -notmatch 'trap ''write_verify_metadata \$\?'' EXIT') {
         throw 'verify-image-tags.sh is missing the failure-safe verify metadata trap.'
     }

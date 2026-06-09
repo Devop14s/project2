@@ -11,6 +11,7 @@ verify_completed=false
 last_service=""
 last_image=""
 
+mkdir -p "$(dirname "$VERIFY_METADATA_FILE")"
 : > "$VERIFIED_IMAGE_LIST_FILE"
 
 write_verify_metadata() {
@@ -33,6 +34,10 @@ EOF
 }
 
 trap 'write_verify_metadata $?' EXIT
+
+if [[ -n "${TAGS_FILE:-}" && ! -f "$TAGS_FILE" ]]; then
+  fail "Tags file not found: ${TAGS_FILE}"
+fi
 
 if [[ -f "$TAGS_FILE" ]]; then
   set -a

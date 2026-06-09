@@ -224,6 +224,8 @@ grep -q 'docker manifest inspect' jenkins/scripts/verify-image-tags.sh
 grep -q 'source "$TAGS_FILE"' jenkins/scripts/verify-image-tags.sh
 grep -q 'VERIFY_IMAGE_TAGS_DRY_RUN' jenkins/scripts/verify-image-tags.sh
 grep -q 'VERIFIED_IMAGE_LIST_FILE="${VERIFIED_IMAGE_LIST_FILE:-work/verified-image-list.txt}"' jenkins/scripts/verify-image-tags.sh
+grep -q 'mkdir -p "$(dirname "$VERIFY_METADATA_FILE")"' jenkins/scripts/verify-image-tags.sh
+grep -q 'Tags file not found: ${TAGS_FILE}' jenkins/scripts/verify-image-tags.sh
 grep -q "trap 'write_verify_metadata \$?' EXIT" jenkins/scripts/verify-image-tags.sh
 grep -q 'done < <(iter_services)' jenkins/scripts/verify-image-tags.sh
 grep -q '"completed": ${verify_completed}' jenkins/scripts/verify-image-tags.sh
@@ -276,6 +278,19 @@ VERIFIED_IMAGE_LIST_FILE="$verified_image_list_file" \
 VERIFY_METADATA_FILE="$verify_image_metadata_file" \
 bash jenkins/scripts/verify-image-tags.sh >/dev/null
 grep -q 'demo-ns/yas-product:test-product-tag' "$verified_image_list_file"
+mkdir -p "${temp_dir}/verify-metadata"
+VERIFY_IMAGE_TAGS_DRY_RUN=1 \
+DOCKERHUB_NAMESPACE="$dockerhub_namespace" \
+SERVICE_CATALOG="release-baseline" \
+TAGS_FILE="$verify_image_tags_file" \
+VERIFIED_IMAGE_LIST_FILE="$verified_image_list_file" \
+VERIFY_METADATA_FILE="${temp_dir}/verify-metadata/verify-image-metadata.json" \
+bash jenkins/scripts/verify-image-tags.sh >/dev/null
+[ -f "${temp_dir}/verify-metadata/verify-image-metadata.json" ]
+if VERIFY_IMAGE_TAGS_DRY_RUN=1 DOCKERHUB_NAMESPACE="$dockerhub_namespace" SERVICE_CATALOG="release-baseline" TAGS_FILE="${temp_dir}/missing-verify-tags.env" VERIFIED_IMAGE_LIST_FILE="$verified_image_list_file" VERIFY_METADATA_FILE="$verify_image_metadata_file" bash jenkins/scripts/verify-image-tags.sh >/dev/null 2>&1; then
+  printf 'verify-image-tags.sh should fail when an explicit TAGS_FILE path is provided but missing.\n' >&2
+  exit 1
+fi
 grep -q 'domainName: storefront-dev.yas.local' "$dev_generated_values_file"
 grep -q 'host: backoffice-dev.yas.local' "$dev_generated_values_file"
 grep -q 'namespace: yas-dev' "$dev_generated_values_file"
