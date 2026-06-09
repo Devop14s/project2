@@ -355,12 +355,37 @@ try {
     }
 
     $pushImagesScript = Get-Content 'jenkins\scripts\push-images.sh' -Raw
+    $buildImagesScript = Get-Content 'jenkins\scripts\build-images.sh' -Raw
+    if ($buildImagesScript -notmatch 'trap ''write_build_metadata \$\?'' EXIT') {
+        throw 'build-images.sh is missing the failure-safe build metadata trap.'
+    }
+
+    if ($buildImagesScript -notmatch '"completed": \$\{build_completed\}') {
+        throw 'build-images.sh is missing the build completion marker in metadata.'
+    }
+
+    if ($buildImagesScript -notmatch '"last_image": "\$\{last_image\}"') {
+        throw 'build-images.sh is missing the last attempted image marker in metadata.'
+    }
+
     if ($pushImagesScript -notmatch 'IMAGE_DIGESTS_FILE="work/image-digests.txt"') {
         throw 'push-images.sh is missing the image-digests artifact output.'
     }
 
     if ($pushImagesScript -notmatch 'record_repo_digest') {
         throw 'push-images.sh no longer records repo digests after push.'
+    }
+
+    if ($pushImagesScript -notmatch 'trap ''write_push_metadata \$\?'' EXIT') {
+        throw 'push-images.sh is missing the failure-safe push metadata trap.'
+    }
+
+    if ($pushImagesScript -notmatch '"completed": \$\{push_completed\}') {
+        throw 'push-images.sh is missing the push completion marker in metadata.'
+    }
+
+    if ($pushImagesScript -notmatch '"last_image": "\$\{last_image\}"') {
+        throw 'push-images.sh is missing the last attempted image marker in metadata.'
     }
 
     $verifyImageTagsScript = Get-Content 'jenkins\scripts\verify-image-tags.sh' -Raw
@@ -378,6 +403,18 @@ try {
 
     if ($verifyImageTagsScript -notmatch 'VERIFIED_IMAGE_LIST_FILE="\$\{VERIFIED_IMAGE_LIST_FILE:-work/verified-image-list.txt\}"') {
         throw 'verify-image-tags.sh is missing the verified image list artifact.'
+    }
+
+    if ($verifyImageTagsScript -notmatch 'trap ''write_verify_metadata \$\?'' EXIT') {
+        throw 'verify-image-tags.sh is missing the failure-safe verify metadata trap.'
+    }
+
+    if ($verifyImageTagsScript -notmatch '"completed": \$\{verify_completed\}') {
+        throw 'verify-image-tags.sh is missing the verify completion marker in metadata.'
+    }
+
+    if ($verifyImageTagsScript -notmatch '"last_image": "\$\{last_image\}"') {
+        throw 'verify-image-tags.sh is missing the last attempted image marker in metadata.'
     }
 
     $captureRuntimeEvidenceScript = Get-Content 'jenkins\scripts\capture-runtime-evidence.sh' -Raw
@@ -542,6 +579,10 @@ try {
 
     if ($statusReport -notmatch 'Runtime evidence directories now snapshot commit, build, push, and verification artifacts') {
         throw 'Generated status report is missing the per-run provenance snapshot note.'
+    }
+
+    if ($statusReport -notmatch 'Build, push, and remote-tag verification helpers now preserve partial metadata artifacts') {
+        throw 'Generated status report is missing the partial build and push metadata note.'
     }
 
     if ($statusReport -notmatch 'Deploy and smoke-test helpers now capture partial runtime diagnostics') {

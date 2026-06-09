@@ -31,6 +31,8 @@ Build and push service images on every branch push. The image tag must equal the
 - `work/image-digests.txt`
 - `work/image-metadata.json`
 
+The build, push, and remote-tag verification helpers now preserve their metadata files even when a run fails mid-stream, so the final attempted service and image reference remain available for debugging.
+
 ## Source-of-truth note
 
 When this delivery repo is separate from the YAS source repo, the CI scripts resolve Docker build contexts from `SOURCE_ROOT` and derive default commit-SHA tags from `SOURCE_GIT_ROOT`.

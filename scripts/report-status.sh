@@ -134,6 +134,7 @@ helm_lint_verified=0
 helm_template_verified=0
 gitops_values_verified=0
 runtime_evidence_provenance_verified=0
+partial_image_metadata_verified=0
 failure_safe_runtime_evidence_verified=0
 cleanup_guard_verified=0
 shared_promotion_commit_metadata_verified=0
@@ -264,6 +265,14 @@ if grep -q 'copied-artifacts.txt' jenkins/scripts/capture-runtime-evidence.sh 2>
    grep -q 'work/image-digests.txt' jenkins/scripts/capture-runtime-evidence.sh 2>/dev/null && \
    grep -q 'work/commit-metadata.json' jenkins/scripts/capture-runtime-evidence.sh 2>/dev/null; then
   runtime_evidence_provenance_verified=1
+fi
+if grep -q 'write_build_metadata' jenkins/scripts/build-images.sh 2>/dev/null && \
+   grep -q '"completed": ${build_completed}' jenkins/scripts/build-images.sh 2>/dev/null && \
+   grep -q 'write_push_metadata' jenkins/scripts/push-images.sh 2>/dev/null && \
+   grep -q '"completed": ${push_completed}' jenkins/scripts/push-images.sh 2>/dev/null && \
+   grep -q 'write_verify_metadata' jenkins/scripts/verify-image-tags.sh 2>/dev/null && \
+   grep -q '"completed": ${verify_completed}' jenkins/scripts/verify-image-tags.sh 2>/dev/null; then
+  partial_image_metadata_verified=1
 fi
 if grep -q 'CAPTURE_RUNTIME_EXIT_CODE' jenkins/scripts/capture-runtime-evidence.sh 2>/dev/null && \
    grep -q 'write_namespace_missing_note' jenkins/scripts/capture-runtime-evidence.sh 2>/dev/null && \
@@ -426,6 +435,9 @@ fi
   fi
   if [ "$runtime_evidence_provenance_verified" -eq 1 ]; then
     printf '%s\n' '- Runtime evidence directories now snapshot commit, build, push, and verification artifacts such as `commit-metadata.json` and `image-digests.txt` per run.'
+  fi
+  if [ "$partial_image_metadata_verified" -eq 1 ]; then
+    printf '%s\n' '- Build, push, and remote-tag verification helpers now preserve partial metadata artifacts with completion state and the last attempted image when a run fails mid-stream.'
   fi
   if [ "$failure_safe_runtime_evidence_verified" -eq 1 ]; then
     printf '%s\n' '- Deploy and smoke-test helpers now capture partial runtime diagnostics even when rollout or endpoint verification fails, reducing lost evidence on first-failure runs.'

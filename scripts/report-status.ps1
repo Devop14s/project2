@@ -148,6 +148,7 @@ $helmLintVerified = $false
 $helmTemplateVerified = $false
 $gitopsValuesVerified = $false
 $runtimeEvidenceProvenanceVerified = $false
+$partialImageMetadataVerified = $false
 $failureSafeRuntimeEvidenceVerified = $false
 $cleanupGuardVerified = $false
 $sharedPromotionCommitMetadataVerified = $false
@@ -308,6 +309,9 @@ if (Test-Path $releaseBaselineServicesFile) {
 }
 
 $captureRuntimeEvidenceScript = if (Test-Path 'jenkins\scripts\capture-runtime-evidence.sh') { Get-Content 'jenkins\scripts\capture-runtime-evidence.sh' -Raw } else { '' }
+$buildImagesScript = if (Test-Path 'jenkins\scripts\build-images.sh') { Get-Content 'jenkins\scripts\build-images.sh' -Raw } else { '' }
+$pushImagesScript = if (Test-Path 'jenkins\scripts\push-images.sh') { Get-Content 'jenkins\scripts\push-images.sh' -Raw } else { '' }
+$verifyImageTagsScript = if (Test-Path 'jenkins\scripts\verify-image-tags.sh') { Get-Content 'jenkins\scripts\verify-image-tags.sh' -Raw } else { '' }
 $deployHelmScript = if (Test-Path 'jenkins\scripts\deploy-helm.sh') { Get-Content 'jenkins\scripts\deploy-helm.sh' -Raw } else { '' }
 $smokeTestScript = if (Test-Path 'jenkins\scripts\smoke-test.sh') { Get-Content 'jenkins\scripts\smoke-test.sh' -Raw } else { '' }
 $cleanupScript = if (Test-Path 'jenkins\scripts\cleanup-release.sh') { Get-Content 'jenkins\scripts\cleanup-release.sh' -Raw } else { '' }
@@ -320,6 +324,15 @@ $runtimeEvidenceProvenanceVerified = (
     $captureRuntimeEvidenceScript -match 'copied-artifacts\.txt' -and
     $captureRuntimeEvidenceScript -match 'work/image-digests\.txt' -and
     $captureRuntimeEvidenceScript -match 'work/commit-metadata\.json'
+)
+
+$partialImageMetadataVerified = (
+    $buildImagesScript -match 'write_build_metadata' -and
+    $buildImagesScript -match '"completed": \$\{build_completed\}' -and
+    $pushImagesScript -match 'write_push_metadata' -and
+    $pushImagesScript -match '"completed": \$\{push_completed\}' -and
+    $verifyImageTagsScript -match 'write_verify_metadata' -and
+    $verifyImageTagsScript -match '"completed": \$\{verify_completed\}'
 )
 
 $failureSafeRuntimeEvidenceVerified = (
@@ -489,6 +502,9 @@ if ($sharedPromotionCommitMetadataVerified) {
 }
 if ($runtimeEvidenceProvenanceVerified) {
     $content.Add('- Runtime evidence directories now snapshot commit, build, push, and verification artifacts such as `commit-metadata.json` and `image-digests.txt` per run.')
+}
+if ($partialImageMetadataVerified) {
+    $content.Add('- Build, push, and remote-tag verification helpers now preserve partial metadata artifacts with completion state and the last attempted image when a run fails mid-stream.')
 }
 if ($failureSafeRuntimeEvidenceVerified) {
     $content.Add('- Deploy and smoke-test helpers now capture partial runtime diagnostics even when rollout or endpoint verification fails, reducing lost evidence on first-failure runs.')

@@ -7,8 +7,32 @@ TAGS_FILE="${TAGS_FILE:-work/branch-tags.env}"
 VERIFIED_IMAGE_LIST_FILE="${VERIFIED_IMAGE_LIST_FILE:-work/verified-image-list.txt}"
 VERIFY_METADATA_FILE="${VERIFY_METADATA_FILE:-work/verify-image-metadata.json}"
 VERIFY_IMAGE_TAGS_DRY_RUN="${VERIFY_IMAGE_TAGS_DRY_RUN:-0}"
+verify_completed=false
+last_service=""
+last_image=""
 
 : > "$VERIFIED_IMAGE_LIST_FILE"
+
+write_verify_metadata() {
+  local exit_code="$1"
+
+  cat > "$VERIFY_METADATA_FILE" <<EOF
+{
+  "services_file": "${SERVICES_FILE}",
+  "source_root": "${SOURCE_ROOT}",
+  "source_git_root": "${SOURCE_GIT_ROOT}",
+  "tags_file": "${TAGS_FILE}",
+  "verified_image_list_file": "${VERIFIED_IMAGE_LIST_FILE}",
+  "completed": ${verify_completed},
+  "exit_code": ${exit_code},
+  "last_service": "${last_service}",
+  "last_image": "${last_image}",
+  "generated_at": "$(date -u '+%Y-%m-%dT%H:%M:%SZ')"
+}
+EOF
+}
+
+trap 'write_verify_metadata $?' EXIT
 
 if [[ -f "$TAGS_FILE" ]]; then
   set -a
@@ -34,6 +58,8 @@ iter_services | while IFS='|' read -r service path dockerfile port expose node_p
   repo_name="$(image_repo "$service")"
   tag_value="$(resolve_service_tag "$service")"
   image_ref="${repo_name}:${tag_value}"
+  last_service="$service"
+  last_image="$image_ref"
 
   log "Verifying remote image tag ${image_ref}"
   if [[ "$VERIFY_IMAGE_TAGS_DRY_RUN" != "1" ]]; then
@@ -41,14 +67,4 @@ iter_services | while IFS='|' read -r service path dockerfile port expose node_p
   fi
   printf '%s\n' "$image_ref" >> "$VERIFIED_IMAGE_LIST_FILE"
 done
-
-cat > "$VERIFY_METADATA_FILE" <<EOF
-{
-  "services_file": "${SERVICES_FILE}",
-  "source_root": "${SOURCE_ROOT}",
-  "source_git_root": "${SOURCE_GIT_ROOT}",
-  "tags_file": "${TAGS_FILE}",
-  "verified_image_list_file": "${VERIFIED_IMAGE_LIST_FILE}",
-  "generated_at": "$(date -u '+%Y-%m-%dT%H:%M:%SZ')"
-}
-EOF
+verify_completed=true

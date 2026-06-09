@@ -166,12 +166,21 @@ grep -q "if (env.PIPELINE_DISPATCH_MODE != 'true')" jenkins/pipelines/staging_re
 grep -q "name: 'DOCKERHUB_NAMESPACE'" jenkins/pipelines/staging_release.groovy
 grep -q "stage('Resolve Commit Metadata')" jenkins/pipelines/staging_release.groovy
 grep -q 'jenkins/scripts/write-commit-metadata.sh' jenkins/pipelines/staging_release.groovy
+grep -q "trap 'write_build_metadata \$?' EXIT" jenkins/scripts/build-images.sh
+grep -q '"completed": ${build_completed}' jenkins/scripts/build-images.sh
+grep -q '"last_image": "${last_image}"' jenkins/scripts/build-images.sh
 grep -q 'IMAGE_DIGESTS_FILE="work/image-digests.txt"' jenkins/scripts/push-images.sh
 grep -q 'record_repo_digest' jenkins/scripts/push-images.sh
+grep -q "trap 'write_push_metadata \$?' EXIT" jenkins/scripts/push-images.sh
+grep -q '"completed": ${push_completed}' jenkins/scripts/push-images.sh
+grep -q '"last_image": "${last_image}"' jenkins/scripts/push-images.sh
 grep -q 'docker manifest inspect' jenkins/scripts/verify-image-tags.sh
 grep -q 'source "$TAGS_FILE"' jenkins/scripts/verify-image-tags.sh
 grep -q 'VERIFY_IMAGE_TAGS_DRY_RUN' jenkins/scripts/verify-image-tags.sh
 grep -q 'VERIFIED_IMAGE_LIST_FILE="${VERIFIED_IMAGE_LIST_FILE:-work/verified-image-list.txt}"' jenkins/scripts/verify-image-tags.sh
+grep -q "trap 'write_verify_metadata \$?' EXIT" jenkins/scripts/verify-image-tags.sh
+grep -q '"completed": ${verify_completed}' jenkins/scripts/verify-image-tags.sh
+grep -q '"last_image": "${last_image}"' jenkins/scripts/verify-image-tags.sh
 grep -q 'copied-artifacts.txt' jenkins/scripts/capture-runtime-evidence.sh
 grep -q 'work/image-digests.txt' jenkins/scripts/capture-runtime-evidence.sh
 grep -q 'work/commit-metadata.json' jenkins/scripts/capture-runtime-evidence.sh
@@ -226,6 +235,7 @@ grep -q 'host: backoffice.yas.local' "$chart_values_file"
 grep -q 'tag: test-tag' "$manifest_values_file"
 grep -q '## Runtime Access Notes' "$status_report_file"
 grep -q 'Runtime evidence directories now snapshot commit, build, push, and verification artifacts' "$status_report_file"
+grep -q 'Build, push, and remote-tag verification helpers now preserve partial metadata artifacts' "$status_report_file"
 grep -q 'Deploy and smoke-test helpers now capture partial runtime diagnostics' "$status_report_file"
 grep -q 'Cleanup helpers now require explicit opt-in for shared targets' "$status_report_file"
 DOCKERHUB_NAMESPACE="$dockerhub_namespace" \
