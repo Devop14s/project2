@@ -5,7 +5,9 @@ return {
         string(name: 'DEPLOYER_ID', defaultValue: 'dev1', description: 'Developer identifier used in namespace and release name'),
         choice(name: 'SERVICE_CATALOG', choices: ['release-baseline', 'full'], description: 'Service catalog associated with the deployment being cleaned up'),
         string(name: 'NAMESPACE', defaultValue: '', description: 'Optional explicit namespace'),
-        string(name: 'RELEASE_NAME', defaultValue: '', description: 'Optional explicit release name')
+        string(name: 'RELEASE_NAME', defaultValue: '', description: 'Optional explicit release name'),
+        booleanParam(name: 'DELETE_NAMESPACE', defaultValue: true, description: 'Delete the namespace after uninstall for developer environments'),
+        booleanParam(name: 'ALLOW_SHARED_ENVIRONMENT_CLEANUP', defaultValue: false, description: 'Required to clean up shared dev/staging environments intentionally')
       ])
     ])
   }
@@ -21,6 +23,8 @@ return {
           export DEPLOYER_ID="${DEPLOYER_ID}"
           export NAMESPACE="${NAMESPACE}"
           export RELEASE_NAME="${RELEASE_NAME}"
+          export DELETE_NAMESPACE="${DELETE_NAMESPACE}"
+          export ALLOW_SHARED_ENVIRONMENT_CLEANUP="${ALLOW_SHARED_ENVIRONMENT_CLEANUP}"
           jenkins/scripts/cleanup-release.sh
         '''
       }

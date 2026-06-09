@@ -124,6 +124,8 @@ grep -q "'developer_cleanup'" Jenkinsfile
 grep -q 'pipelineRequiresDockerhubNamespace' Jenkinsfile
 grep -q "name: 'RELEASE_VERSION'" Jenkinsfile
 grep -q "name: 'DEPLOYER_ID'" Jenkinsfile
+grep -q "name: 'DELETE_NAMESPACE'" Jenkinsfile
+grep -q "name: 'ALLOW_SHARED_ENVIRONMENT_CLEANUP'" Jenkinsfile
 grep -q "name: 'STOREFRONT_BRANCH'" Jenkinsfile
 grep -q "PIPELINE_DISPATCH_MODE = 'true'" Jenkinsfile
 grep -q "env.RELEASE_VERSION = stagingTarget" Jenkinsfile
@@ -144,6 +146,8 @@ grep -q 'CreateNamespace=true' scripts/validate-argocd-apps.sh
 grep -q 'selfHeal:\[\[:space:\]\]+true' scripts/validate-argocd-apps.sh
 grep -q 'staging manifest should remain manual-sync' scripts/validate-argocd-apps.sh
 grep -q "if (env.PIPELINE_DISPATCH_MODE != 'true')" jenkins/pipelines/developer_cleanup.groovy
+grep -q "name: 'DELETE_NAMESPACE'" jenkins/pipelines/developer_cleanup.groovy
+grep -q "name: 'ALLOW_SHARED_ENVIRONMENT_CLEANUP'" jenkins/pipelines/developer_cleanup.groovy
 grep -q "if (env.PIPELINE_DISPATCH_MODE != 'true')" jenkins/pipelines/dev_cd.groovy
 grep -q "name: 'DOCKERHUB_NAMESPACE'" jenkins/pipelines/dev_cd.groovy
 grep -q "if (env.PIPELINE_DISPATCH_MODE != 'true')" jenkins/pipelines/dev_gitops.groovy
@@ -160,6 +164,9 @@ grep -q 'VERIFY_IMAGE_TAGS_DRY_RUN' jenkins/scripts/verify-image-tags.sh
 grep -q 'VERIFIED_IMAGE_LIST_FILE="${VERIFIED_IMAGE_LIST_FILE:-work/verified-image-list.txt}"' jenkins/scripts/verify-image-tags.sh
 grep -q 'ENVIRONMENT="${ENVIRONMENT:-developer}"' jenkins/scripts/cleanup-release.sh
 grep -q 'default_namespace "$ENVIRONMENT" "$DEPLOYER_ID"' jenkins/scripts/cleanup-release.sh
+grep -q 'ALLOW_SHARED_ENVIRONMENT_CLEANUP="${ALLOW_SHARED_ENVIRONMENT_CLEANUP:-0}"' jenkins/scripts/cleanup-release.sh
+grep -q 'DELETE_NAMESPACE="${DELETE_NAMESPACE:-}"' jenkins/scripts/cleanup-release.sh
+grep -q 'work/cleanup-evidence' jenkins/scripts/cleanup-release.sh
 grep -q 'BACKOFFICE_DOMAIN_NAME="${BACKOFFICE_DOMAIN_NAME:-backoffice-${ENVIRONMENT}.yas.local}"' jenkins/scripts/update-manifest-repo.sh
 grep -q 'docker version' scripts/preflight.sh
 grep -q 'present but daemon inaccessible' scripts/preflight.sh

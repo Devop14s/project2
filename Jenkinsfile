@@ -63,6 +63,16 @@ pipeline {
       defaultValue: '',
       description: 'Optional explicit release-name override for cleanup or manual deploy flows'
     )
+    booleanParam(
+      name: 'DELETE_NAMESPACE',
+      defaultValue: true,
+      description: 'Delete the namespace after uninstall for developer cleanup flows'
+    )
+    booleanParam(
+      name: 'ALLOW_SHARED_ENVIRONMENT_CLEANUP',
+      defaultValue: false,
+      description: 'Explicitly allow cleanup against shared dev/staging environments'
+    )
     string(name: 'STOREFRONT_BRANCH', defaultValue: 'main', description: 'Developer-build branch override for storefront')
     string(name: 'BACKOFFICE_BRANCH', defaultValue: 'main', description: 'Developer-build branch override for backoffice')
     string(name: 'STOREFRONT_BFF_BRANCH', defaultValue: 'main', description: 'Developer-build branch override for storefront-bff')
@@ -124,6 +134,8 @@ pipeline {
           env.BACKOFFICE_DOMAIN_NAME = developerBuildTarget ? (params.BACKOFFICE_DOMAIN_NAME?.trim() ?: "backoffice-${env.DEPLOYER_ID}.yas.local") : ''
           env.NAMESPACE = developerCleanupTarget ? (params.NAMESPACE?.trim() ?: '') : ''
           env.RELEASE_NAME = developerCleanupTarget ? (params.RELEASE_NAME?.trim() ?: '') : ''
+          env.DELETE_NAMESPACE = developerCleanupTarget ? (params.DELETE_NAMESPACE ? '1' : '0') : ''
+          env.ALLOW_SHARED_ENVIRONMENT_CLEANUP = developerCleanupTarget ? (params.ALLOW_SHARED_ENVIRONMENT_CLEANUP ? '1' : '0') : ''
 
           [
             'STOREFRONT_BRANCH',

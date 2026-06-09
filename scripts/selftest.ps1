@@ -177,6 +177,14 @@ try {
         throw 'Jenkinsfile is missing the shared DEPLOYER_ID parameter.'
     }
 
+    if ($jenkinsfile -notmatch "name: 'DELETE_NAMESPACE'") {
+        throw 'Jenkinsfile is missing the shared DELETE_NAMESPACE cleanup parameter.'
+    }
+
+    if ($jenkinsfile -notmatch "name: 'ALLOW_SHARED_ENVIRONMENT_CLEANUP'") {
+        throw 'Jenkinsfile is missing the shared ALLOW_SHARED_ENVIRONMENT_CLEANUP cleanup parameter.'
+    }
+
     if ($jenkinsfile -notmatch "name: 'STOREFRONT_BRANCH'") {
         throw 'Jenkinsfile is missing the shared branch-override parameters for dispatch mode.'
     }
@@ -262,6 +270,14 @@ try {
         throw 'developer_cleanup.groovy no longer skips properties rewrites in dispatch mode.'
     }
 
+    if ($developerCleanupPipeline -notmatch "name: 'DELETE_NAMESPACE'") {
+        throw 'developer_cleanup.groovy is missing the direct-load DELETE_NAMESPACE parameter.'
+    }
+
+    if ($developerCleanupPipeline -notmatch "name: 'ALLOW_SHARED_ENVIRONMENT_CLEANUP'") {
+        throw 'developer_cleanup.groovy is missing the direct-load ALLOW_SHARED_ENVIRONMENT_CLEANUP parameter.'
+    }
+
     $devCdPipeline = Get-Content 'jenkins\pipelines\dev_cd.groovy' -Raw
     if ($devCdPipeline -notmatch "if \(env\.PIPELINE_DISPATCH_MODE != 'true'\)") {
         throw 'dev_cd.groovy no longer skips properties rewrites in dispatch mode.'
@@ -331,6 +347,18 @@ try {
 
     if ($cleanupScript -notmatch 'default_namespace "\$ENVIRONMENT" "\$DEPLOYER_ID"') {
         throw 'cleanup-release.sh no longer uses environment-aware namespace defaults.'
+    }
+
+    if ($cleanupScript -notmatch 'ALLOW_SHARED_ENVIRONMENT_CLEANUP="\$\{ALLOW_SHARED_ENVIRONMENT_CLEANUP:-0\}"') {
+        throw 'cleanup-release.sh is missing the shared-environment cleanup guard.'
+    }
+
+    if ($cleanupScript -notmatch 'DELETE_NAMESPACE="\$\{DELETE_NAMESPACE:-\}"') {
+        throw 'cleanup-release.sh is missing the optional namespace deletion control.'
+    }
+
+    if ($cleanupScript -notmatch 'work/cleanup-evidence') {
+        throw 'cleanup-release.sh is missing cleanup evidence artifacts.'
     }
 
     $updateManifestRepoScript = Get-Content 'jenkins\scripts\update-manifest-repo.sh' -Raw

@@ -49,6 +49,7 @@
 - deletion result
 - screenshots and logs
 - proof that namespace and release resources were removed
+- `work/cleanup-evidence/<namespace>/<release>/` excerpt or equivalent cleanup evidence
 
 ## 7. Dev and staging flow
 
