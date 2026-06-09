@@ -9,6 +9,7 @@ If `yas-source/` exists beside this delivery repo, branch-tag resolution automat
 ## Outputs
 
 - `branch-tags.env`
+- `branch-tag-metadata.json`
 - `generated-values.yaml`
 
 ## Windows PowerShell
@@ -55,6 +56,7 @@ TAX_BRANCH=dev_tax_service sh scripts/developer-build-dry-run.sh your-dockerhub-
 
 - service-to-branch mapping
 - branch-to-tag resolution
+- persisted branch/tag provenance for each selected service
 - generated values structure
 - NodePort exposure for public entrypoints
 - workload-aware fields such as `workloadType` and backend `metricPort`

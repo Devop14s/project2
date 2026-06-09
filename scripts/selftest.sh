@@ -144,6 +144,7 @@ grep -q "stage('Docker Login')" jenkins/pipelines/developer_build.groovy
 grep -q "stage('Verify Image Tags')" jenkins/pipelines/developer_build.groovy
 grep -q "name: 'DOCKERHUB_NAMESPACE'" jenkins/pipelines/developer_build.groovy
 grep -q "\[string\]\$PaymentBranch = 'main'" scripts/developer-build-dry-run.ps1
+grep -q 'branch-tag-metadata.json' scripts/developer-build-dry-run.ps1
 grep -q 'helm/yas' scripts/validate-argocd-apps.sh
 grep -q 'staging-values.yaml' scripts/validate-argocd-apps.sh
 grep -q 'https://github.com/Devop14s/project2.git' scripts/validate-argocd-apps.sh

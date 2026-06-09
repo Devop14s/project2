@@ -41,6 +41,7 @@ if ([string]::IsNullOrWhiteSpace($BackofficeDomainName)) {
 New-Item -ItemType Directory -Path $OutputDir -Force | Out-Null
 
 $branchTagsFile = Join-Path $OutputDir 'branch-tags.env'
+$branchTagMetadataFile = Join-Path $OutputDir 'branch-tag-metadata.json'
 $generatedValuesFile = Join-Path $OutputDir 'generated-values.yaml'
 
 $branchOverrides = [ordered]@{
@@ -78,7 +79,7 @@ try {
     }
     $env:SERVICE_CATALOG = $ServiceCatalog
 
-    powershell -ExecutionPolicy Bypass -File scripts\resolve-branch-tags.ps1 -OutputFile $branchTagsFile
+    powershell -ExecutionPolicy Bypass -File scripts\resolve-branch-tags.ps1 -OutputFile $branchTagsFile -MetadataFile $branchTagMetadataFile
     powershell -ExecutionPolicy Bypass -File scripts\generate-values.ps1 `
         -TagsFile $branchTagsFile `
         -OutputFile $generatedValuesFile `
@@ -90,6 +91,7 @@ try {
     Write-Host ''
     Write-Host 'Generated files:'
     Write-Host "  $branchTagsFile"
+    Write-Host "  $branchTagMetadataFile"
     Write-Host "  $generatedValuesFile"
 } finally {
     foreach ($entry in $previousBranchOverrides.GetEnumerator()) {

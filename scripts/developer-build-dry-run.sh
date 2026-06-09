@@ -18,6 +18,7 @@ mkdir -p "$output_dir"
 
 SERVICE_CATALOG="$service_catalog" \
 OUTPUT_FILE="${output_dir}/branch-tags.env" \
+BRANCH_TAG_METADATA_FILE="${output_dir}/branch-tag-metadata.json" \
 sh scripts/resolve-branch-tags.sh
 SERVICE_CATALOG="$service_catalog" \
 DOCKERHUB_NAMESPACE="$dockerhub_namespace" \
@@ -30,4 +31,5 @@ sh scripts/generate-values.sh
 
 printf '\nGenerated files:\n'
 printf '  %s\n' "${output_dir}/branch-tags.env"
+printf '  %s\n' "${output_dir}/branch-tag-metadata.json"
 printf '  %s\n' "${output_dir}/generated-values.yaml"

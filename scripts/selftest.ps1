@@ -258,6 +258,10 @@ try {
         throw 'developer-build-dry-run.ps1 no longer exposes the full branch-override surface.'
     }
 
+    if ($developerBuildDryRunScript -notmatch 'branch-tag-metadata\.json') {
+        throw 'developer-build-dry-run.ps1 no longer emits branch-tag metadata alongside branch-tags.env.'
+    }
+
     $validateArgocdAppsScript = Get-Content 'scripts\validate-argocd-apps.ps1' -Raw
     if ($validateArgocdAppsScript -notmatch 'helm/yas') {
         throw 'validate-argocd-apps.ps1 no longer verifies the expected Helm chart path.'
