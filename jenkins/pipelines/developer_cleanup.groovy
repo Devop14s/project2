@@ -7,7 +7,8 @@ return {
         string(name: 'NAMESPACE', defaultValue: '', description: 'Optional explicit namespace'),
         string(name: 'RELEASE_NAME', defaultValue: '', description: 'Optional explicit release name'),
         booleanParam(name: 'DELETE_NAMESPACE', defaultValue: true, description: 'Delete the namespace after uninstall for developer environments'),
-        booleanParam(name: 'ALLOW_SHARED_ENVIRONMENT_CLEANUP', defaultValue: false, description: 'Required to clean up shared dev/staging environments intentionally')
+        booleanParam(name: 'ALLOW_SHARED_ENVIRONMENT_CLEANUP', defaultValue: false, description: 'Required to clean up shared dev/staging environments intentionally'),
+        booleanParam(name: 'ALLOW_SHARED_NAMESPACE_DELETE', defaultValue: false, description: 'Required in addition to delete the namespace for shared dev/staging targets')
       ])
     ])
   }
@@ -25,6 +26,7 @@ return {
           export RELEASE_NAME="${RELEASE_NAME}"
           export DELETE_NAMESPACE="${DELETE_NAMESPACE}"
           export ALLOW_SHARED_ENVIRONMENT_CLEANUP="${ALLOW_SHARED_ENVIRONMENT_CLEANUP}"
+          export ALLOW_SHARED_NAMESPACE_DELETE="${ALLOW_SHARED_NAMESPACE_DELETE}"
           jenkins/scripts/cleanup-release.sh
         '''
       }

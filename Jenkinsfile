@@ -73,6 +73,11 @@ pipeline {
       defaultValue: false,
       description: 'Explicitly allow cleanup against shared dev/staging environments'
     )
+    booleanParam(
+      name: 'ALLOW_SHARED_NAMESPACE_DELETE',
+      defaultValue: false,
+      description: 'Explicitly allow namespace deletion for shared dev/staging cleanup targets'
+    )
     string(name: 'STOREFRONT_BRANCH', defaultValue: 'main', description: 'Developer-build branch override for storefront')
     string(name: 'BACKOFFICE_BRANCH', defaultValue: 'main', description: 'Developer-build branch override for backoffice')
     string(name: 'STOREFRONT_BFF_BRANCH', defaultValue: 'main', description: 'Developer-build branch override for storefront-bff')
@@ -136,6 +141,7 @@ pipeline {
           env.RELEASE_NAME = developerCleanupTarget ? (params.RELEASE_NAME?.trim() ?: '') : ''
           env.DELETE_NAMESPACE = developerCleanupTarget ? (params.DELETE_NAMESPACE ? '1' : '0') : ''
           env.ALLOW_SHARED_ENVIRONMENT_CLEANUP = developerCleanupTarget ? (params.ALLOW_SHARED_ENVIRONMENT_CLEANUP ? '1' : '0') : ''
+          env.ALLOW_SHARED_NAMESPACE_DELETE = developerCleanupTarget ? (params.ALLOW_SHARED_NAMESPACE_DELETE ? '1' : '0') : ''
 
           [
             'STOREFRONT_BRANCH',

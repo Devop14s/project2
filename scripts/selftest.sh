@@ -126,6 +126,7 @@ grep -q "name: 'RELEASE_VERSION'" Jenkinsfile
 grep -q "name: 'DEPLOYER_ID'" Jenkinsfile
 grep -q "name: 'DELETE_NAMESPACE'" Jenkinsfile
 grep -q "name: 'ALLOW_SHARED_ENVIRONMENT_CLEANUP'" Jenkinsfile
+grep -q "name: 'ALLOW_SHARED_NAMESPACE_DELETE'" Jenkinsfile
 grep -q "name: 'STOREFRONT_BRANCH'" Jenkinsfile
 grep -q "PIPELINE_DISPATCH_MODE = 'true'" Jenkinsfile
 grep -q "env.RELEASE_VERSION = stagingTarget" Jenkinsfile
@@ -148,6 +149,7 @@ grep -q 'staging manifest should remain manual-sync' scripts/validate-argocd-app
 grep -q "if (env.PIPELINE_DISPATCH_MODE != 'true')" jenkins/pipelines/developer_cleanup.groovy
 grep -q "name: 'DELETE_NAMESPACE'" jenkins/pipelines/developer_cleanup.groovy
 grep -q "name: 'ALLOW_SHARED_ENVIRONMENT_CLEANUP'" jenkins/pipelines/developer_cleanup.groovy
+grep -q "name: 'ALLOW_SHARED_NAMESPACE_DELETE'" jenkins/pipelines/developer_cleanup.groovy
 grep -q "if (env.PIPELINE_DISPATCH_MODE != 'true')" jenkins/pipelines/dev_cd.groovy
 grep -q "name: 'DOCKERHUB_NAMESPACE'" jenkins/pipelines/dev_cd.groovy
 grep -q "stage('Resolve Commit Metadata')" jenkins/pipelines/dev_cd.groovy
@@ -185,6 +187,8 @@ grep -q 'work/cleanup-evidence' jenkins/scripts/cleanup-release.sh
 grep -q 'yas-dev' jenkins/scripts/cleanup-release.sh
 grep -q 'yas-staging' jenkins/scripts/cleanup-release.sh
 grep -q 'shared_target_detected=' jenkins/scripts/cleanup-release.sh
+grep -q 'ALLOW_SHARED_NAMESPACE_DELETE="${ALLOW_SHARED_NAMESPACE_DELETE:-0}"' jenkins/scripts/cleanup-release.sh
+grep -q 'Refusing namespace deletion for shared target' jenkins/scripts/cleanup-release.sh
 grep -q 'BACKOFFICE_DOMAIN_NAME="${BACKOFFICE_DOMAIN_NAME:-backoffice-${ENVIRONMENT}.yas.local}"' jenkins/scripts/update-manifest-repo.sh
 grep -q 'docker version' scripts/preflight.sh
 grep -q 'present but daemon inaccessible' scripts/preflight.sh

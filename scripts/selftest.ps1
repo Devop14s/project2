@@ -185,6 +185,10 @@ try {
         throw 'Jenkinsfile is missing the shared ALLOW_SHARED_ENVIRONMENT_CLEANUP cleanup parameter.'
     }
 
+    if ($jenkinsfile -notmatch "name: 'ALLOW_SHARED_NAMESPACE_DELETE'") {
+        throw 'Jenkinsfile is missing the shared ALLOW_SHARED_NAMESPACE_DELETE cleanup parameter.'
+    }
+
     if ($jenkinsfile -notmatch "name: 'STOREFRONT_BRANCH'") {
         throw 'Jenkinsfile is missing the shared branch-override parameters for dispatch mode.'
     }
@@ -276,6 +280,10 @@ try {
 
     if ($developerCleanupPipeline -notmatch "name: 'ALLOW_SHARED_ENVIRONMENT_CLEANUP'") {
         throw 'developer_cleanup.groovy is missing the direct-load ALLOW_SHARED_ENVIRONMENT_CLEANUP parameter.'
+    }
+
+    if ($developerCleanupPipeline -notmatch "name: 'ALLOW_SHARED_NAMESPACE_DELETE'") {
+        throw 'developer_cleanup.groovy is missing the direct-load ALLOW_SHARED_NAMESPACE_DELETE parameter.'
     }
 
     $devCdPipeline = Get-Content 'jenkins\pipelines\dev_cd.groovy' -Raw
@@ -429,6 +437,14 @@ try {
 
     if ($cleanupScript -notmatch 'shared_target_detected=') {
         throw 'cleanup-release.sh is missing the shared-target evidence marker.'
+    }
+
+    if ($cleanupScript -notmatch 'ALLOW_SHARED_NAMESPACE_DELETE="\$\{ALLOW_SHARED_NAMESPACE_DELETE:-0\}"') {
+        throw 'cleanup-release.sh is missing the shared-namespace deletion guard.'
+    }
+
+    if ($cleanupScript -notmatch 'Refusing namespace deletion for shared target') {
+        throw 'cleanup-release.sh no longer refuses shared namespace deletion without explicit opt-in.'
     }
 
     $updateManifestRepoScript = Get-Content 'jenkins\scripts\update-manifest-repo.sh' -Raw

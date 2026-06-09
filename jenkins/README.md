@@ -70,7 +70,7 @@ The shared-environment deploy jobs should follow the same pattern as the develop
 `yas-dev-cd` and `yas-dev-gitops` intentionally keep `main` as the shared mutable baseline tag for `dev`, but they now also write `work/commit_sha.txt`, `work/commit_short_sha.txt`, and `work/commit-metadata.json` before the build/push step so each promotion can still be tied back to an exact source commit.
 `yas-staging-release` and `yas-staging-gitops` now do the same commit-metadata capture before building release-tagged images, so a staging promotion can always be traced back to the exact source commit behind that release input.
 
-`jenkins/scripts/cleanup-release.sh` now uses the same environment-aware namespace and release defaults as the deploy helpers, but it also guards shared environments. By default it only behaves as a developer cleanup, deletes the namespace only when `DELETE_NAMESPACE=true`, writes artifacts under `work/cleanup-evidence/<namespace>/<release>/`, and refuses shared targets unless `ALLOW_SHARED_ENVIRONMENT_CLEANUP=true` is set intentionally, even when the caller passes explicit `yas-dev` or `yas-staging` namespace or release overrides.
+`jenkins/scripts/cleanup-release.sh` now uses the same environment-aware namespace and release defaults as the deploy helpers, but it also guards shared environments. By default it only behaves as a developer cleanup, deletes the namespace only when `DELETE_NAMESPACE=true`, writes artifacts under `work/cleanup-evidence/<namespace>/<release>/`, refuses shared targets unless `ALLOW_SHARED_ENVIRONMENT_CLEANUP=true` is set intentionally, and still refuses deleting the whole shared namespace unless `ALLOW_SHARED_NAMESPACE_DELETE=true` is also set.
 
 ## GitOps note
 
