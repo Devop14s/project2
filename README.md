@@ -15,7 +15,7 @@ This repository currently contains the assignment brief and an executable scaffo
 
 ## Current limitation
 
-The actual YAS application source repository is now cloned locally under [yas-source](</D:/App/project2/yas-source/README.md>), so service paths and Dockerfiles can be checked against real source. This workspace has already verified real local builds for `storefront`, `backoffice`, `storefront-bff`, `backoffice-bff`, `product`, `payment`, `payment-paypal`, and `recommendation`, plus real local Docker image builds for `backoffice`, `storefront-bff`, `backoffice-bff`, `product`, `payment`, `payment-paypal`, and `recommendation`. Helm chart lint and template rendering were also validated locally with Helm 4.2.0, but the delivery repo still cannot yet:
+The actual YAS application source repository is now cloned locally under [yas-source](</D:/App/project2/yas-source/README.md>), so service paths and Dockerfiles can be checked against real source. This workspace has already verified real local builds for `storefront`, `backoffice`, `storefront-bff`, `backoffice-bff`, `product`, `payment`, `payment-paypal`, and `recommendation`, plus test-skipped packaging for `sampledata` and `search`. Real local Docker image builds were verified for `backoffice`, `storefront-bff`, `backoffice-bff`, `product`, `payment`, `payment-paypal`, `recommendation`, `sampledata`, and `search`. Helm chart lint and template rendering were also validated locally with Helm 4.2.0, but the delivery repo still cannot yet:
 
 - build and push a full real image set
 - deploy a working cluster release

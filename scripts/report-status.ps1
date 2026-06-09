@@ -60,6 +60,8 @@ $productBuildVerified = (Test-Path 'yas-source\product\target\product-1.0-SNAPSH
 $paymentBuildVerified = (Test-Path 'yas-source\payment\target\payment-1.0-SNAPSHOT.jar')
 $paymentPaypalBuildVerified = (Test-Path 'yas-source\payment-paypal\target\payment-paypal-1.0-SNAPSHOT.jar')
 $recommendationBuildVerified = (Test-Path 'yas-source\recommendation\target\recommendation-1.0-SNAPSHOT.jar')
+$sampledataPackageVerified = (Test-Path 'yas-source\sampledata\target\sampledata-1.0-SNAPSHOT.jar')
+$searchPackageVerified = (Test-Path 'yas-source\search\target\search-1.0-SNAPSHOT.jar')
 $productImageVerified = $false
 $backofficeImageVerified = $false
 $storefrontBffImageVerified = $false
@@ -67,6 +69,8 @@ $backofficeBffImageVerified = $false
 $paymentImageVerified = $false
 $paymentPaypalImageVerified = $false
 $recommendationImageVerified = $false
+$sampledataImageVerified = $false
+$searchImageVerified = $false
 $helmExecutable = Get-HelmExecutable
 $helmLintVerified = $false
 $helmTemplateVerified = $false
@@ -143,6 +147,20 @@ if ($null -ne (Get-Command docker -ErrorAction SilentlyContinue)) {
         $recommendationImageVerified = ($LASTEXITCODE -eq 0)
     } catch {
         $recommendationImageVerified = $false
+    }
+
+    try {
+        docker image inspect 'yas-sampledata:codex-verified' *> $null
+        $sampledataImageVerified = ($LASTEXITCODE -eq 0)
+    } catch {
+        $sampledataImageVerified = $false
+    }
+
+    try {
+        docker image inspect 'yas-search:codex-verified' *> $null
+        $searchImageVerified = ($LASTEXITCODE -eq 0)
+    } catch {
+        $searchImageVerified = $false
     }
 }
 
@@ -235,6 +253,12 @@ if ($paymentPaypalBuildVerified) {
 if ($recommendationBuildVerified) {
     $content.Add('- A real `recommendation` Maven backend build completed successfully and produced a runnable JAR artifact.')
 }
+if ($sampledataPackageVerified) {
+    $content.Add('- A packaged `sampledata` JAR was produced successfully in this workspace using a test-skipped Maven build.')
+}
+if ($searchPackageVerified) {
+    $content.Add('- A packaged `search` JAR was produced successfully in this workspace using a test-skipped Maven build.')
+}
 if ($productImageVerified) {
     $content.Add('- A real `product` Docker image build completed successfully in this workspace.')
 }
@@ -256,6 +280,12 @@ if ($paymentPaypalImageVerified) {
 if ($recommendationImageVerified) {
     $content.Add('- A real `recommendation` Docker image build completed successfully in this workspace.')
 }
+if ($sampledataImageVerified) {
+    $content.Add('- A real `sampledata` Docker image build completed successfully in this workspace.')
+}
+if ($searchImageVerified) {
+    $content.Add('- A real `search` Docker image build completed successfully in this workspace.')
+}
 if ($helmLintVerified) {
     $content.Add('- A real Helm chart lint completed successfully against `helm/yas`.')
 }
@@ -265,6 +295,7 @@ if ($helmTemplateVerified) {
 $content.Add('')
 $content.Add('## Still Blocked In This Workspace')
 $content.Add('- The full runtime image set has not been built and pushed from this workspace.')
+$content.Add('- A full upstream-style test pass is still blocked for `sampledata` and `search` in this workspace.')
 $content.Add('- Real Kubernetes deployment cannot be executed.')
 $content.Add('- Jenkins credentials and webhook integration cannot be verified locally.')
 

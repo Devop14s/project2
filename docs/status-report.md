@@ -26,8 +26,9 @@
 - Source-alignment validation against the local `yas-source` clone.
 - Source-based build and runtime matrix in `docs/source-build-runtime-matrix.md`.
 - Real local build verification for `storefront`, `backoffice`, `storefront-bff`, `backoffice-bff`, `product`, `payment`, `payment-paypal`, and `recommendation`.
+- Test-skipped packaging verification for `sampledata` and `search`.
 - Local Java and Maven enablement for upstream-style backend builds.
-- Real local Docker image verification for `backoffice`, `storefront-bff`, `backoffice-bff`, `product`, `payment`, `payment-paypal`, and `recommendation`.
+- Real local Docker image verification for `backoffice`, `storefront-bff`, `backoffice-bff`, `product`, `payment`, `payment-paypal`, `recommendation`, `sampledata`, and `search`.
 - Real local Helm lint and template validation for `helm/yas`.
 
 ## Not implementable yet in this workspace
@@ -37,6 +38,7 @@
 - Functional Kubernetes deployment for YAS.
 - Verified Jenkins webhook, credentials, Docker Hub integration, and kubeconfig access.
 - Evidence screenshots and final `.docx` report.
+- A full upstream-style test pass is still blocked for `sampledata` and `search` in this workspace.
 
 ## Blocking inputs still required
 

@@ -47,6 +47,8 @@ product_build_verified=0
 payment_build_verified=0
 payment_paypal_build_verified=0
 recommendation_build_verified=0
+sampledata_package_verified=0
+search_package_verified=0
 product_image_verified=0
 backoffice_image_verified=0
 storefront_bff_image_verified=0
@@ -54,6 +56,8 @@ backoffice_bff_image_verified=0
 payment_image_verified=0
 payment_paypal_image_verified=0
 recommendation_image_verified=0
+sampledata_image_verified=0
+search_image_verified=0
 helm_lint_verified=0
 helm_template_verified=0
 if [ -f "jenkins/services.env" ]; then
@@ -104,6 +108,12 @@ fi
 if [ -f "yas-source/recommendation/target/recommendation-1.0-SNAPSHOT.jar" ]; then
   recommendation_build_verified=1
 fi
+if [ -f "yas-source/sampledata/target/sampledata-1.0-SNAPSHOT.jar" ]; then
+  sampledata_package_verified=1
+fi
+if [ -f "yas-source/search/target/search-1.0-SNAPSHOT.jar" ]; then
+  search_package_verified=1
+fi
 if command -v docker >/dev/null 2>&1; then
   if docker image inspect yas-product:codex-verified >/dev/null 2>&1; then
     product_image_verified=1
@@ -125,6 +135,12 @@ if command -v docker >/dev/null 2>&1; then
   fi
   if docker image inspect yas-recommendation:codex-verified >/dev/null 2>&1; then
     recommendation_image_verified=1
+  fi
+  if docker image inspect yas-sampledata:codex-verified >/dev/null 2>&1; then
+    sampledata_image_verified=1
+  fi
+  if docker image inspect yas-search:codex-verified >/dev/null 2>&1; then
+    search_image_verified=1
   fi
 fi
 if command -v helm >/dev/null 2>&1; then
@@ -203,6 +219,12 @@ fi
   if [ "$recommendation_build_verified" -eq 1 ]; then
     printf '%s\n' '- A real `recommendation` Maven backend build completed successfully and produced a runnable JAR artifact.'
   fi
+  if [ "$sampledata_package_verified" -eq 1 ]; then
+    printf '%s\n' '- A packaged `sampledata` JAR was produced successfully in this workspace using a test-skipped Maven build.'
+  fi
+  if [ "$search_package_verified" -eq 1 ]; then
+    printf '%s\n' '- A packaged `search` JAR was produced successfully in this workspace using a test-skipped Maven build.'
+  fi
   if [ "$product_image_verified" -eq 1 ]; then
     printf '%s\n' '- A real `product` Docker image build completed successfully in this workspace.'
   fi
@@ -224,6 +246,12 @@ fi
   if [ "$recommendation_image_verified" -eq 1 ]; then
     printf '%s\n' '- A real `recommendation` Docker image build completed successfully in this workspace.'
   fi
+  if [ "$sampledata_image_verified" -eq 1 ]; then
+    printf '%s\n' '- A real `sampledata` Docker image build completed successfully in this workspace.'
+  fi
+  if [ "$search_image_verified" -eq 1 ]; then
+    printf '%s\n' '- A real `search` Docker image build completed successfully in this workspace.'
+  fi
   if [ "$helm_lint_verified" -eq 1 ]; then
     printf '%s\n' '- A real Helm chart lint completed successfully against `helm/yas`.'
   fi
@@ -233,6 +261,7 @@ fi
   printf '\n'
   printf '## Still Blocked In This Workspace\n'
   printf '%s\n' '- The full runtime image set has not been built and pushed from this workspace.'
+  printf '%s\n' '- A full upstream-style test pass is still blocked for `sampledata` and `search` in this workspace.'
   printf '%s\n' '- Real Kubernetes deployment cannot be executed.'
   printf '%s\n' '- Jenkins credentials and webhook integration cannot be verified locally.'
 } > "$output_file"
