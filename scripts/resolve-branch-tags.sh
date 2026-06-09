@@ -55,7 +55,7 @@ branch_value_for_service() {
 }
 
 entry_count=0
-while IFS='|' read -r service path dockerfile port expose node_port workload_type; do
+iter_catalog_services "$services_file" | while IFS='|' read -r service path dockerfile port expose node_port workload_type; do
 
   branch_var="$(branch_var_name "$service")"
   branch_value="$(branch_value_for_service "$branch_var")"
@@ -67,7 +67,7 @@ while IFS='|' read -r service path dockerfile port expose node_port workload_typ
   fi
   printf '    {"service":"%s","branch":"%s","tag":"%s"}' "$service" "$branch_value" "$tag_value" >> "$metadata_entries_file"
   entry_count=$((entry_count + 1))
-done < <(iter_catalog_services "$services_file")
+done
 
 cat > "$metadata_file" <<EOF
 {

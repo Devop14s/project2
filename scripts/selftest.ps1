@@ -147,6 +147,11 @@ try {
         throw 'Branch-tag metadata is missing the resolved tag values.'
     }
 
+    $resolveBranchTagsShellScript = Get-Content 'scripts\resolve-branch-tags.sh' -Raw
+    if ($resolveBranchTagsShellScript -match 'done < <\(') {
+        throw 'resolve-branch-tags.sh should remain POSIX-safe and must not use process substitution.'
+    }
+
     $expectedSourceHead = (& git -C 'yas-source' rev-parse HEAD).Trim()
     $sourceGitBranchTags = Get-Content $sourceGitBranchTagsFile -Raw
     if ($sourceGitBranchTags -notmatch ("PRODUCT_TAG=" + [regex]::Escape($expectedSourceHead))) {

@@ -117,6 +117,10 @@ grep -q 'TAX_TAG=main' "$branch_tags_file"
 grep -q '"service":"storefront"' "$branch_tag_metadata_file"
 grep -q '"branch":"main"' "$branch_tag_metadata_file"
 grep -q '"tag":"main"' "$branch_tag_metadata_file"
+if grep -q 'done < <(' scripts/resolve-branch-tags.sh; then
+  printf 'resolve-branch-tags.sh should remain POSIX-safe and must not use process substitution.\n' >&2
+  exit 1
+fi
 grep -q 'repository: demo-ns/yas-storefront-bff' "$generated_values_file"
 grep -q 'workloadType: ui' "$generated_values_file"
 grep -q 'host: storefront-dev1.yas.local' "$generated_values_file"
