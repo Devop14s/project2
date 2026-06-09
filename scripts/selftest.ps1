@@ -34,6 +34,7 @@ $chartValuesFile = Join-Path $tempDir 'chart-values.yaml'
 $manifestValuesFile = Join-Path $tempDir 'dev-values.yaml'
 $helmRenderFile = Join-Path $tempDir 'helm-render.yaml'
 $baselineHelmRenderFile = Join-Path $tempDir 'baseline-helm-render.yaml'
+$statusReportFile = Join-Path $tempDir 'status-report.generated.md'
 $helmExecutable = Get-HelmExecutable
 
 try {
@@ -81,6 +82,9 @@ try {
     powershell -ExecutionPolicy Bypass -File scripts\update-manifest-values.ps1 `
         -ValuesFile $manifestValuesFile `
         -Tag test-tag | Out-Null
+    powershell -ExecutionPolicy Bypass -File scripts\report-status.ps1 `
+        -OutputFile $statusReportFile `
+        -SkipCommandChecks | Out-Null
     if ($helmExecutable) {
         & $helmExecutable lint 'helm\yas' | Out-Null
         & $helmExecutable template yas 'helm\yas' | Out-File -FilePath $helmRenderFile -Encoding utf8
@@ -92,6 +96,7 @@ try {
     $gitopsValues = Get-Content $gitopsValuesFile -Raw
     $chartValues = Get-Content $chartValuesFile -Raw
     $manifestValues = Get-Content $manifestValuesFile -Raw
+    $statusReport = Get-Content $statusReportFile -Raw
     $helmRender = if (Test-Path $helmRenderFile) { Get-Content $helmRenderFile -Raw } else { '' }
 
     if ($branchTags -notmatch 'TAX_TAG=main') {
@@ -252,6 +257,10 @@ try {
 
     if ($manifestValues -notmatch 'tag: test-tag') {
         throw 'Manifest values update did not apply the expected tag.'
+    }
+
+    if ($statusReport -notmatch '## Runtime Access Notes') {
+        throw 'Generated status report is missing the runtime access notes section.'
     }
 
     powershell -ExecutionPolicy Bypass -File scripts\generate-values.ps1 `

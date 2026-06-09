@@ -11,6 +11,7 @@ dev_generated_values_file="${temp_dir}/dev-generated-values.yaml"
 gitops_values_file="${temp_dir}/gitops-values.yaml"
 chart_values_file="${temp_dir}/chart-values.yaml"
 manifest_values_file="${temp_dir}/dev-values.yaml"
+status_report_file="${temp_dir}/status-report.generated.md"
 commit_sha_file="work/commit_sha.txt"
 commit_short_sha_file="work/commit_short_sha.txt"
 commit_metadata_file="work/commit-metadata.json"
@@ -93,6 +94,7 @@ sh scripts/generate-gitops-values.sh >/dev/null
 OUTPUT_FILE="$chart_values_file" \
 sh scripts/generate-chart-values.sh >/dev/null
 sh scripts/update-manifest-values.sh "$manifest_values_file" test-tag >/dev/null
+sh scripts/report-status.sh "$status_report_file" --skip-command-checks >/dev/null
 if command -v helm >/dev/null 2>&1; then
   helm lint helm/yas >/dev/null
   helm template yas helm/yas > "${temp_dir}/helm-render.yaml"
@@ -133,6 +135,7 @@ grep -q 'payment-paypal:' "$gitops_values_file"
 grep -q 'repository: docker.io/example/yas-storefront' "$chart_values_file"
 grep -q 'host: backoffice.yas.local' "$chart_values_file"
 grep -q 'tag: test-tag' "$manifest_values_file"
+grep -q '## Runtime Access Notes' "$status_report_file"
 DOCKERHUB_NAMESPACE="$dockerhub_namespace" \
 SERVICES_FILE="jenkins/services.release-baseline.env" \
 OUTPUT_FILE="$generated_values_file" \

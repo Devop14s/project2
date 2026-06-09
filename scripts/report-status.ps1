@@ -88,6 +88,8 @@ $inventoryImageVerified = $false
 $orderImageVerified = $false
 $sampledataImageVerified = $false
 $searchImageVerified = $false
+$dockerCommandAvailable = ($null -ne (Get-Command docker -ErrorAction SilentlyContinue))
+$dockerDaemonReachable = $false
 $helmExecutable = Get-HelmExecutable
 $helmLintVerified = $false
 $helmTemplateVerified = $false
@@ -117,7 +119,16 @@ if ((Test-Path $sourceRoot) -and (Test-Path $servicesFile)) {
     $sourceAligned = ($LASTEXITCODE -eq 0)
 }
 
-if ($null -ne (Get-Command docker -ErrorAction SilentlyContinue)) {
+if ($dockerCommandAvailable) {
+    try {
+        docker version *> $null
+        $dockerDaemonReachable = ($LASTEXITCODE -eq 0)
+    } catch {
+        $dockerDaemonReachable = $false
+    }
+}
+
+if ($dockerDaemonReachable) {
     try {
         docker image inspect 'yas-product:codex-verified' *> $null
         $productImageVerified = ($LASTEXITCODE -eq 0)
@@ -247,6 +258,14 @@ $fileLines = foreach ($file in $requiredFiles) {
 $commandLines = foreach ($cmd in $requiredCommands) {
     $status = if ($cmd -eq 'helm') {
         if ($helmExecutable) { 'ok' } else { 'missing' }
+    } elseif ($cmd -eq 'docker') {
+        if (-not $dockerCommandAvailable) {
+            'missing'
+        } elseif ($dockerDaemonReachable) {
+            'ok'
+        } else {
+            'present but daemon inaccessible'
+        }
     } else {
         if ($null -ne (Get-Command $cmd -ErrorAction SilentlyContinue)) { 'ok' } else { 'missing' }
     }
@@ -372,6 +391,13 @@ if ($helmTemplateVerified) {
 }
 if ($gitopsValuesVerified) {
     $content.Add('- The committed GitOps values under `argocd/values/` are in sync with the frozen release baseline generator.')
+}
+$content.Add('')
+$content.Add('## Runtime Access Notes')
+if ($dockerCommandAvailable -and -not $dockerDaemonReachable) {
+    $content.Add('- Docker CLI is installed, but the current execution context cannot reach the Docker daemon; local image verification lines may be incomplete unless this report is run with host Docker access.')
+} elseif ($dockerDaemonReachable) {
+    $content.Add('- Docker daemon access was available while generating this report, so local image verification could be checked directly.')
 }
 $content.Add('')
 $content.Add('## Still Blocked In This Workspace')

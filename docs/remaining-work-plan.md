@@ -18,7 +18,7 @@ Move this repository from a source-verified delivery scaffold to a working YAS d
   - `sampledata`
   - `search`
 - Local image build evidence already exists for:
-  - `backoffice`, `storefront-bff`, `backoffice-bff`, `product`, `payment`, `payment-paypal`, `recommendation`, `inventory`, `order`, `sampledata`, `search`
+  - `storefront`, `backoffice`, `storefront-bff`, `backoffice-bff`, `product`, `payment`, `payment-paypal`, `recommendation`, `inventory`, `order`, `sampledata`, `search`
 
 ## Recommended first deployment subset
 
@@ -146,11 +146,6 @@ Current status: the recommended subset is now frozen in [jenkins/services.releas
 - Every required Jenkins job has at least one successful execution with usable evidence.
 
 ## Phase 5: Close the known blockers
-
-### `storefront` image build
-
-1. Re-run the Docker build with sufficient timeout on a stable host.
-2. Record the resulting image tag and size.
 
 ### `sampledata` full test path
 

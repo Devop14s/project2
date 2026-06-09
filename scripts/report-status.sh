@@ -75,6 +75,8 @@ inventory_image_verified=0
 order_image_verified=0
 sampledata_image_verified=0
 search_image_verified=0
+docker_command_available=0
+docker_daemon_reachable=0
 helm_lint_verified=0
 helm_template_verified=0
 gitops_values_verified=0
@@ -147,6 +149,12 @@ if [ -f "${source_root}/search/target/search-1.0-SNAPSHOT.jar" ]; then
   search_package_verified=1
 fi
 if command -v docker >/dev/null 2>&1; then
+  docker_command_available=1
+  if docker version >/dev/null 2>&1; then
+    docker_daemon_reachable=1
+  fi
+fi
+if [ "$docker_daemon_reachable" -eq 1 ]; then
   if docker image inspect yas-product:codex-verified >/dev/null 2>&1; then
     product_image_verified=1
   fi
@@ -213,10 +221,20 @@ fi
   if [ "$skip_command_checks" -eq 0 ]; then
     printf '## Host Commands\n'
     for cmd in $required_commands; do
-      if command -v "$cmd" >/dev/null 2>&1; then
-        status="ok"
+      if [ "$cmd" = "docker" ]; then
+        if [ "$docker_command_available" -eq 0 ]; then
+          status="missing"
+        elif [ "$docker_daemon_reachable" -eq 1 ]; then
+          status="ok"
+        else
+          status="present but daemon inaccessible"
+        fi
       else
-        status="missing"
+        if command -v "$cmd" >/dev/null 2>&1; then
+          status="ok"
+        else
+          status="missing"
+        fi
       fi
       printf -- '- `%s`: %s\n' "$cmd" "$status"
     done
@@ -323,6 +341,13 @@ fi
   fi
   if [ "$gitops_values_verified" -eq 1 ]; then
     printf '%s\n' '- The committed GitOps values under `argocd/values/` are in sync with the frozen release baseline generator.'
+  fi
+  printf '\n'
+  printf '## Runtime Access Notes\n'
+  if [ "$docker_command_available" -eq 1 ] && [ "$docker_daemon_reachable" -eq 0 ]; then
+    printf '%s\n' '- Docker CLI is installed, but the current execution context cannot reach the Docker daemon; local image verification lines may be incomplete unless this report is run with host Docker access.'
+  elif [ "$docker_daemon_reachable" -eq 1 ]; then
+    printf '%s\n' '- Docker daemon access was available while generating this report, so local image verification could be checked directly.'
   fi
   printf '\n'
   printf '## Still Blocked In This Workspace\n'
