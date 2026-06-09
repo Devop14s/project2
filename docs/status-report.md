@@ -25,11 +25,14 @@
 - Cross-platform Helm baseline values generation from the shared service catalog.
 - Source-alignment validation against the local `yas-source` clone.
 - Source-based build and runtime matrix in `docs/source-build-runtime-matrix.md`.
+- Real local build verification for `storefront`, `backoffice`, and `product`.
+- Local Java and Maven enablement for upstream-style backend builds.
+- Real local Docker image verification for `backoffice` and `product`.
 
 ## Not implementable yet in this workspace
 
-- Real YAS service build commands and Dockerfile paths.
-- Working image list for all runtime services.
+- Working image list and registry push verification for all runtime services.
+- Real image build and push verification for the required service subset.
 - Functional Kubernetes deployment for YAS.
 - Verified Jenkins webhook, credentials, Docker Hub integration, and kubeconfig access.
 - Evidence screenshots and final `.docx` report.

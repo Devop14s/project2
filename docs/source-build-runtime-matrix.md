@@ -17,16 +17,21 @@ Checked directly in the cloned source:
 - `storefront`: `npm run build` passed.
 - `storefront`: `npm run lint` passed.
 - `storefront`: `npx prettier --check .` failed with formatting issues across many upstream files.
+- `backoffice`: `npm ci` passed.
+- `backoffice`: `npm run build` passed and produced `.next`, but the build log still printed `quill` SSR `document is not defined` traces after route generation.
+- `backoffice`: `npm run lint` passed.
+- `product`: `mvn clean install -pl product -am` passed using local Temurin 25 and Maven 3.9.11, and produced `product/target/product-1.0-SNAPSHOT.jar`.
 - Docker daemon is reachable outside the sandbox on this host.
-- `docker build` for `storefront` was attempted but timed out before producing a local image.
-- Java and Maven are not installed on this host, so backend Maven builds were not executed locally.
+- `docker build` for `product` passed and produced local image `yas-product:codex-verified`.
+- `docker build` for `backoffice` passed and produced local image `yas-backoffice:codex-verified`.
+- `docker build` for `storefront` was attempted earlier but timed out before producing a local image.
 
 ## UI services
 
 | Service | Source path | CI build steps | Docker context | Upstream image | Runtime port | Runtime command | Notes |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | storefront | `yas-source/storefront` | `npm ci`, `npm run build`, `npm run lint`, `npx prettier --check .` | `./storefront` | `ghcr.io/nashtech-garage/yas-storefront:latest` | `3000` | `node server.js` | Real build and lint were verified locally; prettier check failed upstream. |
-| backoffice | `yas-source/backoffice` | `npm ci`, `npm run build`, `npm run lint`, `npx prettier --check .` | `./backoffice` | `ghcr.io/nashtech-garage/yas-backoffice:latest` | `3000` | `node server.js` | Same workflow shape as storefront; not executed locally yet. |
+| backoffice | `yas-source/backoffice` | `npm ci`, `npm run build`, `npm run lint`, `npx prettier --check .` | `./backoffice` | `ghcr.io/nashtech-garage/yas-backoffice:latest` | `3000` | `node server.js` | Real build and lint were verified locally; Docker image build also passed. Build logs still show post-build `quill` SSR traces. |
 
 ## BFF services
 
@@ -39,7 +44,7 @@ Checked directly in the cloned source:
 
 | Service | Source path | CI build command | Docker context | Upstream image | App port | Context path | Runtime command | Notes |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| product | `yas-source/product` | `mvn clean install -pl product -am` | `./product` | `ghcr.io/nashtech-garage/yas-product:latest` | `8080` | `/product` | `java -jar /app.jar` | Standard Spring Boot JAR packaging. |
+| product | `yas-source/product` | `mvn clean install -pl product -am` | `./product` | `ghcr.io/nashtech-garage/yas-product:latest` | `8080` | `/product` | `java -jar /app.jar` | Real Maven build was verified locally, produced `target/product-1.0-SNAPSHOT.jar`, and the Docker image build also passed. |
 | media | `yas-source/media` | `mvn clean install -pl media -am` | `./media` | `ghcr.io/nashtech-garage/yas-media:latest` | `8083` | none declared | `java -jar /app.jar` | No `server.servlet.context-path` in main properties. |
 | cart | `yas-source/cart` | `mvn clean install -pl cart -am` | `./cart` | `ghcr.io/nashtech-garage/yas-cart:latest` | `8084` | `/cart` | `java -jar /app.jar` | Standard Spring Boot JAR packaging. |
 | order | `yas-source/order` | `mvn clean install -pl order -am` | `./order` | `ghcr.io/nashtech-garage/yas-order:latest` | `8085` | `/order` | `java -jar /app.jar` | Standard Spring Boot JAR packaging. |
@@ -60,5 +65,6 @@ Checked directly in the cloned source:
 
 - The upstream UI workflows use Node 20.
 - The upstream backend workflows use Maven multi-module builds from the repo root with `-pl <service> -am`.
+- Local backend verification on this host used Temurin JDK 25.0.3 and Apache Maven 3.9.11 to match the upstream Java baseline.
 - The backend Dockerfiles expect a prebuilt JAR in `target/`; they are not multi-stage Maven builds.
 - The scaffold still normalizes Kubernetes service port exposure to `80` for backend services, while the app processes themselves listen on ports such as `8080` to `8095` inside their own containers in local development.

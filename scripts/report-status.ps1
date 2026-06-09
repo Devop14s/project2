@@ -36,6 +36,10 @@ $uiCount = 0
 $backendCount = 0
 $sourceAligned = $false
 $storefrontBuildVerified = (Test-Path 'yas-source\storefront\.next')
+$backofficeBuildVerified = (Test-Path 'yas-source\backoffice\.next')
+$productBuildVerified = (Test-Path 'yas-source\product\target\product-1.0-SNAPSHOT.jar')
+$productImageVerified = $false
+$backofficeImageVerified = $false
 
 if (Test-Path $servicesFile) {
     foreach ($line in Get-Content $servicesFile) {
@@ -59,6 +63,22 @@ if (Test-Path $servicesFile) {
 if ((Test-Path $sourceRoot) -and (Test-Path $servicesFile)) {
     powershell -ExecutionPolicy Bypass -File scripts\validate-source-alignment.ps1 -ServicesFile $servicesFile -SourceRoot $sourceRoot *> $null
     $sourceAligned = ($LASTEXITCODE -eq 0)
+}
+
+if ($null -ne (Get-Command docker -ErrorAction SilentlyContinue)) {
+    try {
+        docker image inspect 'yas-product:codex-verified' *> $null
+        $productImageVerified = ($LASTEXITCODE -eq 0)
+    } catch {
+        $productImageVerified = $false
+    }
+
+    try {
+        docker image inspect 'yas-backoffice:codex-verified' *> $null
+        $backofficeImageVerified = ($LASTEXITCODE -eq 0)
+    } catch {
+        $backofficeImageVerified = $false
+    }
 }
 
 $fileLines = foreach ($file in $requiredFiles) {
@@ -109,9 +129,21 @@ if ($sourceAligned) {
 if ($storefrontBuildVerified) {
     $content.Add('- A real `storefront` Next.js production build completed successfully in the cloned source tree.')
 }
+if ($backofficeBuildVerified) {
+    $content.Add('- A real `backoffice` Next.js production build completed successfully in the cloned source tree.')
+}
+if ($productBuildVerified) {
+    $content.Add('- A real `product` Maven backend build completed successfully and produced a runnable JAR artifact.')
+}
+if ($productImageVerified) {
+    $content.Add('- A real `product` Docker image build completed successfully in this workspace.')
+}
+if ($backofficeImageVerified) {
+    $content.Add('- A real `backoffice` Docker image build completed successfully in this workspace.')
+}
 $content.Add('')
 $content.Add('## Still Blocked In This Workspace')
-$content.Add('- Real image builds were not executed in this workspace.')
+$content.Add('- The full runtime image set has not been built and pushed from this workspace.')
 $content.Add('- Real Kubernetes deployment cannot be executed.')
 $content.Add('- Jenkins credentials and webhook integration cannot be verified locally.')
 

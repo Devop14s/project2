@@ -40,6 +40,10 @@ ui_count=0
 backend_count=0
 source_aligned=0
 storefront_build_verified=0
+backoffice_build_verified=0
+product_build_verified=0
+product_image_verified=0
+backoffice_image_verified=0
 if [ -f "jenkins/services.env" ]; then
   while IFS='|' read -r service path dockerfile port expose node_port workload_type; do
     [ -n "$service" ] || continue
@@ -66,6 +70,20 @@ fi
 
 if [ -d "yas-source/storefront/.next" ]; then
   storefront_build_verified=1
+fi
+if [ -d "yas-source/backoffice/.next" ]; then
+  backoffice_build_verified=1
+fi
+if [ -f "yas-source/product/target/product-1.0-SNAPSHOT.jar" ]; then
+  product_build_verified=1
+fi
+if command -v docker >/dev/null 2>&1; then
+  if docker image inspect yas-product:codex-verified >/dev/null 2>&1; then
+    product_image_verified=1
+  fi
+  if docker image inspect yas-backoffice:codex-verified >/dev/null 2>&1; then
+    backoffice_image_verified=1
+  fi
 fi
 
 {
@@ -114,9 +132,21 @@ fi
   if [ "$storefront_build_verified" -eq 1 ]; then
     printf '%s\n' '- A real `storefront` Next.js production build completed successfully in the cloned source tree.'
   fi
+  if [ "$backoffice_build_verified" -eq 1 ]; then
+    printf '%s\n' '- A real `backoffice` Next.js production build completed successfully in the cloned source tree.'
+  fi
+  if [ "$product_build_verified" -eq 1 ]; then
+    printf '%s\n' '- A real `product` Maven backend build completed successfully and produced a runnable JAR artifact.'
+  fi
+  if [ "$product_image_verified" -eq 1 ]; then
+    printf '%s\n' '- A real `product` Docker image build completed successfully in this workspace.'
+  fi
+  if [ "$backoffice_image_verified" -eq 1 ]; then
+    printf '%s\n' '- A real `backoffice` Docker image build completed successfully in this workspace.'
+  fi
   printf '\n'
   printf '## Still Blocked In This Workspace\n'
-  printf '%s\n' '- Real image builds were not executed in this workspace.'
+  printf '%s\n' '- The full runtime image set has not been built and pushed from this workspace.'
   printf '%s\n' '- Real Kubernetes deployment cannot be executed.'
   printf '%s\n' '- Jenkins credentials and webhook integration cannot be verified locally.'
 } > "$output_file"
