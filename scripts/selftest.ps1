@@ -310,6 +310,20 @@ try {
         throw 'validate-argocd-apps.sh is missing the POSIX-safe list-item assertion helper.'
     }
 
+    $validateServicesCatalogShellScript = Get-Content 'scripts\validate-services-catalog.sh' -Raw
+    if ($validateServicesCatalogShellScript -match 'set -- \$line') {
+        throw 'validate-services-catalog.sh should preserve empty catalog columns and must not parse lines with set -- $line.'
+    }
+
+    if ($validateServicesCatalogShellScript -match 'set -- \$reference_line') {
+        throw 'validate-services-catalog.sh should preserve empty reference-catalog columns and must not parse lines with set -- $reference_line.'
+    }
+
+    $generateValuesShellScript = Get-Content 'scripts\generate-values.sh' -Raw
+    if ($generateValuesShellScript -match 'set -- \$selected_entry') {
+        throw 'generate-values.sh should preserve empty nodePort columns and must not parse selected entries with set -- $selected_entry.'
+    }
+
     $developerCleanupPipeline = Get-Content 'jenkins\pipelines\developer_cleanup.groovy' -Raw
     if ($developerCleanupPipeline -notmatch "if \(env\.PIPELINE_DISPATCH_MODE != 'true'\)") {
         throw 'developer_cleanup.groovy no longer skips properties rewrites in dispatch mode.'

@@ -161,6 +161,18 @@ if grep -q '\${expected_repo_url//' scripts/validate-argocd-apps.sh; then
 fi
 grep -q 'assert_scalar_value' scripts/validate-argocd-apps.sh
 grep -q 'assert_list_item' scripts/validate-argocd-apps.sh
+if grep -q 'set -- \$line' scripts/validate-services-catalog.sh; then
+  printf 'validate-services-catalog.sh should preserve empty catalog columns and must not parse lines with set -- $line.\n' >&2
+  exit 1
+fi
+if grep -q 'set -- \$reference_line' scripts/validate-services-catalog.sh; then
+  printf 'validate-services-catalog.sh should preserve empty reference-catalog columns and must not parse lines with set -- $reference_line.\n' >&2
+  exit 1
+fi
+if grep -q 'set -- \$selected_entry' scripts/generate-values.sh; then
+  printf 'generate-values.sh should preserve empty nodePort columns and must not parse selected entries with set -- $selected_entry.\n' >&2
+  exit 1
+fi
 grep -q "if (env.PIPELINE_DISPATCH_MODE != 'true')" jenkins/pipelines/developer_cleanup.groovy
 grep -q "name: 'DELETE_NAMESPACE'" jenkins/pipelines/developer_cleanup.groovy
 grep -q "name: 'ALLOW_SHARED_ENVIRONMENT_CLEANUP'" jenkins/pipelines/developer_cleanup.groovy

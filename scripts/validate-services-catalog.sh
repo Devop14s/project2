@@ -30,28 +30,8 @@ iter_catalog_services "$services_file" > "$tmp_normalized_services"
 line_number=0
 errors=0
 
-while IFS= read -r line; do
+while IFS='|' read -r service path dockerfile port expose node_port workload_type; do
   line_number=$((line_number + 1))
-  [ -n "$line" ] || continue
-
-  old_ifs=$IFS
-  IFS='|'
-  set -- $line
-  IFS=$old_ifs
-
-  if [ "$#" -ne 7 ]; then
-    printf 'Line %s must have 7 columns separated by |\n' "$line_number" >&2
-    errors=1
-    continue
-  fi
-
-  service="$1"
-  path="$2"
-  dockerfile="$3"
-  port="$4"
-  expose="$5"
-  node_port="$6"
-  workload_type="$7"
 
   [ -n "$service" ] || {
     printf 'Line %s has an empty service name\n' "$line_number" >&2
@@ -125,16 +105,16 @@ if [ "$errors" -eq 0 ] && [ -n "$reference_services_file" ]; then
 
   : > "$tmp_reference_lines"
   iter_catalog_services "$reference_services_file" > "$tmp_normalized_reference"
-  while IFS= read -r reference_line; do
-    [ -n "$reference_line" ] || continue
-    old_ifs=$IFS
-    IFS='|'
-    set -- $reference_line
-    IFS=$old_ifs
-
-    if [ "$#" -eq 7 ]; then
-      printf '%s|%s\n' "$1" "$reference_line" >> "$tmp_reference_lines"
-    fi
+  while IFS='|' read -r reference_service reference_path reference_dockerfile reference_port reference_expose reference_node_port reference_workload_type; do
+    printf '%s|%s|%s|%s|%s|%s|%s|%s\n' \
+      "$reference_service" \
+      "$reference_service" \
+      "$reference_path" \
+      "$reference_dockerfile" \
+      "$reference_port" \
+      "$reference_expose" \
+      "$reference_node_port" \
+      "$reference_workload_type" >> "$tmp_reference_lines"
   done < "$tmp_normalized_reference"
 
   while IFS='|' read -r service service_line; do

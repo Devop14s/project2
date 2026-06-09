@@ -118,54 +118,44 @@ EOF
     continue
   fi
 
-  old_ifs=$IFS
-  IFS='|'
-  set -- $selected_entry
-  IFS=$old_ifs
-  service="$1"
-  path="$2"
-  dockerfile="$3"
-  port="$4"
-  expose="$5"
-  node_port="$6"
-  workload_type="$7"
+  printf '%s\n' "$selected_entry" | while IFS='|' read -r selected_service selected_path selected_dockerfile selected_port selected_expose selected_node_port selected_workload_type; do
+    tag_var="$(tag_var_name "$selected_service")"
+    tag_value="$(printenv "$tag_var" 2>/dev/null || printf '%s' "$release_version")"
+    service_type="ClusterIP"
 
-  tag_var="$(tag_var_name "$service")"
-  tag_value="$(printenv "$tag_var" 2>/dev/null || printf '%s' "$release_version")"
-  service_type="ClusterIP"
+    if [ "$selected_expose" = "true" ]; then
+      service_type="NodePort"
+    fi
 
-  if [ "$expose" = "true" ]; then
-    service_type="NodePort"
-  fi
-
-  cat >> "$output_file" <<EOF
-  ${service}:
+    cat >> "$output_file" <<EOF
+  ${selected_service}:
     enabled: true
-    workloadType: ${workload_type}
+    workloadType: ${selected_workload_type}
     image:
-      repository: ${dockerhub_namespace}/yas-${service}
+      repository: ${dockerhub_namespace}/yas-${selected_service}
       tag: ${tag_value}
       pullPolicy: IfNotPresent
-    containerPort: ${port}
+    containerPort: ${selected_port}
     service:
       type: ${service_type}
-      port: ${port}
+      port: ${selected_port}
 EOF
 
-  if [ "${workload_type}" = "backend" ]; then
-    cat >> "$output_file" <<EOF
+    if [ "${selected_workload_type}" = "backend" ]; then
+      cat >> "$output_file" <<EOF
     metricPort: 8090
 EOF
-  fi
+    fi
 
-  if [ "$expose" = "true" ]; then
-    cat >> "$output_file" <<EOF
-      nodePort: ${node_port:-32080}
+    if [ "$selected_expose" = "true" ]; then
+      cat >> "$output_file" <<EOF
+      nodePort: ${selected_node_port:-32080}
     ingress:
       enabled: true
-      host: $(ingress_host_for "$service")
+      host: $(ingress_host_for "$selected_service")
 EOF
-  fi
+    fi
+  done
 done
 
 printf 'Generated %s\n' "$output_file"
