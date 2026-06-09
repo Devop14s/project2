@@ -182,6 +182,9 @@ grep -q 'default_namespace "$ENVIRONMENT" "$DEPLOYER_ID"' jenkins/scripts/cleanu
 grep -q 'ALLOW_SHARED_ENVIRONMENT_CLEANUP="${ALLOW_SHARED_ENVIRONMENT_CLEANUP:-0}"' jenkins/scripts/cleanup-release.sh
 grep -q 'DELETE_NAMESPACE="${DELETE_NAMESPACE:-}"' jenkins/scripts/cleanup-release.sh
 grep -q 'work/cleanup-evidence' jenkins/scripts/cleanup-release.sh
+grep -q 'yas-dev' jenkins/scripts/cleanup-release.sh
+grep -q 'yas-staging' jenkins/scripts/cleanup-release.sh
+grep -q 'shared_target_detected=' jenkins/scripts/cleanup-release.sh
 grep -q 'BACKOFFICE_DOMAIN_NAME="${BACKOFFICE_DOMAIN_NAME:-backoffice-${ENVIRONMENT}.yas.local}"' jenkins/scripts/update-manifest-repo.sh
 grep -q 'docker version' scripts/preflight.sh
 grep -q 'present but daemon inaccessible' scripts/preflight.sh

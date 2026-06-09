@@ -423,6 +423,14 @@ try {
         throw 'cleanup-release.sh is missing cleanup evidence artifacts.'
     }
 
+    if ($cleanupScript -notmatch 'yas-dev' -or $cleanupScript -notmatch 'yas-staging') {
+        throw 'cleanup-release.sh no longer guards the reserved shared namespace or release names explicitly.'
+    }
+
+    if ($cleanupScript -notmatch 'shared_target_detected=') {
+        throw 'cleanup-release.sh is missing the shared-target evidence marker.'
+    }
+
     $updateManifestRepoScript = Get-Content 'jenkins\scripts\update-manifest-repo.sh' -Raw
     if ($updateManifestRepoScript -notmatch 'BACKOFFICE_DOMAIN_NAME="\$\{BACKOFFICE_DOMAIN_NAME:-backoffice-\$\{ENVIRONMENT\}\.yas\.local\}"') {
         throw 'update-manifest-repo.sh is missing the backoffice GitOps hostname default.'

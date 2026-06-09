@@ -11,6 +11,10 @@ ALLOW_SHARED_ENVIRONMENT_CLEANUP="${ALLOW_SHARED_ENVIRONMENT_CLEANUP:-0}"
 CLEANUP_EVIDENCE_ROOT="${CLEANUP_EVIDENCE_ROOT:-work/cleanup-evidence}"
 evidence_dir="${CLEANUP_EVIDENCE_ROOT}/${NAMESPACE}/${RELEASE_NAME}"
 
+is_reserved_shared_target() {
+  [[ "$ENVIRONMENT" == "dev" || "$ENVIRONMENT" == "staging" || "$NAMESPACE" == "yas-dev" || "$NAMESPACE" == "yas-staging" || "$RELEASE_NAME" == "yas-dev" || "$RELEASE_NAME" == "yas-staging" ]]
+}
+
 mkdir -p "$evidence_dir"
 
 if [[ -z "$DELETE_NAMESPACE" ]]; then
@@ -28,11 +32,12 @@ fi
   printf 'release_name=%s\n' "$RELEASE_NAME"
   printf 'delete_namespace=%s\n' "$DELETE_NAMESPACE"
   printf 'allow_shared_environment_cleanup=%s\n' "$ALLOW_SHARED_ENVIRONMENT_CLEANUP"
+  printf 'shared_target_detected=%s\n' "$([[ "$ENVIRONMENT" == "dev" || "$ENVIRONMENT" == "staging" || "$NAMESPACE" == "yas-dev" || "$NAMESPACE" == "yas-staging" || "$RELEASE_NAME" == "yas-dev" || "$RELEASE_NAME" == "yas-staging" ]] && printf true || printf false)"
   printf 'generated_at=%s\n' "$(date -u '+%Y-%m-%dT%H:%M:%SZ')"
 } > "${evidence_dir}/cleanup-context.env"
 
-if [[ "$ENVIRONMENT" != "developer" && "$ALLOW_SHARED_ENVIRONMENT_CLEANUP" != "1" ]]; then
-  printf 'Refusing cleanup for shared environment %s without ALLOW_SHARED_ENVIRONMENT_CLEANUP=1\n' "$ENVIRONMENT" | tee "${evidence_dir}/cleanup-refused.txt" >&2
+if is_reserved_shared_target && [[ "$ALLOW_SHARED_ENVIRONMENT_CLEANUP" != "1" ]]; then
+  printf 'Refusing cleanup for shared target namespace=%s release=%s environment=%s without ALLOW_SHARED_ENVIRONMENT_CLEANUP=1\n' "$NAMESPACE" "$RELEASE_NAME" "$ENVIRONMENT" | tee "${evidence_dir}/cleanup-refused.txt" >&2
   exit 1
 fi
 
