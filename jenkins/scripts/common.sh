@@ -83,6 +83,37 @@ tag_env_name() {
   printf '%s_TAG' "$(printf '%s' "$service" | tr '[:lower:]-' '[:upper:]_')"
 }
 
+resolve_manifest_branch_ref() {
+  local explicit_branch="${1:-}"
+  local branch_name="${2:-}"
+  local git_branch="${3:-}"
+  local git_fallback="${4:-}"
+  local branch_ref="$explicit_branch"
+
+  if [[ -z "$branch_ref" && -n "$branch_name" ]]; then
+    branch_ref="$branch_name"
+  fi
+
+  if [[ -z "$branch_ref" && -n "$git_branch" ]]; then
+    branch_ref="$git_branch"
+  fi
+
+  if [[ -z "$branch_ref" ]]; then
+    branch_ref="$git_fallback"
+  fi
+
+  if [[ "$branch_ref" == refs/heads/* ]]; then
+    branch_ref="${branch_ref#refs/heads/}"
+  elif [[ "$branch_ref" == refs/remotes/* ]]; then
+    branch_ref="${branch_ref#refs/remotes/}"
+    branch_ref="${branch_ref#*/}"
+  elif [[ "$branch_ref" == origin/* ]]; then
+    branch_ref="${branch_ref#origin/}"
+  fi
+
+  printf '%s' "$branch_ref"
+}
+
 iter_services() {
   iter_catalog_services "$SERVICES_FILE"
 }

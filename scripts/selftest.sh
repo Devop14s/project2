@@ -138,4 +138,14 @@ if [ -f "${temp_dir}/helm-render.yaml" ]; then
   grep -q 'kind: Deployment' "${temp_dir}/helm-render.yaml"
 fi
 
+if command -v bash >/dev/null 2>&1; then
+  bash -lc '
+    source jenkins/scripts/common.sh
+    [ "$(resolve_manifest_branch_ref "" "" "origin/main" "HEAD")" = "main" ]
+    [ "$(resolve_manifest_branch_ref "" "" "refs/remotes/origin/feature/demo" "HEAD")" = "feature/demo" ]
+    [ "$(resolve_manifest_branch_ref "" "feature/demo" "" "HEAD")" = "feature/demo" ]
+    [ "$(resolve_manifest_branch_ref "refs/heads/release/v1.2.3" "" "" "HEAD")" = "release/v1.2.3" ]
+  '
+fi
+
 printf 'Selftest passed.\n'

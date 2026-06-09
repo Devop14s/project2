@@ -70,6 +70,7 @@ The shared-environment deploy jobs should follow the same pattern as the develop
 ## GitOps note
 
 `jenkins/scripts/update-manifest-repo.sh` now regenerates the full `argocd/values/*.yaml` file from the service catalog instead of editing only a few existing tag lines.
+When the Jenkins checkout is detached, the same helper now also falls back from `BRANCH_NAME` to `GIT_BRANCH` before failing branch detection for the manifest push.
 
 ## Chart note
 

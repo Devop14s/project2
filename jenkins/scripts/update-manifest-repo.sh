@@ -8,11 +8,10 @@ ENVIRONMENT="${ENVIRONMENT:-dev}"
 TAGS_FILE="${TAGS_FILE:-}"
 NAMESPACE_NAME="${NAMESPACE_NAME:-yas-${ENVIRONMENT}}"
 DOMAIN_NAME="${DOMAIN_NAME:-storefront-${ENVIRONMENT}.yas.local}"
-MANIFEST_BRANCH="${MANIFEST_BRANCH:-${BRANCH_NAME:-$(git rev-parse --abbrev-ref HEAD)}}"
 GIT_AUTHOR_NAME="${GIT_AUTHOR_NAME:-Jenkins Bot}"
 GIT_AUTHOR_EMAIL="${GIT_AUTHOR_EMAIL:-jenkins@example.local}"
 MANIFEST_COMMIT_MESSAGE="${MANIFEST_COMMIT_MESSAGE:-Update ${ENVIRONMENT} GitOps values for ${TAG}}"
-MANIFEST_BRANCH="${MANIFEST_BRANCH##*/}"
+MANIFEST_BRANCH="$(resolve_manifest_branch_ref "${MANIFEST_BRANCH:-}" "${BRANCH_NAME:-}" "${GIT_BRANCH:-}" "$(git rev-parse --abbrev-ref HEAD)")"
 
 [[ -f "$VALUES_FILE" ]] || fail "Values file not found: ${VALUES_FILE}"
 if [[ -n "${SERVICES_FILE:-}" ]]; then
@@ -32,7 +31,7 @@ if git diff --quiet -- "${VALUES_FILE}"; then
 fi
 
 if [[ "${MANIFEST_BRANCH}" == "HEAD" ]]; then
-  fail "Unable to determine manifest branch. Set MANIFEST_BRANCH or BRANCH_NAME."
+  fail "Unable to determine manifest branch. Set MANIFEST_BRANCH, BRANCH_NAME, or GIT_BRANCH."
 fi
 
 git config user.name "${GIT_AUTHOR_NAME}"
