@@ -134,6 +134,26 @@ if [ "$skip_command_checks" -eq 0 ]; then
   done
 fi
 
+while IFS='|' read -r validator_name validator_command; do
+  [ -n "${validator_name:-}" ] || continue
+
+  if sh -c "$validator_command" >/dev/null 2>&1; then
+    status="ok"
+  else
+    status="failed"
+    missing=1
+  fi
+
+  printf '%-8s %-40s %-8s\n' "validator" "$validator_name" "$status"
+done <<'EOF'
+validate-services-catalog/full|sh scripts/validate-services-catalog.sh
+validate-services-catalog/release-baseline|sh scripts/validate-services-catalog.sh jenkins/services.release-baseline.env jenkins/services.env
+validate-argocd-apps|sh scripts/validate-argocd-apps.sh
+validate-chart-values|sh scripts/validate-chart-values.sh
+validate-gitops-values|sh scripts/validate-gitops-values.sh
+validate-source-alignment|sh scripts/validate-source-alignment.sh
+EOF
+
 if [ "$missing" -ne 0 ]; then
   printf '\nMissing items detected.\n' >&2
   exit 1

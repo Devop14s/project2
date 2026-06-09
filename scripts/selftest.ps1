@@ -41,6 +41,7 @@ $sampleDevHelmRenderFile = Join-Path $tempDir 'sample-dev-helm-render.yaml'
 $sampleStagingHelmRenderFile = Join-Path $tempDir 'sample-staging-helm-render.yaml'
 $sampleDeveloperHelmRenderFile = Join-Path $tempDir 'sample-developer-helm-render.yaml'
 $statusReportFile = Join-Path $tempDir 'status-report.generated.md'
+$preflightJsonFile = Join-Path $tempDir 'preflight.json'
 $helmExecutable = Get-HelmExecutable
 
 try {
@@ -96,7 +97,7 @@ try {
         -Tag test-tag | Out-Null
     powershell -ExecutionPolicy Bypass -File scripts\preflight.ps1 `
         -AsJson `
-        -SkipCommandChecks *> $null
+        -SkipCommandChecks > $preflightJsonFile
     if ($LASTEXITCODE -ne 0) {
         throw 'preflight.ps1 -AsJson -SkipCommandChecks should succeed in the repo root.'
     }
@@ -116,6 +117,7 @@ try {
     $chartValues = Get-Content $chartValuesFile -Raw
     $manifestValues = Get-Content $manifestValuesFile -Raw
     $statusReport = Get-Content $statusReportFile -Raw
+    $preflightJson = Get-Content $preflightJsonFile -Raw
     $helmRender = if (Test-Path $helmRenderFile) { Get-Content $helmRenderFile -Raw } else { '' }
 
     if ($branchTags -notmatch 'TAX_TAG=main') {
@@ -327,6 +329,14 @@ try {
 
     if ($preflightScript -notmatch 'present but daemon inaccessible') {
         throw 'preflight.ps1 is missing the Docker daemon accessibility status message.'
+    }
+
+    if ($preflightJson -notmatch '"type":\s*"validator"') {
+        throw 'preflight.ps1 -AsJson is missing validator results.'
+    }
+
+    if ($preflightJson -notmatch 'validate-gitops-values') {
+        throw 'preflight.ps1 -AsJson is missing the GitOps validator result.'
     }
 
     Push-Location $tempDir

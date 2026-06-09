@@ -128,6 +128,39 @@ $requiredCommands = @(
     'docker'
 )
 
+$validatorDefinitions = @(
+    @{
+        name = 'validate-services-catalog/full'
+        script = 'scripts\validate-services-catalog.ps1'
+        arguments = @()
+    },
+    @{
+        name = 'validate-services-catalog/release-baseline'
+        script = 'scripts\validate-services-catalog.ps1'
+        arguments = @('-ServicesFile', 'jenkins\services.release-baseline.env', '-ReferenceServicesFile', 'jenkins\services.env')
+    },
+    @{
+        name = 'validate-argocd-apps'
+        script = 'scripts\validate-argocd-apps.ps1'
+        arguments = @()
+    },
+    @{
+        name = 'validate-chart-values'
+        script = 'scripts\validate-chart-values.ps1'
+        arguments = @()
+    },
+    @{
+        name = 'validate-gitops-values'
+        script = 'scripts\validate-gitops-values.ps1'
+        arguments = @()
+    },
+    @{
+        name = 'validate-source-alignment'
+        script = 'scripts\validate-source-alignment.ps1'
+        arguments = @()
+    }
+)
+
 $fileResults = foreach ($file in $requiredFiles) {
     [pscustomobject]@{
         type = 'file'
@@ -148,6 +181,30 @@ $results = @($fileResults)
 if (-not $SkipCommandChecks) {
     $results += $commandResults
 }
+
+$validatorResults = foreach ($validator in $validatorDefinitions) {
+    $status = 'failed'
+    if (-not (Test-Path $validator.script)) {
+        $status = 'missing'
+    } else {
+        try {
+            $null = & powershell -ExecutionPolicy Bypass -File $validator.script @($validator.arguments) *> $null
+            if ($LASTEXITCODE -eq 0) {
+                $status = 'ok'
+            }
+        } catch {
+            $status = 'failed'
+        }
+    }
+
+    [pscustomobject]@{
+        type = 'validator'
+        name = $validator.name
+        status = $status
+    }
+}
+
+$results += $validatorResults
 
 $missing = $results | Where-Object { $_.status -ne 'ok' }
 
