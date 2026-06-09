@@ -26,6 +26,8 @@ scripts/validate-services-catalog.ps1
 scripts/validate-services-catalog.sh
 scripts/validate-chart-values.ps1
 scripts/validate-chart-values.sh
+scripts/validate-source-alignment.ps1
+scripts/validate-source-alignment.sh
 scripts/report-status.ps1
 scripts/report-status.sh
 scripts/resolve-branch-tags.ps1

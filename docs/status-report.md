@@ -19,10 +19,11 @@
 - Cross-platform scaffold selftest for local helper integration.
 - Preflight supports file-only validation separately from host command validation.
 - Cross-platform service catalog validation and generated status reporting.
-- Upstream-derived YAS service catalog with 18 services and 2 public entrypoints.
+- Source-verified YAS service catalog with 20 services and 2 public entrypoints.
 - Workload-aware catalog split between upstream-style `ui` and `backend` services.
 - Cross-platform GitOps values generation for the full service catalog.
 - Cross-platform Helm baseline values generation from the shared service catalog.
+- Source-alignment validation against the local `yas-source` clone.
 
 ## Not implementable yet in this workspace
 
@@ -34,7 +35,6 @@
 
 ## Blocking inputs still required
 
-- The actual YAS source tree.
-- Final service inventory to deploy.
+- Final service subset to deploy from the now source-verified catalog.
 - Docker Hub namespace and Jenkins credential IDs.
 - A reachable Kubernetes cluster and Jenkins host.

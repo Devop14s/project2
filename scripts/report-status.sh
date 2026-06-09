@@ -33,10 +33,12 @@ helm
 docker
 "
 
+source_root="yas-source"
 service_count=0
 public_entry_count=0
 ui_count=0
 backend_count=0
+source_aligned=0
 if [ -f "jenkins/services.env" ]; then
   while IFS='|' read -r service path dockerfile port expose node_port workload_type; do
     [ -n "$service" ] || continue
@@ -53,6 +55,12 @@ if [ -f "jenkins/services.env" ]; then
       backend_count=$((backend_count + 1))
     fi
   done < "jenkins/services.env"
+fi
+
+if [ -d "$source_root" ] && [ -f "jenkins/services.env" ]; then
+  if SERVICES_FILE="jenkins/services.env" SOURCE_ROOT="$source_root" sh scripts/validate-source-alignment.sh >/dev/null 2>&1; then
+    source_aligned=1
+  fi
 fi
 
 {
@@ -95,10 +103,12 @@ fi
   printf '%s\n' '- Generated values include workload-aware fields such as `workloadType` and backend `metricPort`.'
   printf '%s\n' '- GitOps values generation is available for the full service catalog.'
   printf '%s\n' '- Helm baseline values generation is available from the shared service catalog.'
+  if [ "$source_aligned" -eq 1 ]; then
+    printf '%s\n' '- Service catalog paths and Dockerfiles were verified against the local `yas-source` clone.'
+  fi
   printf '\n'
   printf '## Still Blocked In This Workspace\n'
-  printf '%s\n' '- Real YAS source tree is not present.'
-  printf '%s\n' '- Real Docker build paths cannot be verified.'
+  printf '%s\n' '- Real image builds were not executed in this workspace.'
   printf '%s\n' '- Real Kubernetes deployment cannot be executed.'
   printf '%s\n' '- Jenkins credentials and webhook integration cannot be verified locally.'
 } > "$output_file"

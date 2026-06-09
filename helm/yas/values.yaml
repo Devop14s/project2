@@ -231,6 +231,32 @@ services:
       type: ClusterIP
       port: 80
 
+  recommendation:
+    enabled: true
+    workloadType: backend
+    image:
+      repository: docker.io/example/yas-recommendation
+      tag: main
+      pullPolicy: IfNotPresent
+    containerPort: 80
+    metricPort: 8090
+    service:
+      type: ClusterIP
+      port: 80
+
+  sampledata:
+    enabled: true
+    workloadType: backend
+    image:
+      repository: docker.io/example/yas-sampledata
+      tag: main
+      pullPolicy: IfNotPresent
+    containerPort: 80
+    metricPort: 8090
+    service:
+      type: ClusterIP
+      port: 80
+
   webhook:
     enabled: true
     workloadType: backend

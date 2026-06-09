@@ -21,6 +21,7 @@ cp argocd/values/dev-values.yaml "$manifest_values_file"
 
 sh scripts/validate-services-catalog.sh >/dev/null
 sh scripts/validate-chart-values.sh >/dev/null
+sh scripts/validate-source-alignment.sh >/dev/null
 OUTPUT_FILE="$branch_tags_file" sh scripts/resolve-branch-tags.sh >/dev/null
 DOCKERHUB_NAMESPACE="$dockerhub_namespace" \
 TAGS_FILE="$branch_tags_file" \

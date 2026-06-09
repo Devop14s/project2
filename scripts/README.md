@@ -18,6 +18,8 @@ The generated developer values also keep separate ingress hosts for the public `
 - `validate-services-catalog.sh`
 - `validate-chart-values.ps1`
 - `validate-chart-values.sh`
+- `validate-source-alignment.ps1`
+- `validate-source-alignment.sh`
 - `report-status.ps1`
 - `report-status.sh`
 - `resolve-branch-tags.ps1`
@@ -42,6 +44,7 @@ powershell -ExecutionPolicy Bypass -File scripts\developer-build-dry-run.ps1 -Do
 powershell -ExecutionPolicy Bypass -File scripts\selftest.ps1
 powershell -ExecutionPolicy Bypass -File scripts\validate-services-catalog.ps1
 powershell -ExecutionPolicy Bypass -File scripts\validate-chart-values.ps1
+powershell -ExecutionPolicy Bypass -File scripts\validate-source-alignment.ps1
 powershell -ExecutionPolicy Bypass -File scripts\report-status.ps1 -SkipCommandChecks
 powershell -ExecutionPolicy Bypass -File scripts\resolve-branch-tags.ps1
 powershell -ExecutionPolicy Bypass -File scripts\generate-values.ps1 -DockerhubNamespace your-dockerhub-namespace
@@ -59,6 +62,7 @@ sh scripts/developer-build-dry-run.sh your-dockerhub-namespace
 sh scripts/selftest.sh
 sh scripts/validate-services-catalog.sh
 sh scripts/validate-chart-values.sh
+sh scripts/validate-source-alignment.sh
 sh scripts/report-status.sh --skip-command-checks
 sh scripts/resolve-branch-tags.sh
 DOCKERHUB_NAMESPACE=your-dockerhub-namespace sh scripts/generate-values.sh

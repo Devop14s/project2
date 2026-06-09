@@ -12,21 +12,17 @@ This repository currently contains the assignment brief and an executable scaffo
 - `docs/` contains runbooks, templates, and tracking documents.
 - `scripts/` contains local validation helpers for this scaffold.
 
-## Important limitation
+## Current limitation
 
-The actual YAS application source repository is not present in this workspace. That means this scaffold can prepare the delivery structure, but it cannot yet:
+The actual YAS application source repository is now cloned locally under [yas-source](</D:/App/project2/yas-source/README.md>), so service paths and Dockerfiles can be checked against real source. The delivery repo still cannot yet:
 
 - build real service images
-- render final service inventory from source
-- validate Docker build paths
 - deploy a working cluster release
 
 ## Suggested next steps
 
-1. Clone `nashtech-garage/yas` into this workspace or merge these files into the real delivery repo.
-2. Replace sample entries in `jenkins/services.env` and `helm/yas/values.yaml` with the real service list.
-   The current entries are upstream-derived from the public YAS repo, but still need verification against the exact source tree you will deploy.
-   `helm/yas/values.yaml` can now be regenerated from `jenkins/services.env` with `scripts/generate-chart-values.*`.
+1. Decide the final deployment subset from the now source-verified service catalog in `jenkins/services.env`.
+2. Replace demo registry values such as `docker.io/example` and configure real Jenkins credentials.
 3. Validate one service end-to-end: Docker build, image push, Helm deploy.
 4. Expand from one service to the full required YAS baseline.
 

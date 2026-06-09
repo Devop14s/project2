@@ -21,6 +21,8 @@ return {
       string(name: 'PROMOTION_BRANCH', defaultValue: 'main', description: 'Branch override for promotion'),
       string(name: 'PAYMENT_BRANCH', defaultValue: 'main', description: 'Branch override for payment'),
       string(name: 'PAYMENT_PAYPAL_BRANCH', defaultValue: 'main', description: 'Branch override for payment-paypal'),
+      string(name: 'RECOMMENDATION_BRANCH', defaultValue: 'main', description: 'Branch override for recommendation'),
+      string(name: 'SAMPLEDATA_BRANCH', defaultValue: 'main', description: 'Branch override for sampledata'),
       string(name: 'WEBHOOK_BRANCH', defaultValue: 'main', description: 'Branch override for webhook')
     ])
   ])

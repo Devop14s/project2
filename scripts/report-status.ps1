@@ -29,10 +29,12 @@ $requiredFiles = @(
 
 $requiredCommands = @('git', 'kubectl', 'helm', 'docker')
 $servicesFile = 'jenkins/services.env'
+$sourceRoot = 'yas-source'
 $serviceCount = 0
 $publicEntryCount = 0
 $uiCount = 0
 $backendCount = 0
+$sourceAligned = $false
 
 if (Test-Path $servicesFile) {
     foreach ($line in Get-Content $servicesFile) {
@@ -51,6 +53,11 @@ if (Test-Path $servicesFile) {
             }
         }
     }
+}
+
+if ((Test-Path $sourceRoot) -and (Test-Path $servicesFile)) {
+    powershell -ExecutionPolicy Bypass -File scripts\validate-source-alignment.ps1 -ServicesFile $servicesFile -SourceRoot $sourceRoot *> $null
+    $sourceAligned = ($LASTEXITCODE -eq 0)
 }
 
 $fileLines = foreach ($file in $requiredFiles) {
@@ -95,10 +102,12 @@ $content.Add('- Cross-platform dry-run helpers exist in both `ps1` and `.sh` for
 $content.Add('- Generated values include workload-aware fields such as `workloadType` and backend `metricPort`.')
 $content.Add('- GitOps values generation is available for the full service catalog.')
 $content.Add('- Helm baseline values generation is available from the shared service catalog.')
+if ($sourceAligned) {
+    $content.Add('- Service catalog paths and Dockerfiles were verified against the local `yas-source` clone.')
+}
 $content.Add('')
 $content.Add('## Still Blocked In This Workspace')
-$content.Add('- Real YAS source tree is not present.')
-$content.Add('- Real Docker build paths cannot be verified.')
+$content.Add('- Real image builds were not executed in this workspace.')
 $content.Add('- Real Kubernetes deployment cannot be executed.')
 $content.Add('- Jenkins credentials and webhook integration cannot be verified locally.')
 

@@ -19,6 +19,7 @@ try {
 
     powershell -ExecutionPolicy Bypass -File scripts\validate-services-catalog.ps1 | Out-Null
     powershell -ExecutionPolicy Bypass -File scripts\validate-chart-values.ps1 | Out-Null
+    powershell -ExecutionPolicy Bypass -File scripts\validate-source-alignment.ps1 | Out-Null
     powershell -ExecutionPolicy Bypass -File scripts\resolve-branch-tags.ps1 -OutputFile $branchTagsFile | Out-Null
     powershell -ExecutionPolicy Bypass -File scripts\generate-values.ps1 `
         -TagsFile $branchTagsFile `

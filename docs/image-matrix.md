@@ -21,6 +21,8 @@ This naming matrix is aligned with the public upstream workflows in `nashtech-ga
 | promotion | `docker.io/<namespace>/yas-promotion` | `main` | latest commit SHA of selected branch | semantic version tag |
 | payment | `docker.io/<namespace>/yas-payment` | `main` | latest commit SHA of selected branch | semantic version tag |
 | payment-paypal | `docker.io/<namespace>/yas-payment-paypal` | `main` | latest commit SHA of selected branch | semantic version tag |
+| recommendation | `docker.io/<namespace>/yas-recommendation` | `main` | latest commit SHA of selected branch | semantic version tag |
+| sampledata | `docker.io/<namespace>/yas-sampledata` | `main` | latest commit SHA of selected branch | semantic version tag |
 | webhook | `docker.io/<namespace>/yas-webhook` | `main` | latest commit SHA of selected branch | semantic version tag |
 
 ## Conventions
