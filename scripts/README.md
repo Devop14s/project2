@@ -24,6 +24,8 @@ On Windows, `preflight.ps1`, `selftest.ps1`, and `report-status.ps1` can also pi
 - `developer-build-dry-run.sh`
 - `selftest.ps1`
 - `selftest.sh`
+- `validate-argocd-apps.ps1`
+- `validate-argocd-apps.sh`
 - `validate-services-catalog.ps1`
 - `validate-services-catalog.sh`
 - `validate-chart-values.ps1`
@@ -55,6 +57,7 @@ powershell -ExecutionPolicy Bypass -File scripts\preflight.ps1 -SkipCommandCheck
 powershell -ExecutionPolicy Bypass -File scripts\developer-build-dry-run.ps1 -DockerhubNamespace your-dockerhub-namespace
 powershell -ExecutionPolicy Bypass -File scripts\developer-build-dry-run.ps1 -DockerhubNamespace your-dockerhub-namespace -ServiceCatalog release-baseline
 powershell -ExecutionPolicy Bypass -File scripts\selftest.ps1
+powershell -ExecutionPolicy Bypass -File scripts\validate-argocd-apps.ps1
 powershell -ExecutionPolicy Bypass -File scripts\validate-services-catalog.ps1
 powershell -ExecutionPolicy Bypass -File scripts\validate-services-catalog.ps1 -ServicesFile jenkins\services.release-baseline.env -ReferenceServicesFile jenkins\services.env
 powershell -ExecutionPolicy Bypass -File scripts\validate-chart-values.ps1
@@ -77,6 +80,7 @@ sh scripts/preflight.sh --skip-command-checks
 sh scripts/developer-build-dry-run.sh your-dockerhub-namespace
 sh scripts/developer-build-dry-run.sh your-dockerhub-namespace work/dry-run release-baseline
 sh scripts/selftest.sh
+sh scripts/validate-argocd-apps.sh
 sh scripts/validate-services-catalog.sh
 sh scripts/validate-services-catalog.sh jenkins/services.release-baseline.env jenkins/services.env
 sh scripts/validate-chart-values.sh

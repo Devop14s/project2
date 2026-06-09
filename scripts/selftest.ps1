@@ -49,6 +49,7 @@ try {
     powershell -ExecutionPolicy Bypass -File scripts\validate-services-catalog.ps1 `
         -ServicesFile 'jenkins\services.release-baseline.env' `
         -ReferenceServicesFile 'jenkins\services.env' | Out-Null
+    powershell -ExecutionPolicy Bypass -File scripts\validate-argocd-apps.ps1 | Out-Null
     powershell -ExecutionPolicy Bypass -File scripts\validate-chart-values.ps1 | Out-Null
     powershell -ExecutionPolicy Bypass -File scripts\validate-gitops-values.ps1 | Out-Null
     powershell -ExecutionPolicy Bypass -File scripts\validate-source-alignment.ps1 | Out-Null
@@ -220,6 +221,15 @@ try {
     $developerBuildDryRunScript = Get-Content 'scripts\developer-build-dry-run.ps1' -Raw
     if ($developerBuildDryRunScript -notmatch '\[string\]\$PaymentBranch = ''main''') {
         throw 'developer-build-dry-run.ps1 no longer exposes the full branch-override surface.'
+    }
+
+    $validateArgocdAppsScript = Get-Content 'scripts\validate-argocd-apps.ps1' -Raw
+    if ($validateArgocdAppsScript -notmatch 'helm/yas') {
+        throw 'validate-argocd-apps.ps1 no longer verifies the expected Helm chart path.'
+    }
+
+    if ($validateArgocdAppsScript -notmatch 'staging-values\.yaml') {
+        throw 'validate-argocd-apps.ps1 no longer verifies the staging values file path.'
     }
 
     $developerCleanupPipeline = Get-Content 'jenkins\pipelines\developer_cleanup.groovy' -Raw

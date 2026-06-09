@@ -99,6 +99,8 @@ $requiredFiles = @(
     'scripts\selftest.sh',
     'scripts\validate-services-catalog.ps1',
     'scripts\validate-services-catalog.sh',
+    'scripts\validate-argocd-apps.ps1',
+    'scripts\validate-argocd-apps.sh',
     'scripts\validate-chart-values.ps1',
     'scripts\validate-chart-values.sh',
     'scripts\validate-gitops-values.ps1',

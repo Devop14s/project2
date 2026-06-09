@@ -79,6 +79,7 @@ restore_work_file() {
 
 sh scripts/validate-services-catalog.sh >/dev/null
 sh scripts/validate-services-catalog.sh jenkins/services.release-baseline.env jenkins/services.env >/dev/null
+sh scripts/validate-argocd-apps.sh >/dev/null
 sh scripts/validate-chart-values.sh >/dev/null
 sh scripts/validate-gitops-values.sh >/dev/null
 sh scripts/validate-source-alignment.sh >/dev/null
@@ -130,6 +131,8 @@ grep -q "stage('Docker Login')" jenkins/pipelines/developer_build.groovy
 grep -q "stage('Verify Image Tags')" jenkins/pipelines/developer_build.groovy
 grep -q "name: 'DOCKERHUB_NAMESPACE'" jenkins/pipelines/developer_build.groovy
 grep -q "\[string\]\$PaymentBranch = 'main'" scripts/developer-build-dry-run.ps1
+grep -q 'helm/yas' scripts/validate-argocd-apps.sh
+grep -q 'staging-values.yaml' scripts/validate-argocd-apps.sh
 grep -q "if (env.PIPELINE_DISPATCH_MODE != 'true')" jenkins/pipelines/developer_cleanup.groovy
 grep -q "if (env.PIPELINE_DISPATCH_MODE != 'true')" jenkins/pipelines/dev_cd.groovy
 grep -q "name: 'DOCKERHUB_NAMESPACE'" jenkins/pipelines/dev_cd.groovy

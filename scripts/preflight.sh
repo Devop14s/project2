@@ -56,6 +56,8 @@ scripts/source-root.ps1
 scripts/source-root.sh
 scripts/selftest.ps1
 scripts/selftest.sh
+scripts/validate-argocd-apps.ps1
+scripts/validate-argocd-apps.sh
 scripts/validate-services-catalog.ps1
 scripts/validate-services-catalog.sh
 scripts/validate-chart-values.ps1

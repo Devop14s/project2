@@ -21,6 +21,8 @@ Use Jenkins only for build-and-update, then let ArgoCD reconcile the runtime sta
 - `jenkins/pipelines/dev_gitops.groovy`
 - `jenkins/pipelines/staging_gitops.groovy`
 - `jenkins/scripts/update-manifest-repo.sh`
+- `scripts/validate-argocd-apps.ps1`
+- `scripts/validate-argocd-apps.sh`
 - `scripts/generate-gitops-values.ps1`
 - `scripts/generate-gitops-values.sh`
 
