@@ -29,6 +29,10 @@ return {
       }
     }
 
+    stage('Resolve Commit Metadata') {
+      sh 'jenkins/scripts/write-commit-metadata.sh'
+    }
+
     stage('Build And Push Main Images') {
       sh 'export RELEASE_VERSION=main; jenkins/scripts/build-images.sh'
       sh 'export RELEASE_VERSION=main; jenkins/scripts/push-images.sh'

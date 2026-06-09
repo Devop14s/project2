@@ -150,8 +150,12 @@ grep -q "name: 'DELETE_NAMESPACE'" jenkins/pipelines/developer_cleanup.groovy
 grep -q "name: 'ALLOW_SHARED_ENVIRONMENT_CLEANUP'" jenkins/pipelines/developer_cleanup.groovy
 grep -q "if (env.PIPELINE_DISPATCH_MODE != 'true')" jenkins/pipelines/dev_cd.groovy
 grep -q "name: 'DOCKERHUB_NAMESPACE'" jenkins/pipelines/dev_cd.groovy
+grep -q "stage('Resolve Commit Metadata')" jenkins/pipelines/dev_cd.groovy
+grep -q 'jenkins/scripts/write-commit-metadata.sh' jenkins/pipelines/dev_cd.groovy
 grep -q "if (env.PIPELINE_DISPATCH_MODE != 'true')" jenkins/pipelines/dev_gitops.groovy
 grep -q "name: 'DOCKERHUB_NAMESPACE'" jenkins/pipelines/dev_gitops.groovy
+grep -q "stage('Resolve Commit Metadata')" jenkins/pipelines/dev_gitops.groovy
+grep -q 'jenkins/scripts/write-commit-metadata.sh' jenkins/pipelines/dev_gitops.groovy
 grep -q "if (env.PIPELINE_DISPATCH_MODE != 'true')" jenkins/pipelines/staging_gitops.groovy
 grep -q "name: 'DOCKERHUB_NAMESPACE'" jenkins/pipelines/staging_gitops.groovy
 grep -q "if (env.PIPELINE_DISPATCH_MODE != 'true')" jenkins/pipelines/staging_release.groovy

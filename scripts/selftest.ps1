@@ -287,6 +287,14 @@ try {
         throw 'dev_cd.groovy is missing the direct-load DOCKERHUB_NAMESPACE parameter.'
     }
 
+    if ($devCdPipeline -notmatch "stage\('Resolve Commit Metadata'\)") {
+        throw 'dev_cd.groovy is missing the commit-metadata stage for main-tag traceability.'
+    }
+
+    if ($devCdPipeline -notmatch 'jenkins/scripts/write-commit-metadata\.sh') {
+        throw 'dev_cd.groovy no longer records commit metadata before promoting the main tag.'
+    }
+
     $devGitopsPipeline = Get-Content 'jenkins\pipelines\dev_gitops.groovy' -Raw
     if ($devGitopsPipeline -notmatch "if \(env\.PIPELINE_DISPATCH_MODE != 'true'\)") {
         throw 'dev_gitops.groovy no longer skips properties rewrites in dispatch mode.'
@@ -294,6 +302,14 @@ try {
 
     if ($devGitopsPipeline -notmatch "name: 'DOCKERHUB_NAMESPACE'") {
         throw 'dev_gitops.groovy is missing the direct-load DOCKERHUB_NAMESPACE parameter.'
+    }
+
+    if ($devGitopsPipeline -notmatch "stage\('Resolve Commit Metadata'\)") {
+        throw 'dev_gitops.groovy is missing the commit-metadata stage for main-tag traceability.'
+    }
+
+    if ($devGitopsPipeline -notmatch 'jenkins/scripts/write-commit-metadata\.sh') {
+        throw 'dev_gitops.groovy no longer records commit metadata before updating dev GitOps values.'
     }
 
     $stagingGitopsPipeline = Get-Content 'jenkins\pipelines\staging_gitops.groovy' -Raw

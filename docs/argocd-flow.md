@@ -13,6 +13,8 @@ Use Jenkins only for build-and-update, then let ArgoCD reconcile the runtime sta
 5. Jenkins commits and pushes that manifest change.
 6. ArgoCD watches the repo and syncs the target namespace.
 
+For `dev_gitops`, the scaffold intentionally keeps the shared `main` tag in the committed overlay and relies on `work/commit_sha.txt` plus `work/commit-metadata.json` to identify which source revision the mutable `main` tag represented for that promotion run.
+
 ## Files in this repository
 
 - `argocd/app-dev.yaml`
