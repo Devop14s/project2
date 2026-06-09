@@ -60,7 +60,7 @@ The repository now keeps two catalogs:
 
 If this delivery repo lives beside a cloned YAS source tree under `yas-source/`, you can usually leave `SOURCE_ROOT` blank and let the scripts auto-detect it. Set `SOURCE_ROOT` explicitly only when the source checkout lives somewhere else. If branch and commit resolution should also come from that clone, leave `SOURCE_GIT_ROOT` unset and it will follow `SOURCE_ROOT` automatically when that directory contains `.git`.
 
-Successful deploy and smoke-test runs now also leave runtime evidence under `work/runtime-evidence/<namespace>/<release>/`, including Helm status, pod/service snapshots, and the discovered public endpoints.
+Successful deploy and smoke-test runs now also leave runtime evidence under `work/runtime-evidence/<namespace>/<release>/`, including Helm status, pod/service snapshots, the discovered public endpoints, and copied build/push provenance such as `commit-metadata.json`, `image-digests.txt`, and related artifact indexes.
 
 The shared-environment deploy jobs should follow the same pattern as the developer build:
 

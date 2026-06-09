@@ -170,6 +170,9 @@ grep -q 'docker manifest inspect' jenkins/scripts/verify-image-tags.sh
 grep -q 'source "$TAGS_FILE"' jenkins/scripts/verify-image-tags.sh
 grep -q 'VERIFY_IMAGE_TAGS_DRY_RUN' jenkins/scripts/verify-image-tags.sh
 grep -q 'VERIFIED_IMAGE_LIST_FILE="${VERIFIED_IMAGE_LIST_FILE:-work/verified-image-list.txt}"' jenkins/scripts/verify-image-tags.sh
+grep -q 'copied-artifacts.txt' jenkins/scripts/capture-runtime-evidence.sh
+grep -q 'work/image-digests.txt' jenkins/scripts/capture-runtime-evidence.sh
+grep -q 'work/commit-metadata.json' jenkins/scripts/capture-runtime-evidence.sh
 grep -q 'ENVIRONMENT="${ENVIRONMENT:-developer}"' jenkins/scripts/cleanup-release.sh
 grep -q 'default_namespace "$ENVIRONMENT" "$DEPLOYER_ID"' jenkins/scripts/cleanup-release.sh
 grep -q 'ALLOW_SHARED_ENVIRONMENT_CLEANUP="${ALLOW_SHARED_ENVIRONMENT_CLEANUP:-0}"' jenkins/scripts/cleanup-release.sh

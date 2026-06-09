@@ -372,6 +372,19 @@ try {
         throw 'verify-image-tags.sh is missing the verified image list artifact.'
     }
 
+    $captureRuntimeEvidenceScript = Get-Content 'jenkins\scripts\capture-runtime-evidence.sh' -Raw
+    if ($captureRuntimeEvidenceScript -notmatch 'copied-artifacts\.txt') {
+        throw 'capture-runtime-evidence.sh is missing the copied-artifacts evidence index.'
+    }
+
+    if ($captureRuntimeEvidenceScript -notmatch 'work/image-digests\.txt') {
+        throw 'capture-runtime-evidence.sh no longer snapshots pushed image digests into the per-run evidence directory.'
+    }
+
+    if ($captureRuntimeEvidenceScript -notmatch 'work/commit-metadata\.json') {
+        throw 'capture-runtime-evidence.sh no longer snapshots commit metadata into the per-run evidence directory.'
+    }
+
     $cleanupScript = Get-Content 'jenkins\scripts\cleanup-release.sh' -Raw
     if ($cleanupScript -notmatch 'ENVIRONMENT="\$\{ENVIRONMENT:-developer\}"') {
         throw 'cleanup-release.sh is missing the environment-aware default.'

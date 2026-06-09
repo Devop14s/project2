@@ -32,6 +32,7 @@ Deploy a temporary environment where one or more services can use images built f
 - values file under `work/generated-values.yaml`
 - distinct public endpoints for `storefront` and `backoffice`
 - runtime evidence under `work/runtime-evidence/<namespace>/<release>/`
+- copied provenance inside that evidence directory, including `verified-image-list.txt` and `commit-metadata.json` when available
 
 ## Important prerequisite
 
