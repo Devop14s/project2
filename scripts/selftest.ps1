@@ -474,6 +474,11 @@ try {
         throw 'capture-runtime-evidence.sh no longer snapshots branch-tag metadata into the per-run evidence directory.'
     }
 
+    $reportStatusShellScript = Get-Content 'scripts\report-status.sh' -Raw
+    if ($reportStatusShellScript -notmatch 'work/branch-tag-metadata\.json') {
+        throw 'report-status.sh no longer treats branch-tag metadata as part of the runtime evidence provenance contract.'
+    }
+
     if ($captureRuntimeEvidenceScript -notmatch 'work/image-digests\.txt') {
         throw 'capture-runtime-evidence.sh no longer snapshots pushed image digests into the per-run evidence directory.'
     }

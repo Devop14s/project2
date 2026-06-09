@@ -265,6 +265,7 @@ if [ -f "jenkins/services.release-baseline.env" ] && sh scripts/validate-gitops-
   gitops_values_verified=1
 fi
 if grep -q 'copied-artifacts.txt' jenkins/scripts/capture-runtime-evidence.sh 2>/dev/null && \
+   grep -q 'work/branch-tag-metadata.json' jenkins/scripts/capture-runtime-evidence.sh 2>/dev/null && \
    grep -q 'work/image-digests.txt' jenkins/scripts/capture-runtime-evidence.sh 2>/dev/null && \
    grep -q 'work/commit-metadata.json' jenkins/scripts/capture-runtime-evidence.sh 2>/dev/null; then
   runtime_evidence_provenance_verified=1
