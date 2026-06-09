@@ -62,6 +62,11 @@ If this delivery repo lives beside a cloned YAS source tree under `yas-source/`,
 
 Successful deploy and smoke-test runs now also leave runtime evidence under `work/runtime-evidence/<namespace>/<release>/`, including Helm status, pod/service snapshots, and the discovered public endpoints.
 
+The shared-environment deploy jobs should follow the same pattern as the developer build:
+
+- `yas-dev-cd` deploys to `yas-dev` and then runs `jenkins/scripts/smoke-test.sh`
+- `yas-staging-release` deploys to `yas-staging` and then runs `jenkins/scripts/smoke-test.sh`
+
 ## GitOps note
 
 `jenkins/scripts/update-manifest-repo.sh` now regenerates the full `argocd/values/*.yaml` file from the service catalog instead of editing only a few existing tag lines.

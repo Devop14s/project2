@@ -33,5 +33,11 @@ return {
         sh 'export ENVIRONMENT=dev; export RELEASE_NAME=yas-dev; export NAMESPACE=yas-dev; jenkins/scripts/deploy-helm.sh'
       }
     }
+
+    stage('Smoke Test Dev') {
+      withCredentials([file(credentialsId: 'kubeconfig-file', variable: 'KUBECONFIG')]) {
+        sh 'export ENVIRONMENT=dev; export RELEASE_NAME=yas-dev; export NAMESPACE=yas-dev; jenkins/scripts/smoke-test.sh'
+      }
+    }
   }
 }

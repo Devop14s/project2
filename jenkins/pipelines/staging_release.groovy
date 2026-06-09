@@ -43,5 +43,17 @@ return {
         '''
       }
     }
+
+    stage('Smoke Test Staging') {
+      withCredentials([file(credentialsId: 'kubeconfig-file', variable: 'KUBECONFIG')]) {
+        sh '''
+          export ENVIRONMENT=staging
+          export RELEASE_VERSION="${RELEASE_VERSION}"
+          export RELEASE_NAME=yas-staging
+          export NAMESPACE=yas-staging
+          jenkins/scripts/smoke-test.sh
+        '''
+      }
+    }
   }
 }

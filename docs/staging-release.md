@@ -9,6 +9,7 @@ Run for an explicit release version such as `v1.2.3`.
 - checkout the release tag or release branch
 - build and push release images with the same version tag
 - deploy them into namespace `yas-staging`
+- run the shared smoke-test helper against the public services and collect runtime evidence
 
 ## Notes
 
