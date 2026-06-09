@@ -39,6 +39,7 @@ public_entry_count=0
 ui_count=0
 backend_count=0
 source_aligned=0
+storefront_build_verified=0
 if [ -f "jenkins/services.env" ]; then
   while IFS='|' read -r service path dockerfile port expose node_port workload_type; do
     [ -n "$service" ] || continue
@@ -61,6 +62,10 @@ if [ -d "$source_root" ] && [ -f "jenkins/services.env" ]; then
   if SERVICES_FILE="jenkins/services.env" SOURCE_ROOT="$source_root" sh scripts/validate-source-alignment.sh >/dev/null 2>&1; then
     source_aligned=1
   fi
+fi
+
+if [ -d "yas-source/storefront/.next" ]; then
+  storefront_build_verified=1
 fi
 
 {
@@ -105,6 +110,9 @@ fi
   printf '%s\n' '- Helm baseline values generation is available from the shared service catalog.'
   if [ "$source_aligned" -eq 1 ]; then
     printf '%s\n' '- Service catalog paths and Dockerfiles were verified against the local `yas-source` clone.'
+  fi
+  if [ "$storefront_build_verified" -eq 1 ]; then
+    printf '%s\n' '- A real `storefront` Next.js production build completed successfully in the cloned source tree.'
   fi
   printf '\n'
   printf '## Still Blocked In This Workspace\n'

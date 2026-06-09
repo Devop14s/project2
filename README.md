@@ -11,6 +11,7 @@ This repository currently contains the assignment brief and an executable scaffo
 - `mesh/` contains Istio and Kiali manifest skeletons.
 - `docs/` contains runbooks, templates, and tracking documents.
 - `scripts/` contains local validation helpers for this scaffold.
+- [docs/source-build-runtime-matrix.md](</D:/App/project2/docs/source-build-runtime-matrix.md>) records source-verified build commands and runtime ports from the local `yas-source` clone.
 
 ## Current limitation
 

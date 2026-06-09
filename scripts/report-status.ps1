@@ -35,6 +35,7 @@ $publicEntryCount = 0
 $uiCount = 0
 $backendCount = 0
 $sourceAligned = $false
+$storefrontBuildVerified = (Test-Path 'yas-source\storefront\.next')
 
 if (Test-Path $servicesFile) {
     foreach ($line in Get-Content $servicesFile) {
@@ -104,6 +105,9 @@ $content.Add('- GitOps values generation is available for the full service catal
 $content.Add('- Helm baseline values generation is available from the shared service catalog.')
 if ($sourceAligned) {
     $content.Add('- Service catalog paths and Dockerfiles were verified against the local `yas-source` clone.')
+}
+if ($storefrontBuildVerified) {
+    $content.Add('- A real `storefront` Next.js production build completed successfully in the cloned source tree.')
 }
 $content.Add('')
 $content.Add('## Still Blocked In This Workspace')

@@ -24,6 +24,7 @@
 - Cross-platform GitOps values generation for the full service catalog.
 - Cross-platform Helm baseline values generation from the shared service catalog.
 - Source-alignment validation against the local `yas-source` clone.
+- Source-based build and runtime matrix in `docs/source-build-runtime-matrix.md`.
 
 ## Not implementable yet in this workspace
 
