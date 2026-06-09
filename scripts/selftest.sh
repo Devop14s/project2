@@ -125,6 +125,8 @@ grep -q 'IMAGE_DIGESTS_FILE="work/image-digests.txt"' jenkins/scripts/push-image
 grep -q 'record_repo_digest' jenkins/scripts/push-images.sh
 grep -q 'ENVIRONMENT="${ENVIRONMENT:-developer}"' jenkins/scripts/cleanup-release.sh
 grep -q 'default_namespace "$ENVIRONMENT" "$DEPLOYER_ID"' jenkins/scripts/cleanup-release.sh
+grep -q 'docker version' scripts/preflight.sh
+grep -q 'present but daemon inaccessible' scripts/preflight.sh
 grep -q 'domainName: storefront-dev.yas.local' "$dev_generated_values_file"
 grep -q 'host: backoffice-dev.yas.local' "$dev_generated_values_file"
 grep -q 'namespace: yas-dev' "$dev_generated_values_file"

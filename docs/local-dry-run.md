@@ -100,3 +100,5 @@ powershell -ExecutionPolicy Bypass -File scripts\preflight.ps1 -SkipCommandCheck
 ```bash
 sh scripts/preflight.sh --skip-command-checks
 ```
+
+When command checks are enabled, `preflight` now treats "Docker CLI installed but daemon unreachable" as a failed prerequisite instead of reporting Docker as fully available.

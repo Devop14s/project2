@@ -59,6 +59,15 @@ docker
 "
 
 missing=0
+docker_command_available=0
+docker_daemon_reachable=0
+
+if command -v docker >/dev/null 2>&1; then
+  docker_command_available=1
+  if docker version >/dev/null 2>&1; then
+    docker_daemon_reachable=1
+  fi
+fi
 
 printf '%-8s %-40s %-8s\n' "type" "name" "status"
 
@@ -74,11 +83,23 @@ done
 
 if [ "$skip_command_checks" -eq 0 ]; then
   for cmd in $required_commands; do
-    if command -v "$cmd" >/dev/null 2>&1; then
-      status="ok"
+    if [ "$cmd" = "docker" ]; then
+      if [ "$docker_command_available" -eq 0 ]; then
+        status="missing"
+        missing=1
+      elif [ "$docker_daemon_reachable" -eq 1 ]; then
+        status="ok"
+      else
+        status="present but daemon inaccessible"
+        missing=1
+      fi
     else
-      status="missing"
-      missing=1
+      if command -v "$cmd" >/dev/null 2>&1; then
+        status="ok"
+      else
+        status="missing"
+        missing=1
+      fi
     fi
     printf '%-8s %-40s %-8s\n' "command" "$cmd" "$status"
   done

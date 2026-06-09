@@ -219,6 +219,15 @@ try {
         throw 'cleanup-release.sh no longer uses environment-aware namespace defaults.'
     }
 
+    $preflightScript = Get-Content 'scripts\preflight.ps1' -Raw
+    if ($preflightScript -notmatch 'docker version') {
+        throw 'preflight.ps1 no longer distinguishes Docker CLI presence from daemon access.'
+    }
+
+    if ($preflightScript -notmatch 'present but daemon inaccessible') {
+        throw 'preflight.ps1 is missing the Docker daemon accessibility status message.'
+    }
+
     if ($devGeneratedValues -notmatch 'domainName: storefront-dev.yas.local') {
         throw 'Dev generated values are missing the expected storefront dev domain.'
     }

@@ -14,6 +14,8 @@ Source-dependent helpers such as branch-tag resolution and Docker builds now als
 
 On Windows, `preflight.ps1`, `selftest.ps1`, and `report-status.ps1` can also pick up a portable Helm binary under `work/tools/helm-v*/windows-amd64/helm.exe`, so Helm chart validation does not depend on a global install.
 
+`preflight` and `report-status` now distinguish between the Docker CLI being installed and the Docker daemon actually being reachable. If you only want a repo-structure check, use `-SkipCommandChecks` or `--skip-command-checks`.
+
 ## Available pairs
 
 - `preflight.ps1`

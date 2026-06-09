@@ -22,6 +22,31 @@ function Test-ToolAvailable {
     return $false
 }
 
+function Get-CommandStatus {
+    param(
+        [string]$CommandName
+    )
+
+    $exists = Test-ToolAvailable -CommandName $CommandName
+    if (-not $exists) {
+        return 'missing'
+    }
+
+    if ($CommandName -eq 'docker') {
+        try {
+            docker version *> $null
+            if ($LASTEXITCODE -eq 0) {
+                return 'ok'
+            }
+        } catch {
+        }
+
+        return 'present but daemon inaccessible'
+    }
+
+    return 'ok'
+}
+
 $requiredFiles = @(
     'README.md',
     'Jenkinsfile',
@@ -83,11 +108,10 @@ $fileResults = foreach ($file in $requiredFiles) {
 }
 
 $commandResults = foreach ($cmd in $requiredCommands) {
-    $exists = Test-ToolAvailable -CommandName $cmd
     [pscustomobject]@{
         type = 'command'
         name = $cmd
-        status = if ($exists) { 'ok' } else { 'missing' }
+        status = Get-CommandStatus -CommandName $cmd
     }
 }
 
