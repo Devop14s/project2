@@ -31,6 +31,8 @@ powershell -ExecutionPolicy Bypass -File scripts\developer-build-dry-run.ps1 `
   -TaxBranch dev_tax_service
 ```
 
+The PowerShell dry-run now mirrors the full Jenkins `developer_build` branch-override surface, so you can pass parameters such as `-StorefrontBranch`, `-BackofficeBranch`, `-PaymentBranch`, or any other service-specific override supported by the pipeline.
+
 ## Linux or macOS
 
 ```bash

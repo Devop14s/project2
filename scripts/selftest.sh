@@ -126,6 +126,7 @@ grep -q "if (env.PIPELINE_DISPATCH_MODE != 'true')" jenkins/pipelines/ci.groovy
 grep -q "if (env.PIPELINE_DISPATCH_MODE != 'true')" jenkins/pipelines/developer_build.groovy
 grep -q "stage('Docker Login')" jenkins/pipelines/developer_build.groovy
 grep -q "stage('Verify Image Tags')" jenkins/pipelines/developer_build.groovy
+grep -q "\[string\]\$PaymentBranch = 'main'" scripts/developer-build-dry-run.ps1
 grep -q "if (env.PIPELINE_DISPATCH_MODE != 'true')" jenkins/pipelines/developer_cleanup.groovy
 grep -q "if (env.PIPELINE_DISPATCH_MODE != 'true')" jenkins/pipelines/dev_cd.groovy
 grep -q "if (env.PIPELINE_DISPATCH_MODE != 'true')" jenkins/pipelines/dev_gitops.groovy

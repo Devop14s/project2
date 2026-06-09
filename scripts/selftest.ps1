@@ -205,6 +205,11 @@ try {
         throw 'developer_build.groovy is missing the image verification stage.'
     }
 
+    $developerBuildDryRunScript = Get-Content 'scripts\developer-build-dry-run.ps1' -Raw
+    if ($developerBuildDryRunScript -notmatch '\[string\]\$PaymentBranch = ''main''') {
+        throw 'developer-build-dry-run.ps1 no longer exposes the full branch-override surface.'
+    }
+
     $developerCleanupPipeline = Get-Content 'jenkins\pipelines\developer_cleanup.groovy' -Raw
     if ($developerCleanupPipeline -notmatch "if \(env\.PIPELINE_DISPATCH_MODE != 'true'\)") {
         throw 'developer_cleanup.groovy no longer skips properties rewrites in dispatch mode.'
