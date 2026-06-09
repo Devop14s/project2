@@ -166,6 +166,9 @@ grep -q "if (env.PIPELINE_DISPATCH_MODE != 'true')" jenkins/pipelines/staging_re
 grep -q "name: 'DOCKERHUB_NAMESPACE'" jenkins/pipelines/staging_release.groovy
 grep -q "stage('Resolve Commit Metadata')" jenkins/pipelines/staging_release.groovy
 grep -q 'jenkins/scripts/write-commit-metadata.sh' jenkins/pipelines/staging_release.groovy
+grep -q '"commit_sha": "${commit_sha}"' jenkins/scripts/write-commit-metadata.sh
+grep -q '"commit_short_sha": "${commit_short_sha}"' jenkins/scripts/write-commit-metadata.sh
+grep -q '"generated_at":' jenkins/scripts/write-commit-metadata.sh
 grep -q "trap 'write_build_metadata \$?' EXIT" jenkins/scripts/build-images.sh
 grep -q 'done < <(iter_services)' jenkins/scripts/build-images.sh
 grep -q '"completed": ${build_completed}' jenkins/scripts/build-images.sh
@@ -239,6 +242,7 @@ grep -q 'host: backoffice.yas.local' "$chart_values_file"
 grep -q 'tag: test-tag' "$manifest_values_file"
 grep -q '## Runtime Access Notes' "$status_report_file"
 grep -q 'Runtime evidence directories now snapshot commit, build, push, and verification artifacts' "$status_report_file"
+grep -q 'Commit metadata artifacts now embed the exact commit SHA and short SHA directly in `commit-metadata.json`' "$status_report_file"
 grep -q 'Build, push, and remote-tag verification helpers now preserve partial metadata artifacts' "$status_report_file"
 grep -q 'Deploy and smoke-test helpers now capture partial runtime diagnostics' "$status_report_file"
 grep -q 'Cleanup helpers now require explicit opt-in for shared targets' "$status_report_file"
@@ -330,6 +334,8 @@ if command -v bash >/dev/null 2>&1; then
   expected_commit_short_sha="$(git -C yas-source rev-parse --short HEAD)"
   [ "$(cat "$commit_sha_file")" = "$expected_commit_sha" ]
   [ "$(cat "$commit_short_sha_file")" = "$expected_commit_short_sha" ]
+  grep -q "\"commit_sha\": \"${expected_commit_sha}\"" "$commit_metadata_file"
+  grep -q "\"commit_short_sha\": \"${expected_commit_short_sha}\"" "$commit_metadata_file"
   grep -q '"source_git_root": "yas-source"' "$commit_metadata_file"
   grep -q '"services_file": "jenkins/services.release-baseline.env"' "$commit_metadata_file"
   bash -lc '

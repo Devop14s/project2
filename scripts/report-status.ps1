@@ -148,6 +148,7 @@ $helmLintVerified = $false
 $helmTemplateVerified = $false
 $gitopsValuesVerified = $false
 $runtimeEvidenceProvenanceVerified = $false
+$selfContainedCommitMetadataVerified = $false
 $partialImageMetadataVerified = $false
 $failureSafeRuntimeEvidenceVerified = $false
 $cleanupGuardVerified = $false
@@ -309,6 +310,7 @@ if (Test-Path $releaseBaselineServicesFile) {
 }
 
 $captureRuntimeEvidenceScript = if (Test-Path 'jenkins\scripts\capture-runtime-evidence.sh') { Get-Content 'jenkins\scripts\capture-runtime-evidence.sh' -Raw } else { '' }
+$writeCommitMetadataScript = if (Test-Path 'jenkins\scripts\write-commit-metadata.sh') { Get-Content 'jenkins\scripts\write-commit-metadata.sh' -Raw } else { '' }
 $buildImagesScript = if (Test-Path 'jenkins\scripts\build-images.sh') { Get-Content 'jenkins\scripts\build-images.sh' -Raw } else { '' }
 $pushImagesScript = if (Test-Path 'jenkins\scripts\push-images.sh') { Get-Content 'jenkins\scripts\push-images.sh' -Raw } else { '' }
 $verifyImageTagsScript = if (Test-Path 'jenkins\scripts\verify-image-tags.sh') { Get-Content 'jenkins\scripts\verify-image-tags.sh' -Raw } else { '' }
@@ -324,6 +326,12 @@ $runtimeEvidenceProvenanceVerified = (
     $captureRuntimeEvidenceScript -match 'copied-artifacts\.txt' -and
     $captureRuntimeEvidenceScript -match 'work/image-digests\.txt' -and
     $captureRuntimeEvidenceScript -match 'work/commit-metadata\.json'
+)
+
+$selfContainedCommitMetadataVerified = (
+    $writeCommitMetadataScript -match '"commit_sha": "\$\{commit_sha\}"' -and
+    $writeCommitMetadataScript -match '"commit_short_sha": "\$\{commit_short_sha\}"' -and
+    $writeCommitMetadataScript -match '"generated_at":'
 )
 
 $partialImageMetadataVerified = (
@@ -502,6 +510,9 @@ if ($sharedPromotionCommitMetadataVerified) {
 }
 if ($runtimeEvidenceProvenanceVerified) {
     $content.Add('- Runtime evidence directories now snapshot commit, build, push, and verification artifacts such as `commit-metadata.json` and `image-digests.txt` per run.')
+}
+if ($selfContainedCommitMetadataVerified) {
+    $content.Add('- Commit metadata artifacts now embed the exact commit SHA and short SHA directly in `commit-metadata.json`, not only in sidecar text files.')
 }
 if ($partialImageMetadataVerified) {
     $content.Add('- Build, push, and remote-tag verification helpers now preserve partial metadata artifacts with completion state and the last attempted image when a run fails mid-stream.')

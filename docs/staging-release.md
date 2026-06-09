@@ -18,6 +18,7 @@ Run for an explicit release version such as `v1.2.3`.
 - Save `work/image-digests.txt` from the push step and reuse those digests in the final report.
 - Save `work/runtime-evidence/yas-staging/yas-staging/` after a successful run for screenshots and rollout evidence.
 - Save `work/commit-metadata.json` as the source-of-truth link between the release tag and the exact source commit that was built.
+- `work/commit-metadata.json` now embeds both `commit_sha` and `commit_short_sha`, so one JSON excerpt is enough to prove which source revision backed the staging promotion.
 - The runtime evidence directory now also snapshots those provenance files locally, so `image-digests.txt`, `commit_sha.txt`, and `commit-metadata.json` remain tied to that specific staging run.
 - Failed deploy, rollout, or smoke-test attempts now also leave partial runtime evidence and capture status markers there, so staging diagnostics are not lost on the first failing run.
 

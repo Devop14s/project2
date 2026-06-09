@@ -134,6 +134,7 @@ helm_lint_verified=0
 helm_template_verified=0
 gitops_values_verified=0
 runtime_evidence_provenance_verified=0
+self_contained_commit_metadata_verified=0
 partial_image_metadata_verified=0
 failure_safe_runtime_evidence_verified=0
 cleanup_guard_verified=0
@@ -265,6 +266,11 @@ if grep -q 'copied-artifacts.txt' jenkins/scripts/capture-runtime-evidence.sh 2>
    grep -q 'work/image-digests.txt' jenkins/scripts/capture-runtime-evidence.sh 2>/dev/null && \
    grep -q 'work/commit-metadata.json' jenkins/scripts/capture-runtime-evidence.sh 2>/dev/null; then
   runtime_evidence_provenance_verified=1
+fi
+if grep -q '"commit_sha": "${commit_sha}"' jenkins/scripts/write-commit-metadata.sh 2>/dev/null && \
+   grep -q '"commit_short_sha": "${commit_short_sha}"' jenkins/scripts/write-commit-metadata.sh 2>/dev/null && \
+   grep -q '"generated_at":' jenkins/scripts/write-commit-metadata.sh 2>/dev/null; then
+  self_contained_commit_metadata_verified=1
 fi
 if grep -q 'write_build_metadata' jenkins/scripts/build-images.sh 2>/dev/null && \
    grep -q '"completed": ${build_completed}' jenkins/scripts/build-images.sh 2>/dev/null && \
@@ -435,6 +441,9 @@ fi
   fi
   if [ "$runtime_evidence_provenance_verified" -eq 1 ]; then
     printf '%s\n' '- Runtime evidence directories now snapshot commit, build, push, and verification artifacts such as `commit-metadata.json` and `image-digests.txt` per run.'
+  fi
+  if [ "$self_contained_commit_metadata_verified" -eq 1 ]; then
+    printf '%s\n' '- Commit metadata artifacts now embed the exact commit SHA and short SHA directly in `commit-metadata.json`, not only in sidecar text files.'
   fi
   if [ "$partial_image_metadata_verified" -eq 1 ]; then
     printf '%s\n' '- Build, push, and remote-tag verification helpers now preserve partial metadata artifacts with completion state and the last attempted image when a run fails mid-stream.'

@@ -57,9 +57,9 @@
 - staging release deployment
 - screenshots and logs
 - actual image tag promoted to `dev`
-- `work/commit_sha.txt` or `work/commit-metadata.json` excerpt showing which source commit the `dev` promotion used
+- `work/commit_sha.txt` or a `work/commit-metadata.json` excerpt that includes `commit_sha` and `commit_short_sha` showing which source commit the `dev` promotion used
 - actual image tag promoted to `staging`
-- `work/commit_sha.txt` or `work/commit-metadata.json` excerpt showing which source commit the `staging` release or GitOps promotion used
+- `work/commit_sha.txt` or a `work/commit-metadata.json` excerpt that includes `commit_sha` and `commit_short_sha` showing which source commit the `staging` release or GitOps promotion used
 - excerpt from `work/runtime-evidence/<namespace>/<release>/copied-artifacts.txt` or equivalent per-run provenance bundle
 
 ## 8. Advanced section

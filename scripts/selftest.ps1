@@ -354,6 +354,19 @@ try {
         throw 'staging_release.groovy no longer records commit metadata before promoting a release.'
     }
 
+    $writeCommitMetadataScript = Get-Content 'jenkins\scripts\write-commit-metadata.sh' -Raw
+    if ($writeCommitMetadataScript -notmatch '"commit_sha": "\$\{commit_sha\}"') {
+        throw 'write-commit-metadata.sh is missing the exact commit SHA in commit-metadata.json.'
+    }
+
+    if ($writeCommitMetadataScript -notmatch '"commit_short_sha": "\$\{commit_short_sha\}"') {
+        throw 'write-commit-metadata.sh is missing the short commit SHA in commit-metadata.json.'
+    }
+
+    if ($writeCommitMetadataScript -notmatch '"generated_at":') {
+        throw 'write-commit-metadata.sh is missing the metadata generation timestamp.'
+    }
+
     $pushImagesScript = Get-Content 'jenkins\scripts\push-images.sh' -Raw
     $buildImagesScript = Get-Content 'jenkins\scripts\build-images.sh' -Raw
     if ($buildImagesScript -notmatch 'trap ''write_build_metadata \$\?'' EXIT') {
@@ -595,6 +608,10 @@ try {
 
     if ($statusReport -notmatch 'Runtime evidence directories now snapshot commit, build, push, and verification artifacts') {
         throw 'Generated status report is missing the per-run provenance snapshot note.'
+    }
+
+    if ($statusReport -notmatch 'Commit metadata artifacts now embed the exact commit SHA and short SHA directly in `commit-metadata.json`') {
+        throw 'Generated status report is missing the self-contained commit metadata note.'
     }
 
     if ($statusReport -notmatch 'Build, push, and remote-tag verification helpers now preserve partial metadata artifacts') {
