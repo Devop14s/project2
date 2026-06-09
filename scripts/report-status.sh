@@ -64,6 +64,7 @@ order_build_verified=0
 sampledata_package_verified=0
 search_package_verified=0
 product_image_verified=0
+storefront_image_verified=0
 backoffice_image_verified=0
 storefront_bff_image_verified=0
 backoffice_bff_image_verified=0
@@ -148,6 +149,9 @@ fi
 if command -v docker >/dev/null 2>&1; then
   if docker image inspect yas-product:codex-verified >/dev/null 2>&1; then
     product_image_verified=1
+  fi
+  if docker image inspect yas-storefront:codex-verified >/dev/null 2>&1; then
+    storefront_image_verified=1
   fi
   if docker image inspect yas-backoffice:codex-verified >/dev/null 2>&1; then
     backoffice_image_verified=1
@@ -277,6 +281,9 @@ fi
   fi
   if [ "$product_image_verified" -eq 1 ]; then
     printf '%s\n' '- A real `product` Docker image build completed successfully in this workspace.'
+  fi
+  if [ "$storefront_image_verified" -eq 1 ]; then
+    printf '%s\n' '- A real `storefront` Docker image build completed successfully in this workspace.'
   fi
   if [ "$backoffice_image_verified" -eq 1 ]; then
     printf '%s\n' '- A real `backoffice` Docker image build completed successfully in this workspace.'

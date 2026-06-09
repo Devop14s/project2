@@ -32,6 +32,7 @@ Checked directly in the cloned source:
 - `search`: upstream-style `mvn clean install -pl search -am` is currently blocked by `ProductCdcConsumerTest` because the Elasticsearch Testcontainers dependency does not become ready in this workspace, but packaging with `-Dmaven.test.skip=true` passed and produced `search/target/search-1.0-SNAPSHOT.jar`.
 - Docker daemon is reachable outside the sandbox on this host.
 - `docker build` for `product` passed and produced local image `yas-product:codex-verified`.
+- `docker build` for `storefront` passed and produced local image `yas-storefront:codex-verified`.
 - `docker build` for `backoffice` passed and produced local image `yas-backoffice:codex-verified`.
 - `docker build` for `storefront-bff` passed and produced local image `yas-storefront-bff:codex-verified`.
 - `docker build` for `backoffice-bff` passed and produced local image `yas-backoffice-bff:codex-verified`.
@@ -42,7 +43,6 @@ Checked directly in the cloned source:
 - `docker build` for `order` passed and produced local image `yas-order:codex-verified`.
 - `docker build` for `sampledata` passed and produced local image `yas-sampledata:codex-verified`.
 - `docker build` for `search` passed and produced local image `yas-search:codex-verified`.
-- `docker build` for `storefront` was attempted earlier but timed out before producing a local image.
 - `helm lint helm/yas` passed with Helm 4.2.0.
 - `helm template yas helm/yas` passed and rendered chart output locally.
 

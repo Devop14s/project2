@@ -31,6 +31,7 @@ Last updated: June 9, 2026
   - `sampledata`: packaged successfully with `-Dmaven.test.skip=true`
   - `search`: packaged successfully with `-Dmaven.test.skip=true`
 - Local Docker image builds verified:
+  - `storefront`
   - `backoffice`
   - `storefront-bff`
   - `backoffice-bff`
@@ -53,7 +54,6 @@ Last updated: June 9, 2026
 - Jenkins webhook, Jenkins credentials, registry credentials, and kubeconfig wiring have not been exercised end to end.
 - `sampledata` does not currently have a clean full upstream-style test pass in this workspace because `common-library` test compilation blocks the reactor build.
 - `search` does not currently have a clean full upstream-style test pass in this workspace because Elasticsearch Testcontainers does not become ready for `ProductCdcConsumerTest`.
-- `storefront` still lacks a completed local Docker image verification because the earlier build attempt timed out before finishing.
 
 ## Current recommendation
 

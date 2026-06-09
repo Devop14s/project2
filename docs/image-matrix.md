@@ -4,7 +4,7 @@ This matrix keeps the intended naming convention and also records the current lo
 
 | Service | Docker repository | Default tag | Branch tag rule | Release tag rule | Local image verification |
 | --- | --- | --- | --- | --- | --- |
-| storefront | `docker.io/<namespace>/yas-storefront` | `main` | latest commit SHA of selected branch | semantic version tag | attempted once, timed out before completion |
+| storefront | `docker.io/<namespace>/yas-storefront` | `main` | latest commit SHA of selected branch | semantic version tag | local `docker build` now passes and produces `yas-storefront:codex-verified` |
 | backoffice | `docker.io/<namespace>/yas-backoffice` | `main` | latest commit SHA of selected branch | semantic version tag | verified |
 | storefront-bff | `docker.io/<namespace>/yas-storefront-bff` | `main` | latest commit SHA of selected branch | semantic version tag | verified |
 | backoffice-bff | `docker.io/<namespace>/yas-backoffice-bff` | `main` | latest commit SHA of selected branch | semantic version tag | verified |

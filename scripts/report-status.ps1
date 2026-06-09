@@ -77,6 +77,7 @@ $orderBuildVerified = (Test-Path (Join-Path $sourceRoot 'order\target\order-1.0-
 $sampledataPackageVerified = (Test-Path (Join-Path $sourceRoot 'sampledata\target\sampledata-1.0-SNAPSHOT.jar'))
 $searchPackageVerified = (Test-Path (Join-Path $sourceRoot 'search\target\search-1.0-SNAPSHOT.jar'))
 $productImageVerified = $false
+$storefrontImageVerified = $false
 $backofficeImageVerified = $false
 $storefrontBffImageVerified = $false
 $backofficeBffImageVerified = $false
@@ -122,6 +123,13 @@ if ($null -ne (Get-Command docker -ErrorAction SilentlyContinue)) {
         $productImageVerified = ($LASTEXITCODE -eq 0)
     } catch {
         $productImageVerified = $false
+    }
+
+    try {
+        docker image inspect 'yas-storefront:codex-verified' *> $null
+        $storefrontImageVerified = ($LASTEXITCODE -eq 0)
+    } catch {
+        $storefrontImageVerified = $false
     }
 
     try {
@@ -322,6 +330,9 @@ if ($searchPackageVerified) {
 }
 if ($productImageVerified) {
     $content.Add('- A real `product` Docker image build completed successfully in this workspace.')
+}
+if ($storefrontImageVerified) {
+    $content.Add('- A real `storefront` Docker image build completed successfully in this workspace.')
 }
 if ($backofficeImageVerified) {
     $content.Add('- A real `backoffice` Docker image build completed successfully in this workspace.')
