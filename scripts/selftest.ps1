@@ -360,6 +360,10 @@ try {
         throw 'build-images.sh is missing the failure-safe build metadata trap.'
     }
 
+    if ($buildImagesScript -notmatch 'done < <\(iter_services\)') {
+        throw 'build-images.sh should iterate services without a subshell so failure metadata preserves the last attempted service.'
+    }
+
     if ($buildImagesScript -notmatch '"completed": \$\{build_completed\}') {
         throw 'build-images.sh is missing the build completion marker in metadata.'
     }
@@ -378,6 +382,10 @@ try {
 
     if ($pushImagesScript -notmatch 'trap ''write_push_metadata \$\?'' EXIT') {
         throw 'push-images.sh is missing the failure-safe push metadata trap.'
+    }
+
+    if ($pushImagesScript -notmatch 'done < <\(iter_services\)') {
+        throw 'push-images.sh should iterate services without a subshell so failure metadata preserves the last attempted service.'
     }
 
     if ($pushImagesScript -notmatch '"completed": \$\{push_completed\}') {
@@ -407,6 +415,10 @@ try {
 
     if ($verifyImageTagsScript -notmatch 'trap ''write_verify_metadata \$\?'' EXIT') {
         throw 'verify-image-tags.sh is missing the failure-safe verify metadata trap.'
+    }
+
+    if ($verifyImageTagsScript -notmatch 'done < <\(iter_services\)') {
+        throw 'verify-image-tags.sh should iterate services without a subshell so failure metadata preserves the last attempted service.'
     }
 
     if ($verifyImageTagsScript -notmatch '"completed": \$\{verify_completed\}') {
@@ -441,6 +453,10 @@ try {
     $deployHelmScript = Get-Content 'jenkins\scripts\deploy-helm.sh' -Raw
     if ($deployHelmScript -notmatch 'capture_runtime_evidence_on_exit') {
         throw 'deploy-helm.sh is missing the failure-safe runtime evidence trap.'
+    }
+
+    if ($deployHelmScript -notmatch 'done < <\(iter_services\)') {
+        throw 'deploy-helm.sh should iterate services without a subshell to avoid losing future loop state.'
     }
 
     if ($deployHelmScript -notmatch 'CAPTURE_RUNTIME_REASON="deploy-helm"') {

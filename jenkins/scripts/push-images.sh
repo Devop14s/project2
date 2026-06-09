@@ -52,7 +52,7 @@ record_repo_digest() {
   printf '%s <missing-digest>\n' "$local_image" >> "$IMAGE_DIGESTS_FILE"
 }
 
-iter_services | while IFS='|' read -r service path dockerfile port expose node_port workload_type; do
+while IFS='|' read -r service path dockerfile port expose node_port workload_type; do
   repo_name="$(image_repo "$service")"
   image="${repo_name}:${TAG}"
   last_service="$service"
@@ -61,5 +61,5 @@ iter_services | while IFS='|' read -r service path dockerfile port expose node_p
   docker push "$image"
   printf '%s\n' "$image" >> "$IMAGE_LIST_FILE"
   record_repo_digest "$repo_name" "$TAG"
-done
+done < <(iter_services)
 push_completed=true

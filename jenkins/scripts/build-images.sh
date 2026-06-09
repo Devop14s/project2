@@ -33,7 +33,7 @@ EOF
 
 trap 'write_build_metadata $?' EXIT
 
-iter_services | while IFS='|' read -r service path dockerfile port expose node_port workload_type; do
+while IFS='|' read -r service path dockerfile port expose node_port workload_type; do
   resolved_path="$(service_source_path "$path")"
   resolved_dockerfile="$(service_source_path "$dockerfile")"
   [[ -f "$resolved_dockerfile" ]] || fail "Dockerfile not found for ${service}: ${resolved_dockerfile}"
@@ -45,5 +45,5 @@ iter_services | while IFS='|' read -r service path dockerfile port expose node_p
     -f "$resolved_dockerfile" \
     "$resolved_path"
   printf '%s\n' "$last_image" >> "$BUILT_IMAGE_LIST_FILE"
-done
+done < <(iter_services)
 build_completed=true

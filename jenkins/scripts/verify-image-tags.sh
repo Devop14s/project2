@@ -54,7 +54,7 @@ resolve_service_tag() {
   printf '%s' "${RELEASE_VERSION:-main}"
 }
 
-iter_services | while IFS='|' read -r service path dockerfile port expose node_port workload_type; do
+while IFS='|' read -r service path dockerfile port expose node_port workload_type; do
   repo_name="$(image_repo "$service")"
   tag_value="$(resolve_service_tag "$service")"
   image_ref="${repo_name}:${tag_value}"
@@ -66,5 +66,5 @@ iter_services | while IFS='|' read -r service path dockerfile port expose node_p
     docker manifest inspect "$image_ref" >/dev/null
   fi
   printf '%s\n' "$image_ref" >> "$VERIFIED_IMAGE_LIST_FILE"
-done
+done < <(iter_services)
 verify_completed=true
