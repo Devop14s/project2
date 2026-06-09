@@ -45,11 +45,15 @@ storefront_bff_build_verified=0
 backoffice_bff_build_verified=0
 product_build_verified=0
 payment_build_verified=0
+payment_paypal_build_verified=0
+recommendation_build_verified=0
 product_image_verified=0
 backoffice_image_verified=0
 storefront_bff_image_verified=0
 backoffice_bff_image_verified=0
 payment_image_verified=0
+payment_paypal_image_verified=0
+recommendation_image_verified=0
 helm_lint_verified=0
 helm_template_verified=0
 if [ -f "jenkins/services.env" ]; then
@@ -94,6 +98,12 @@ fi
 if [ -f "yas-source/payment/target/payment-1.0-SNAPSHOT.jar" ]; then
   payment_build_verified=1
 fi
+if [ -f "yas-source/payment-paypal/target/payment-paypal-1.0-SNAPSHOT.jar" ]; then
+  payment_paypal_build_verified=1
+fi
+if [ -f "yas-source/recommendation/target/recommendation-1.0-SNAPSHOT.jar" ]; then
+  recommendation_build_verified=1
+fi
 if command -v docker >/dev/null 2>&1; then
   if docker image inspect yas-product:codex-verified >/dev/null 2>&1; then
     product_image_verified=1
@@ -109,6 +119,12 @@ if command -v docker >/dev/null 2>&1; then
   fi
   if docker image inspect yas-payment:codex-verified >/dev/null 2>&1; then
     payment_image_verified=1
+  fi
+  if docker image inspect yas-payment-paypal:codex-verified >/dev/null 2>&1; then
+    payment_paypal_image_verified=1
+  fi
+  if docker image inspect yas-recommendation:codex-verified >/dev/null 2>&1; then
+    recommendation_image_verified=1
   fi
 fi
 if command -v helm >/dev/null 2>&1; then
@@ -181,6 +197,12 @@ fi
   if [ "$payment_build_verified" -eq 1 ]; then
     printf '%s\n' '- A real `payment` Maven backend build completed successfully and produced a runnable JAR artifact.'
   fi
+  if [ "$payment_paypal_build_verified" -eq 1 ]; then
+    printf '%s\n' '- A real `payment-paypal` Maven backend build completed successfully and produced a runnable JAR artifact.'
+  fi
+  if [ "$recommendation_build_verified" -eq 1 ]; then
+    printf '%s\n' '- A real `recommendation` Maven backend build completed successfully and produced a runnable JAR artifact.'
+  fi
   if [ "$product_image_verified" -eq 1 ]; then
     printf '%s\n' '- A real `product` Docker image build completed successfully in this workspace.'
   fi
@@ -195,6 +217,12 @@ fi
   fi
   if [ "$payment_image_verified" -eq 1 ]; then
     printf '%s\n' '- A real `payment` Docker image build completed successfully in this workspace.'
+  fi
+  if [ "$payment_paypal_image_verified" -eq 1 ]; then
+    printf '%s\n' '- A real `payment-paypal` Docker image build completed successfully in this workspace.'
+  fi
+  if [ "$recommendation_image_verified" -eq 1 ]; then
+    printf '%s\n' '- A real `recommendation` Docker image build completed successfully in this workspace.'
   fi
   if [ "$helm_lint_verified" -eq 1 ]; then
     printf '%s\n' '- A real Helm chart lint completed successfully against `helm/yas`.'

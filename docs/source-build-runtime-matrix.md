@@ -24,12 +24,16 @@ Checked directly in the cloned source:
 - `backoffice-bff`: upstream-style `mvn clean verify -f backoffice-bff` passed using local Temurin 25 and Maven 3.9.11, and produced `backoffice-bff/target/backoffice-bff-1.0-SNAPSHOT.jar`.
 - `product`: `mvn clean install -pl product -am` passed using local Temurin 25 and Maven 3.9.11, and produced `product/target/product-1.0-SNAPSHOT.jar`.
 - `payment`: upstream-style `mvn clean install -pl payment -am` passed using local Temurin 25 and Maven 3.9.11, including tests and Testcontainers-backed integration flow, and produced `payment/target/payment-1.0-SNAPSHOT.jar`.
+- `payment-paypal`: upstream-style `mvn clean install -pl payment-paypal -am` passed using local Temurin 25 and Maven 3.9.11, including unit-test coverage for the PayPal adapter, and produced `payment-paypal/target/payment-paypal-1.0-SNAPSHOT.jar`.
+- `recommendation`: upstream-style `mvn clean install -pl recommendation -am` passed using local Temurin 25 and Maven 3.9.11 after rerunning sequentially; the earlier parallel attempt only failed because a shared `common-library/target` clean collided with another reactor build.
 - Docker daemon is reachable outside the sandbox on this host.
 - `docker build` for `product` passed and produced local image `yas-product:codex-verified`.
 - `docker build` for `backoffice` passed and produced local image `yas-backoffice:codex-verified`.
 - `docker build` for `storefront-bff` passed and produced local image `yas-storefront-bff:codex-verified`.
 - `docker build` for `backoffice-bff` passed and produced local image `yas-backoffice-bff:codex-verified`.
 - `docker build` for `payment` passed and produced local image `yas-payment:codex-verified`.
+- `docker build` for `payment-paypal` passed and produced local image `yas-payment-paypal:codex-verified`.
+- `docker build` for `recommendation` passed and produced local image `yas-recommendation:codex-verified`.
 - `docker build` for `storefront` was attempted earlier but timed out before producing a local image.
 - `helm lint helm/yas` passed with Helm 4.2.0.
 - `helm template yas helm/yas` passed and rendered chart output locally.
@@ -66,8 +70,9 @@ Checked directly in the cloned source:
 | webhook | `yas-source/webhook` | `mvn clean install -pl webhook -am` | `./webhook` | `ghcr.io/nashtech-garage/yas-webhook:latest` | `8092` | `/webhook` | `java -jar /app.jar` | Integration-style backend service. |
 | payment-paypal | `yas-source/payment-paypal` | `mvn clean install -pl payment-paypal -am` | `./payment-paypal` | `ghcr.io/nashtech-garage/yas-payment-paypal:latest` | `8093` | `/payment-paypal` | `java -jar /app.jar` | Payment provider plugin service. |
 | sampledata | `yas-source/sampledata` | `mvn clean install -pl sampledata -am` | `./sampledata` | `ghcr.io/nashtech-garage/yas-sampledata:latest` | `8094` | `/sampledata` | `java -jar /app.jar` | Seed/sample data workload. |
-| recommendation | `yas-source/recommendation` | `mvn clean install -pl recommendation -am` | `./recommendation` | `ghcr.io/nashtech-garage/yas-recommendation:latest` | `8095` | `/recommendation` | `java -jar /app.jar` | Present in CI and chart; commented out in main compose baseline. |
+| recommendation | `yas-source/recommendation` | `mvn clean install -pl recommendation -am` | `./recommendation` | `ghcr.io/nashtech-garage/yas-recommendation:latest` | `8095` | `/recommendation` | `java -jar /app.jar` | Real Maven build and Docker image build were verified locally. First parallel build attempt only hit a shared-target cleanup conflict in `common-library`. |
 | payment | `yas-source/payment` | `mvn clean install -pl payment -am` | `./payment` | `ghcr.io/nashtech-garage/yas-payment:latest` | `8081` | `/payment` | `java -jar /app.jar` | Real Maven build and Docker image build were both verified locally; tests exercised container-backed integration flow. |
+| payment-paypal | `yas-source/payment-paypal` | `mvn clean install -pl payment-paypal -am` | `./payment-paypal` | `ghcr.io/nashtech-garage/yas-payment-paypal:latest` | `8093` | `/payment-paypal` | `java -jar /app.jar` | Real Maven build and Docker image build were both verified locally; test suite exercised the PayPal integration adapter. |
 
 ## Notes
 

@@ -58,11 +58,15 @@ $storefrontBffBuildVerified = (Test-Path 'yas-source\storefront-bff\target\store
 $backofficeBffBuildVerified = (Test-Path 'yas-source\backoffice-bff\target\backoffice-bff-1.0-SNAPSHOT.jar')
 $productBuildVerified = (Test-Path 'yas-source\product\target\product-1.0-SNAPSHOT.jar')
 $paymentBuildVerified = (Test-Path 'yas-source\payment\target\payment-1.0-SNAPSHOT.jar')
+$paymentPaypalBuildVerified = (Test-Path 'yas-source\payment-paypal\target\payment-paypal-1.0-SNAPSHOT.jar')
+$recommendationBuildVerified = (Test-Path 'yas-source\recommendation\target\recommendation-1.0-SNAPSHOT.jar')
 $productImageVerified = $false
 $backofficeImageVerified = $false
 $storefrontBffImageVerified = $false
 $backofficeBffImageVerified = $false
 $paymentImageVerified = $false
+$paymentPaypalImageVerified = $false
+$recommendationImageVerified = $false
 $helmExecutable = Get-HelmExecutable
 $helmLintVerified = $false
 $helmTemplateVerified = $false
@@ -125,6 +129,20 @@ if ($null -ne (Get-Command docker -ErrorAction SilentlyContinue)) {
         $paymentImageVerified = ($LASTEXITCODE -eq 0)
     } catch {
         $paymentImageVerified = $false
+    }
+
+    try {
+        docker image inspect 'yas-payment-paypal:codex-verified' *> $null
+        $paymentPaypalImageVerified = ($LASTEXITCODE -eq 0)
+    } catch {
+        $paymentPaypalImageVerified = $false
+    }
+
+    try {
+        docker image inspect 'yas-recommendation:codex-verified' *> $null
+        $recommendationImageVerified = ($LASTEXITCODE -eq 0)
+    } catch {
+        $recommendationImageVerified = $false
     }
 }
 
@@ -211,6 +229,12 @@ if ($productBuildVerified) {
 if ($paymentBuildVerified) {
     $content.Add('- A real `payment` Maven backend build completed successfully and produced a runnable JAR artifact.')
 }
+if ($paymentPaypalBuildVerified) {
+    $content.Add('- A real `payment-paypal` Maven backend build completed successfully and produced a runnable JAR artifact.')
+}
+if ($recommendationBuildVerified) {
+    $content.Add('- A real `recommendation` Maven backend build completed successfully and produced a runnable JAR artifact.')
+}
 if ($productImageVerified) {
     $content.Add('- A real `product` Docker image build completed successfully in this workspace.')
 }
@@ -225,6 +249,12 @@ if ($backofficeBffImageVerified) {
 }
 if ($paymentImageVerified) {
     $content.Add('- A real `payment` Docker image build completed successfully in this workspace.')
+}
+if ($paymentPaypalImageVerified) {
+    $content.Add('- A real `payment-paypal` Docker image build completed successfully in this workspace.')
+}
+if ($recommendationImageVerified) {
+    $content.Add('- A real `recommendation` Docker image build completed successfully in this workspace.')
 }
 if ($helmLintVerified) {
     $content.Add('- A real Helm chart lint completed successfully against `helm/yas`.')
