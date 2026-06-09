@@ -297,6 +297,19 @@ try {
         throw 'validate-argocd-apps.ps1 no longer protects the staging manual-sync contract.'
     }
 
+    $validateArgocdAppsShellScript = Get-Content 'scripts\validate-argocd-apps.sh' -Raw
+    if ($validateArgocdAppsShellScript -match '\$\{expected_repo_url//') {
+        throw 'validate-argocd-apps.sh should remain POSIX-safe and must not use bash-only replacement expansion.'
+    }
+
+    if ($validateArgocdAppsShellScript -notmatch 'assert_scalar_value') {
+        throw 'validate-argocd-apps.sh is missing the POSIX-safe scalar-value assertion helper.'
+    }
+
+    if ($validateArgocdAppsShellScript -notmatch 'assert_list_item') {
+        throw 'validate-argocd-apps.sh is missing the POSIX-safe list-item assertion helper.'
+    }
+
     $developerCleanupPipeline = Get-Content 'jenkins\pipelines\developer_cleanup.groovy' -Raw
     if ($developerCleanupPipeline -notmatch "if \(env\.PIPELINE_DISPATCH_MODE != 'true'\)") {
         throw 'developer_cleanup.groovy no longer skips properties rewrites in dispatch mode.'

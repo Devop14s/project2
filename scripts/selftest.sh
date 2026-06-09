@@ -155,6 +155,12 @@ grep -q 'https://github.com/Devop14s/project2.git' scripts/validate-argocd-apps.
 grep -q 'CreateNamespace=true' scripts/validate-argocd-apps.sh
 grep -q 'selfHeal:\[\[:space:\]\]+true' scripts/validate-argocd-apps.sh
 grep -q 'staging manifest should remain manual-sync' scripts/validate-argocd-apps.sh
+if grep -q '\${expected_repo_url//' scripts/validate-argocd-apps.sh; then
+  printf 'validate-argocd-apps.sh should remain POSIX-safe and must not use bash-only replacement expansion.\n' >&2
+  exit 1
+fi
+grep -q 'assert_scalar_value' scripts/validate-argocd-apps.sh
+grep -q 'assert_list_item' scripts/validate-argocd-apps.sh
 grep -q "if (env.PIPELINE_DISPATCH_MODE != 'true')" jenkins/pipelines/developer_cleanup.groovy
 grep -q "name: 'DELETE_NAMESPACE'" jenkins/pipelines/developer_cleanup.groovy
 grep -q "name: 'ALLOW_SHARED_ENVIRONMENT_CLEANUP'" jenkins/pipelines/developer_cleanup.groovy

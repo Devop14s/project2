@@ -15,6 +15,55 @@ assert_match() {
   fi
 }
 
+assert_scalar_value() {
+  file_path="$1"
+  key_name="$2"
+  expected_value="$3"
+  message="$4"
+
+  if ! awk -v key_name="$key_name" -v expected_value="$expected_value" '
+    {
+      line=$0
+      sub(/\r$/, "", line)
+      if (line ~ "^[[:space:]]*" key_name ":[[:space:]]*") {
+        sub("^[[:space:]]*" key_name ":[[:space:]]*", "", line)
+        sub(/[[:space:]]+$/, "", line)
+        if (line == expected_value) {
+          found=1
+        }
+      }
+    }
+    END { exit found ? 0 : 1 }
+  ' "$file_path"; then
+    printf '%s\n' "$message" >&2
+    exit 1
+  fi
+}
+
+assert_list_item() {
+  file_path="$1"
+  expected_value="$2"
+  message="$3"
+
+  if ! awk -v expected_value="$expected_value" '
+    {
+      line=$0
+      sub(/\r$/, "", line)
+      if (line ~ "^[[:space:]]*-[[:space:]]*") {
+        sub("^[[:space:]]*-[[:space:]]*", "", line)
+        sub(/[[:space:]]+$/, "", line)
+        if (line == expected_value) {
+          found=1
+        }
+      }
+    }
+    END { exit found ? 0 : 1 }
+  ' "$file_path"; then
+    printf '%s\n' "$message" >&2
+    exit 1
+  fi
+}
+
 test_app_file() {
   file_path="$1"
   expected_name="$2"
@@ -35,10 +84,10 @@ test_app_file() {
   assert_match "$file_path" "^[[:space:]]*name:[[:space:]]+${expected_name}[[:space:]]*$" "ArgoCD metadata.name mismatch in $file_path"
   assert_match "$file_path" '^[[:space:]]*namespace:[[:space:]]+argocd[[:space:]]*$' "ArgoCD metadata.namespace should stay argocd in $file_path"
   assert_match "$file_path" "^[[:space:]]*project:[[:space:]]+${expected_project}[[:space:]]*$" "ArgoCD project mismatch in $file_path"
-  assert_match "$file_path" "^[[:space:]]*repoURL:[[:space:]]+${expected_repo_url//\//\\/}[[:space:]]*$" "ArgoCD repoURL mismatch in $file_path"
+  assert_scalar_value "$file_path" "repoURL" "$expected_repo_url" "ArgoCD repoURL mismatch in $file_path"
   assert_match "$file_path" "^[[:space:]]*targetRevision:[[:space:]]+${expected_target_revision}[[:space:]]*$" "ArgoCD targetRevision mismatch in $file_path"
   assert_match "$file_path" '^[[:space:]]*path:[[:space:]]+helm/yas[[:space:]]*$' "ArgoCD source.path should stay helm/yas in $file_path"
-  assert_match "$file_path" "^[[:space:]]*-[[:space:]]+${expected_values_file//\//\\/}[[:space:]]*$" "ArgoCD values file mismatch in $file_path"
+  assert_list_item "$file_path" "$expected_values_file" "ArgoCD values file mismatch in $file_path"
   assert_match "$file_path" '^[[:space:]]*server:[[:space:]]+https://kubernetes\.default\.svc[[:space:]]*$' "ArgoCD destination.server mismatch in $file_path"
   assert_match "$file_path" "^[[:space:]]*namespace:[[:space:]]+${expected_namespace}[[:space:]]*$" "ArgoCD destination.namespace mismatch in $file_path"
   assert_match "$file_path" '^[[:space:]]*-[[:space:]]+CreateNamespace=true[[:space:]]*$' "ArgoCD syncOptions should keep CreateNamespace=true in $file_path"
