@@ -56,6 +56,14 @@ try {
         [Environment]::SetEnvironmentVariable('PRODUCT_BRANCH', $previousProductBranch)
     }
 
+    $previousStorefrontBranch = [Environment]::GetEnvironmentVariable('STOREFRONT_BRANCH')
+    [Environment]::SetEnvironmentVariable('STOREFRONT_BRANCH', '')
+    try {
+        powershell -ExecutionPolicy Bypass -File scripts\resolve-branch-tags.ps1 -OutputFile $branchTagsFile | Out-Null
+    } finally {
+        [Environment]::SetEnvironmentVariable('STOREFRONT_BRANCH', $previousStorefrontBranch)
+    }
+
     powershell -ExecutionPolicy Bypass -File scripts\generate-values.ps1 `
         -TagsFile $branchTagsFile `
         -OutputFile $generatedValuesFile `
@@ -88,6 +96,10 @@ try {
 
     if ($branchTags -notmatch 'TAX_TAG=main') {
         throw 'Branch tag resolution failed for tax service.'
+    }
+
+    if ($branchTags -notmatch 'STOREFRONT_TAG=main') {
+        throw 'Branch tag resolution should treat empty storefront branch overrides as main.'
     }
 
     $expectedSourceHead = (& git -C 'yas-source' rev-parse HEAD).Trim()
@@ -135,6 +147,18 @@ try {
 
     if ($jenkinsfile -notmatch "PIPELINE_DISPATCH_MODE = 'true'") {
         throw 'Jenkinsfile no longer marks dispatched pipeline execution.'
+    }
+
+    if ($jenkinsfile -notmatch 'env\.RELEASE_VERSION = stagingTarget') {
+        throw 'Jenkinsfile no longer sanitizes RELEASE_VERSION by dispatched pipeline target.'
+    }
+
+    if ($jenkinsfile -notmatch 'env\.DOMAIN_NAME = developerBuildTarget') {
+        throw 'Jenkinsfile no longer scopes DOMAIN_NAME to developer-build dispatches.'
+    }
+
+    if ($jenkinsfile -notmatch 'env\."\$\{branchParam\}" = developerBuildTarget') {
+        throw 'Jenkinsfile no longer scopes branch overrides to developer-build dispatches.'
     }
 
     $ciPipeline = Get-Content 'jenkins\pipelines\ci.groovy' -Raw

@@ -89,6 +89,11 @@ pipeline {
     stage('Dispatch') {
       steps {
         script {
+          def developerBuildTarget = params.PIPELINE_TARGET == 'developer_build'
+          def developerCleanupTarget = params.PIPELINE_TARGET == 'developer_cleanup'
+          def stagingReleaseTarget = params.PIPELINE_TARGET == 'staging_release'
+          def stagingGitopsTarget = params.PIPELINE_TARGET == 'staging_gitops'
+          def stagingTarget = stagingReleaseTarget || stagingGitopsTarget
           def pipelineRequiresDockerhubNamespace = [
             'ci',
             'developer_build',
@@ -113,6 +118,38 @@ pipeline {
           env.SERVICE_CATALOG = params.SERVICE_CATALOG
           env.SOURCE_ROOT = params.SOURCE_ROOT?.trim()
           env.SOURCE_GIT_ROOT = params.SOURCE_GIT_ROOT?.trim()
+          env.RELEASE_VERSION = stagingTarget ? (params.RELEASE_VERSION?.trim() ?: 'v1.0.0') : ''
+          env.DEPLOYER_ID = (developerBuildTarget || developerCleanupTarget) ? (params.DEPLOYER_ID?.trim() ?: 'dev1') : ''
+          env.DOMAIN_NAME = developerBuildTarget ? (params.DOMAIN_NAME?.trim() ?: "storefront-${env.DEPLOYER_ID}.yas.local") : ''
+          env.BACKOFFICE_DOMAIN_NAME = developerBuildTarget ? (params.BACKOFFICE_DOMAIN_NAME?.trim() ?: "backoffice-${env.DEPLOYER_ID}.yas.local") : ''
+          env.NAMESPACE = developerCleanupTarget ? (params.NAMESPACE?.trim() ?: '') : ''
+          env.RELEASE_NAME = developerCleanupTarget ? (params.RELEASE_NAME?.trim() ?: '') : ''
+
+          [
+            'STOREFRONT_BRANCH',
+            'BACKOFFICE_BRANCH',
+            'STOREFRONT_BFF_BRANCH',
+            'BACKOFFICE_BFF_BRANCH',
+            'PRODUCT_BRANCH',
+            'MEDIA_BRANCH',
+            'CART_BRANCH',
+            'CUSTOMER_BRANCH',
+            'RATING_BRANCH',
+            'LOCATION_BRANCH',
+            'ORDER_BRANCH',
+            'INVENTORY_BRANCH',
+            'TAX_BRANCH',
+            'SEARCH_BRANCH',
+            'PROMOTION_BRANCH',
+            'PAYMENT_BRANCH',
+            'PAYMENT_PAYPAL_BRANCH',
+            'RECOMMENDATION_BRANCH',
+            'SAMPLEDATA_BRANCH',
+            'WEBHOOK_BRANCH'
+          ].each { branchParam ->
+            env."${branchParam}" = developerBuildTarget ? (params."${branchParam}"?.trim() ?: 'main') : ''
+          }
+
           env.SERVICES_FILE = [
             'release-baseline': 'jenkins/services.release-baseline.env',
             'full': 'jenkins/services.env'

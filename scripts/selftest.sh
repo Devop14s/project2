@@ -109,6 +109,9 @@ grep -q "name: 'RELEASE_VERSION'" Jenkinsfile
 grep -q "name: 'DEPLOYER_ID'" Jenkinsfile
 grep -q "name: 'STOREFRONT_BRANCH'" Jenkinsfile
 grep -q "PIPELINE_DISPATCH_MODE = 'true'" Jenkinsfile
+grep -q "env.RELEASE_VERSION = stagingTarget" Jenkinsfile
+grep -q 'env.DOMAIN_NAME = developerBuildTarget' Jenkinsfile
+grep -q 'env."${branchParam}" = developerBuildTarget' Jenkinsfile
 grep -q "if (env.PIPELINE_DISPATCH_MODE != 'true')" jenkins/pipelines/ci.groovy
 grep -q "if (env.PIPELINE_DISPATCH_MODE != 'true')" jenkins/pipelines/developer_build.groovy
 grep -q "if (env.PIPELINE_DISPATCH_MODE != 'true')" jenkins/pipelines/developer_cleanup.groovy
@@ -187,6 +190,8 @@ if command -v bash >/dev/null 2>&1; then
   backup_work_file "$commit_sha_file"
   backup_work_file "$commit_short_sha_file"
   backup_work_file "$commit_metadata_file"
+  STOREFRONT_BRANCH="" OUTPUT_FILE="${temp_dir}/blank-branch-tags.env" bash scripts/resolve-branch-tags.sh >/dev/null
+  grep -q '^STOREFRONT_TAG=main$' "${temp_dir}/blank-branch-tags.env"
   SERVICE_CATALOG="release-baseline" \
   SOURCE_ROOT="yas-source" \
   SOURCE_GIT_ROOT="yas-source" \

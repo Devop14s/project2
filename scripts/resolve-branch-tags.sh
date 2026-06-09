@@ -41,10 +41,19 @@ resolve_tag() {
   exit 1
 }
 
+branch_value_for_service() {
+  branch_var="$1"
+  branch_value="$(printenv "$branch_var" 2>/dev/null || true)"
+  if [ -z "$branch_value" ]; then
+    branch_value="main"
+  fi
+  printf '%s' "$branch_value"
+}
+
 iter_catalog_services "$services_file" | while IFS='|' read -r service path dockerfile port expose node_port workload_type; do
 
   branch_var="$(branch_var_name "$service")"
-  branch_value="$(printenv "$branch_var" 2>/dev/null || printf 'main')"
+  branch_value="$(branch_value_for_service "$branch_var")"
   tag_var="$(tag_var_name "$service")"
   tag_value="$(resolve_tag "$branch_value")"
   printf '%s=%s\n' "$tag_var" "$tag_value" >> "$output_file"
