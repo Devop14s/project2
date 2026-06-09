@@ -36,6 +36,9 @@ $helmRenderFile = Join-Path $tempDir 'helm-render.yaml'
 $baselineHelmRenderFile = Join-Path $tempDir 'baseline-helm-render.yaml'
 $gitopsDevHelmRenderFile = Join-Path $tempDir 'gitops-dev-helm-render.yaml'
 $gitopsStagingHelmRenderFile = Join-Path $tempDir 'gitops-staging-helm-render.yaml'
+$sampleDevHelmRenderFile = Join-Path $tempDir 'sample-dev-helm-render.yaml'
+$sampleStagingHelmRenderFile = Join-Path $tempDir 'sample-staging-helm-render.yaml'
+$sampleDeveloperHelmRenderFile = Join-Path $tempDir 'sample-developer-helm-render.yaml'
 $statusReportFile = Join-Path $tempDir 'status-report.generated.md'
 $helmExecutable = Get-HelmExecutable
 
@@ -374,6 +377,33 @@ try {
         }
         if ($gitopsStagingHelmRender -notmatch 'host: "backoffice-staging\.yas\.local"') {
             throw 'GitOps staging Helm render is missing the backoffice staging ingress host override.'
+        }
+
+        & $helmExecutable template yas-dev 'helm\yas' -f 'helm\yas\values.yaml' -f 'helm\yas\values-dev.yaml' | Out-File -FilePath $sampleDevHelmRenderFile -Encoding utf8
+        $sampleDevHelmRender = Get-Content $sampleDevHelmRenderFile -Raw
+        if ($sampleDevHelmRender -notmatch 'host: "storefront-dev\.yas\.local"') {
+            throw 'helm/yas/values-dev.yaml is missing the storefront dev ingress host override.'
+        }
+        if ($sampleDevHelmRender -notmatch 'host: "backoffice-dev\.yas\.local"') {
+            throw 'helm/yas/values-dev.yaml is missing the backoffice dev ingress host override.'
+        }
+
+        & $helmExecutable template yas-staging 'helm\yas' -f 'helm\yas\values.yaml' -f 'helm\yas\values-staging.yaml' | Out-File -FilePath $sampleStagingHelmRenderFile -Encoding utf8
+        $sampleStagingHelmRender = Get-Content $sampleStagingHelmRenderFile -Raw
+        if ($sampleStagingHelmRender -notmatch 'host: "storefront-staging\.yas\.local"') {
+            throw 'helm/yas/values-staging.yaml is missing the storefront staging ingress host override.'
+        }
+        if ($sampleStagingHelmRender -notmatch 'host: "backoffice-staging\.yas\.local"') {
+            throw 'helm/yas/values-staging.yaml is missing the backoffice staging ingress host override.'
+        }
+
+        & $helmExecutable template yas-dev1 'helm\yas' -f 'helm\yas\values.yaml' -f 'helm\yas\values-developer-template.yaml' | Out-File -FilePath $sampleDeveloperHelmRenderFile -Encoding utf8
+        $sampleDeveloperHelmRender = Get-Content $sampleDeveloperHelmRenderFile -Raw
+        if ($sampleDeveloperHelmRender -notmatch 'host: "storefront-dev1\.yas\.local"') {
+            throw 'helm/yas/values-developer-template.yaml is missing the storefront developer ingress host override.'
+        }
+        if ($sampleDeveloperHelmRender -notmatch 'host: "backoffice-dev1\.yas\.local"') {
+            throw 'helm/yas/values-developer-template.yaml is missing the backoffice developer ingress host override.'
         }
     }
 

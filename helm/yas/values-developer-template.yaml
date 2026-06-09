@@ -3,3 +3,13 @@ global:
   namespace: yas-user-dev1
   domainName: storefront-dev1.yas.local
 
+services:
+  storefront:
+    ingress:
+      enabled: true
+      host: storefront-dev1.yas.local
+  backoffice:
+    ingress:
+      enabled: true
+      host: backoffice-dev1.yas.local
+

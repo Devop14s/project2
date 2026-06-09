@@ -201,6 +201,15 @@ if [ -f "${temp_dir}/helm-render.yaml" ]; then
   helm template yas-staging helm/yas -f helm/yas/values.yaml -f argocd/values/staging-values.yaml > "${temp_dir}/gitops-staging-helm-render.yaml"
   grep -q 'host: "storefront-staging.yas.local"' "${temp_dir}/gitops-staging-helm-render.yaml"
   grep -q 'host: "backoffice-staging.yas.local"' "${temp_dir}/gitops-staging-helm-render.yaml"
+  helm template yas-dev helm/yas -f helm/yas/values.yaml -f helm/yas/values-dev.yaml > "${temp_dir}/sample-dev-helm-render.yaml"
+  grep -q 'host: "storefront-dev.yas.local"' "${temp_dir}/sample-dev-helm-render.yaml"
+  grep -q 'host: "backoffice-dev.yas.local"' "${temp_dir}/sample-dev-helm-render.yaml"
+  helm template yas-staging helm/yas -f helm/yas/values.yaml -f helm/yas/values-staging.yaml > "${temp_dir}/sample-staging-helm-render.yaml"
+  grep -q 'host: "storefront-staging.yas.local"' "${temp_dir}/sample-staging-helm-render.yaml"
+  grep -q 'host: "backoffice-staging.yas.local"' "${temp_dir}/sample-staging-helm-render.yaml"
+  helm template yas-dev1 helm/yas -f helm/yas/values.yaml -f helm/yas/values-developer-template.yaml > "${temp_dir}/sample-developer-helm-render.yaml"
+  grep -q 'host: "storefront-dev1.yas.local"' "${temp_dir}/sample-developer-helm-render.yaml"
+  grep -q 'host: "backoffice-dev1.yas.local"' "${temp_dir}/sample-developer-helm-render.yaml"
   grep -q 'kind: Deployment' "${temp_dir}/helm-render.yaml"
 fi
 

@@ -3,3 +3,13 @@ global:
   namespace: yas-staging
   domainName: storefront-staging.yas.local
 
+services:
+  storefront:
+    ingress:
+      enabled: true
+      host: storefront-staging.yas.local
+  backoffice:
+    ingress:
+      enabled: true
+      host: backoffice-staging.yas.local
+
