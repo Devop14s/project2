@@ -1,7 +1,8 @@
 param(
     [string]$ServicesFile = '',
     [string]$SourceGitRoot = '',
-    [string]$OutputFile = 'work/branch-tags.env'
+    [string]$OutputFile = 'work/branch-tags.env',
+    [string]$MetadataFile = 'work/branch-tag-metadata.json'
 )
 
 . "$PSScriptRoot\catalog.ps1"
@@ -25,8 +26,15 @@ $resolvedOutputPath = if ([System.IO.Path]::IsPathRooted($OutputFile)) {
     Join-Path (Get-Location) $OutputFile
 }
 
+$resolvedMetadataPath = if ([System.IO.Path]::IsPathRooted($MetadataFile)) {
+    $MetadataFile
+} else {
+    Join-Path (Get-Location) $MetadataFile
+}
+
 $lines = Get-Content $ServicesFile
 $output = New-Object System.Collections.Generic.List[string]
+$metadataEntries = New-Object System.Collections.Generic.List[object]
 
 function Get-BranchEnvName {
     param([string]$ServiceName)
@@ -75,7 +83,20 @@ foreach ($line in $lines) {
     $tagVar = Get-TagEnvName -ServiceName $service
     $tagValue = Resolve-Tag -Branch $branchValue
     $output.Add("$tagVar=$tagValue")
+    $metadataEntries.Add([pscustomobject]@{
+        service = $service
+        branch = $branchValue
+        tag = $tagValue
+    })
 }
 
 [System.IO.File]::WriteAllLines($resolvedOutputPath, $output)
+$metadata = [pscustomobject]@{
+    services_file = $ServicesFile
+    source_git_root = $SourceGitRoot
+    output_file = $OutputFile
+    generated_at = (Get-Date).ToUniversalTime().ToString('yyyy-MM-ddTHH:mm:ssZ')
+    entries = $metadataEntries
+}
+$metadata | ConvertTo-Json -Depth 4 | Set-Content -Path $resolvedMetadataPath
 Write-Host "Resolved branch tags into $OutputFile"

@@ -29,10 +29,12 @@ Deploy a temporary environment where one or more services can use images built f
 - namespace `yas-user-<developer-id>`
 - release `yas-<developer-id>`
 - verified image list under `work/verified-image-list.txt`
+- branch/tag provenance under `work/branch-tag-metadata.json`
 - values file under `work/generated-values.yaml`
 - distinct public endpoints for `storefront` and `backoffice`
 - runtime evidence under `work/runtime-evidence/<namespace>/<release>/`
 - copied provenance inside that evidence directory, including `verified-image-list.txt` and `commit-metadata.json` when available
+- `work/branch-tag-metadata.json` records both the requested branch override and the resolved tag per service, so a developer build can be explained without reconstructing Jenkins parameters later
 - deploy and smoke-test failures now also capture partial runtime evidence there, including missing-release or missing-namespace notes when rollout breaks early and the public-endpoint list when verification fails later
 
 ## Important prerequisite

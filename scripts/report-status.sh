@@ -135,6 +135,7 @@ helm_template_verified=0
 gitops_values_verified=0
 runtime_evidence_provenance_verified=0
 self_contained_commit_metadata_verified=0
+branch_tag_metadata_verified=0
 gitops_manifest_metadata_verified=0
 partial_image_metadata_verified=0
 failure_safe_runtime_evidence_verified=0
@@ -272,6 +273,11 @@ if grep -q '"commit_sha": "${commit_sha}"' jenkins/scripts/write-commit-metadata
    grep -q '"commit_short_sha": "${commit_short_sha}"' jenkins/scripts/write-commit-metadata.sh 2>/dev/null && \
    grep -q '"generated_at":' jenkins/scripts/write-commit-metadata.sh 2>/dev/null; then
   self_contained_commit_metadata_verified=1
+fi
+if grep -q 'branch-tag-metadata.json' scripts/resolve-branch-tags.sh 2>/dev/null && \
+   grep -q '"service":"%s"' scripts/resolve-branch-tags.sh 2>/dev/null && \
+   grep -q '"branch":"%s"' scripts/resolve-branch-tags.sh 2>/dev/null; then
+  branch_tag_metadata_verified=1
 fi
 if grep -q 'MANIFEST_METADATA_FILE="${MANIFEST_METADATA_FILE:-work/manifest-update-metadata.json}"' jenkins/scripts/update-manifest-repo.sh 2>/dev/null && \
    grep -q 'write_manifest_metadata' jenkins/scripts/update-manifest-repo.sh 2>/dev/null && \
@@ -451,6 +457,9 @@ fi
   fi
   if [ "$self_contained_commit_metadata_verified" -eq 1 ]; then
     printf '%s\n' '- Commit metadata artifacts now embed the exact commit SHA and short SHA directly in `commit-metadata.json`, not only in sidecar text files.'
+  fi
+  if [ "$branch_tag_metadata_verified" -eq 1 ]; then
+    printf '%s\n' '- Branch-tag resolution now emits a dedicated metadata artifact that records both the requested branch override and the resolved image tag for each service.'
   fi
   if [ "$gitops_manifest_metadata_verified" -eq 1 ]; then
     printf '%s\n' '- GitOps manifest-update helpers now preserve a dedicated metadata artifact with branch, commit, push, and no-op state for each attempted overlay update.'

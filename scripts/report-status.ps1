@@ -154,6 +154,7 @@ $partialImageMetadataVerified = $false
 $failureSafeRuntimeEvidenceVerified = $false
 $cleanupGuardVerified = $false
 $sharedPromotionCommitMetadataVerified = $false
+$branchTagMetadataVerified = $false
 
 if (Test-Path $servicesFile) {
     foreach ($line in Get-Content $servicesFile) {
@@ -312,6 +313,7 @@ if (Test-Path $releaseBaselineServicesFile) {
 
 $captureRuntimeEvidenceScript = if (Test-Path 'jenkins\scripts\capture-runtime-evidence.sh') { Get-Content 'jenkins\scripts\capture-runtime-evidence.sh' -Raw } else { '' }
 $writeCommitMetadataScript = if (Test-Path 'jenkins\scripts\write-commit-metadata.sh') { Get-Content 'jenkins\scripts\write-commit-metadata.sh' -Raw } else { '' }
+$resolveBranchTagsScript = if (Test-Path 'scripts\resolve-branch-tags.ps1') { Get-Content 'scripts\resolve-branch-tags.ps1' -Raw } else { '' }
 $buildImagesScript = if (Test-Path 'jenkins\scripts\build-images.sh') { Get-Content 'jenkins\scripts\build-images.sh' -Raw } else { '' }
 $pushImagesScript = if (Test-Path 'jenkins\scripts\push-images.sh') { Get-Content 'jenkins\scripts\push-images.sh' -Raw } else { '' }
 $verifyImageTagsScript = if (Test-Path 'jenkins\scripts\verify-image-tags.sh') { Get-Content 'jenkins\scripts\verify-image-tags.sh' -Raw } else { '' }
@@ -326,6 +328,7 @@ $stagingGitopsPipeline = if (Test-Path 'jenkins\pipelines\staging_gitops.groovy'
 
 $runtimeEvidenceProvenanceVerified = (
     $captureRuntimeEvidenceScript -match 'copied-artifacts\.txt' -and
+    $captureRuntimeEvidenceScript -match 'work/branch-tag-metadata\.json' -and
     $captureRuntimeEvidenceScript -match 'work/image-digests\.txt' -and
     $captureRuntimeEvidenceScript -match 'work/commit-metadata\.json'
 )
@@ -341,6 +344,12 @@ $gitopsManifestMetadataVerified = (
     $updateManifestRepoScript -match 'write_manifest_metadata' -and
     $updateManifestRepoScript -match '"manifest_commit_sha": "\$\{manifest_commit_sha\}"' -and
     $updateManifestRepoScript -match '"last_action": "\$\{last_action\}"'
+)
+
+$branchTagMetadataVerified = (
+    $resolveBranchTagsScript -match 'branch-tag-metadata\.json' -and
+    $resolveBranchTagsScript -match 'entries = \$metadataEntries' -and
+    $resolveBranchTagsScript -match 'service = \$service'
 )
 
 $partialImageMetadataVerified = (
@@ -522,6 +531,9 @@ if ($runtimeEvidenceProvenanceVerified) {
 }
 if ($selfContainedCommitMetadataVerified) {
     $content.Add('- Commit metadata artifacts now embed the exact commit SHA and short SHA directly in `commit-metadata.json`, not only in sidecar text files.')
+}
+if ($branchTagMetadataVerified) {
+    $content.Add('- Branch-tag resolution now emits a dedicated metadata artifact that records both the requested branch override and the resolved image tag for each service.')
 }
 if ($gitopsManifestMetadataVerified) {
     $content.Add('- GitOps manifest-update helpers now preserve a dedicated metadata artifact with branch, commit, push, and no-op state for each attempted overlay update.')

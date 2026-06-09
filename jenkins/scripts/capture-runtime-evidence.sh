@@ -47,6 +47,7 @@ write_namespace_missing_note() {
 }
 
 copy_optional_artifact "work/branch-tags.env"
+copy_optional_artifact "work/branch-tag-metadata.json"
 copy_optional_artifact "work/built-image-list.txt"
 copy_optional_artifact "work/build-metadata.json"
 copy_optional_artifact "work/image-list.txt"

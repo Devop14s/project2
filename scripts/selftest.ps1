@@ -26,6 +26,7 @@ if (Test-Path $tempDir) {
 New-Item -ItemType Directory -Path $tempDir -Force | Out-Null
 
 $branchTagsFile = Join-Path $tempDir 'branch-tags.env'
+$branchTagMetadataFile = Join-Path $tempDir 'branch-tag-metadata.json'
 $sourceGitBranchTagsFile = Join-Path $tempDir 'source-git-branch-tags.env'
 $generatedValuesFile = Join-Path $tempDir 'generated-values.yaml'
 $devGeneratedValuesFile = Join-Path $tempDir 'dev-generated-values.yaml'
@@ -55,12 +56,12 @@ try {
     powershell -ExecutionPolicy Bypass -File scripts\validate-chart-values.ps1 | Out-Null
     powershell -ExecutionPolicy Bypass -File scripts\validate-gitops-values.ps1 | Out-Null
     powershell -ExecutionPolicy Bypass -File scripts\validate-source-alignment.ps1 | Out-Null
-    powershell -ExecutionPolicy Bypass -File scripts\resolve-branch-tags.ps1 -OutputFile $branchTagsFile | Out-Null
+    powershell -ExecutionPolicy Bypass -File scripts\resolve-branch-tags.ps1 -OutputFile $branchTagsFile -MetadataFile $branchTagMetadataFile | Out-Null
 
     $previousProductBranch = [Environment]::GetEnvironmentVariable('PRODUCT_BRANCH')
     [Environment]::SetEnvironmentVariable('PRODUCT_BRANCH', 'HEAD')
     try {
-        powershell -ExecutionPolicy Bypass -File scripts\resolve-branch-tags.ps1 -SourceGitRoot 'yas-source' -OutputFile $sourceGitBranchTagsFile | Out-Null
+        powershell -ExecutionPolicy Bypass -File scripts\resolve-branch-tags.ps1 -SourceGitRoot 'yas-source' -OutputFile $sourceGitBranchTagsFile -MetadataFile $branchTagMetadataFile | Out-Null
     } finally {
         [Environment]::SetEnvironmentVariable('PRODUCT_BRANCH', $previousProductBranch)
     }
@@ -68,7 +69,7 @@ try {
     $previousStorefrontBranch = [Environment]::GetEnvironmentVariable('STOREFRONT_BRANCH')
     [Environment]::SetEnvironmentVariable('STOREFRONT_BRANCH', '')
     try {
-        powershell -ExecutionPolicy Bypass -File scripts\resolve-branch-tags.ps1 -OutputFile $branchTagsFile | Out-Null
+        powershell -ExecutionPolicy Bypass -File scripts\resolve-branch-tags.ps1 -OutputFile $branchTagsFile -MetadataFile $branchTagMetadataFile | Out-Null
     } finally {
         [Environment]::SetEnvironmentVariable('STOREFRONT_BRANCH', $previousStorefrontBranch)
     }
@@ -110,6 +111,7 @@ try {
     }
 
     $branchTags = Get-Content $branchTagsFile -Raw
+    $branchTagMetadata = Get-Content $branchTagMetadataFile -Raw
     $generatedValues = Get-Content $generatedValuesFile -Raw
     $devGeneratedValues = Get-Content $devGeneratedValuesFile -Raw
     $gitopsValues = Get-Content $gitopsValuesFile -Raw
@@ -126,6 +128,18 @@ try {
 
     if ($branchTags -notmatch 'STOREFRONT_TAG=main') {
         throw 'Branch tag resolution should treat empty storefront branch overrides as main.'
+    }
+
+    if ($branchTagMetadata -notmatch '"service":\s*"storefront"') {
+        throw 'Branch-tag metadata is missing the storefront entry.'
+    }
+
+    if ($branchTagMetadata -notmatch '"branch":\s*"main"') {
+        throw 'Branch-tag metadata is missing the resolved branch values.'
+    }
+
+    if ($branchTagMetadata -notmatch '"tag":\s*"main"') {
+        throw 'Branch-tag metadata is missing the resolved tag values.'
     }
 
     $expectedSourceHead = (& git -C 'yas-source' rev-parse HEAD).Trim()
@@ -445,6 +459,10 @@ try {
     $captureRuntimeEvidenceScript = Get-Content 'jenkins\scripts\capture-runtime-evidence.sh' -Raw
     if ($captureRuntimeEvidenceScript -notmatch 'copied-artifacts\.txt') {
         throw 'capture-runtime-evidence.sh is missing the copied-artifacts evidence index.'
+    }
+
+    if ($captureRuntimeEvidenceScript -notmatch 'work/branch-tag-metadata\.json') {
+        throw 'capture-runtime-evidence.sh no longer snapshots branch-tag metadata into the per-run evidence directory.'
     }
 
     if ($captureRuntimeEvidenceScript -notmatch 'work/image-digests\.txt') {

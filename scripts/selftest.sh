@@ -7,6 +7,7 @@ repo_root="$(pwd)"
 
 mkdir -p "$temp_dir"
 branch_tags_file="${temp_dir}/branch-tags.env"
+branch_tag_metadata_file="${temp_dir}/branch-tag-metadata.json"
 generated_values_file="${temp_dir}/generated-values.yaml"
 dev_generated_values_file="${temp_dir}/dev-generated-values.yaml"
 gitops_values_file="${temp_dir}/gitops-values.yaml"
@@ -84,7 +85,7 @@ sh scripts/validate-argocd-apps.sh >/dev/null
 sh scripts/validate-chart-values.sh >/dev/null
 sh scripts/validate-gitops-values.sh >/dev/null
 sh scripts/validate-source-alignment.sh >/dev/null
-OUTPUT_FILE="$branch_tags_file" sh scripts/resolve-branch-tags.sh >/dev/null
+OUTPUT_FILE="$branch_tags_file" BRANCH_TAG_METADATA_FILE="$branch_tag_metadata_file" sh scripts/resolve-branch-tags.sh >/dev/null
 DOCKERHUB_NAMESPACE="$dockerhub_namespace" \
 TAGS_FILE="$branch_tags_file" \
 OUTPUT_FILE="$generated_values_file" \
@@ -113,6 +114,9 @@ if command -v helm >/dev/null 2>&1; then
 fi
 
 grep -q 'TAX_TAG=main' "$branch_tags_file"
+grep -q '"service":"storefront"' "$branch_tag_metadata_file"
+grep -q '"branch":"main"' "$branch_tag_metadata_file"
+grep -q '"tag":"main"' "$branch_tag_metadata_file"
 grep -q 'repository: demo-ns/yas-storefront-bff' "$generated_values_file"
 grep -q 'workloadType: ui' "$generated_values_file"
 grep -q 'host: storefront-dev1.yas.local' "$generated_values_file"
@@ -188,6 +192,7 @@ grep -q 'done < <(iter_services)' jenkins/scripts/verify-image-tags.sh
 grep -q '"completed": ${verify_completed}' jenkins/scripts/verify-image-tags.sh
 grep -q '"last_image": "${last_image}"' jenkins/scripts/verify-image-tags.sh
 grep -q 'copied-artifacts.txt' jenkins/scripts/capture-runtime-evidence.sh
+grep -q 'work/branch-tag-metadata.json' jenkins/scripts/capture-runtime-evidence.sh
 grep -q 'work/image-digests.txt' jenkins/scripts/capture-runtime-evidence.sh
 grep -q 'work/commit-metadata.json' jenkins/scripts/capture-runtime-evidence.sh
 grep -q 'CAPTURE_RUNTIME_EXIT_CODE' jenkins/scripts/capture-runtime-evidence.sh
@@ -329,8 +334,9 @@ if command -v bash >/dev/null 2>&1; then
   backup_work_file "$commit_sha_file"
   backup_work_file "$commit_short_sha_file"
   backup_work_file "$commit_metadata_file"
-  STOREFRONT_BRANCH="" OUTPUT_FILE="${temp_dir}/blank-branch-tags.env" bash scripts/resolve-branch-tags.sh >/dev/null
+  STOREFRONT_BRANCH="" OUTPUT_FILE="${temp_dir}/blank-branch-tags.env" BRANCH_TAG_METADATA_FILE="${temp_dir}/blank-branch-tag-metadata.json" bash scripts/resolve-branch-tags.sh >/dev/null
   grep -q '^STOREFRONT_TAG=main$' "${temp_dir}/blank-branch-tags.env"
+  grep -q '"service":"storefront"' "${temp_dir}/blank-branch-tag-metadata.json"
   SERVICE_CATALOG="release-baseline" \
   SOURCE_ROOT="yas-source" \
   SOURCE_GIT_ROOT="yas-source" \
