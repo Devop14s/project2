@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-global
+data:
+  environment: {{ .Values.global.environment | quote }}
+  domainName: {{ .Values.global.domainName | quote }}
+

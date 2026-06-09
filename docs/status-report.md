@@ -1,0 +1,39 @@
+# Status Report
+
+## Implemented in this repository
+
+- Assignment breakdown and phased execution plan in `plan/`.
+- Delivery repo scaffold in `jenkins/`, `helm/`, and `docs/`.
+- Advanced scaffold in `argocd/` and `mesh/`.
+- Jenkins pipeline entrypoints for CI, developer deploy, cleanup, dev, and staging.
+- GitOps pipeline entrypoints for `dev` and `staging`.
+- Reusable shell-script skeletons for Docker login, image build/push, values generation, deploy, cleanup, and smoke test.
+- Reusable shell-script skeleton for GitOps values updates.
+- Helm chart skeleton with per-service image overrides and environment overlays.
+- Helm chart scaffold aligned more closely with upstream YAS `ui` and `backend` workload patterns.
+- Documentation templates for service inventory, image mapping, deployment topology, and runbooks.
+- Local preflight script for checking scaffold completeness and tool availability.
+- Cross-platform local helpers in both PowerShell and shell form.
+- Cross-platform local helpers for preflight, branch-tag resolution, values generation, and GitOps values updates.
+- Cross-platform dry-run flow for the developer deployment path.
+- Cross-platform scaffold selftest for local helper integration.
+- Preflight supports file-only validation separately from host command validation.
+- Cross-platform service catalog validation and generated status reporting.
+- Upstream-derived YAS service catalog with 18 services and 2 public entrypoints.
+- Workload-aware catalog split between upstream-style `ui` and `backend` services.
+- Cross-platform GitOps values generation for the full service catalog.
+
+## Not implementable yet in this workspace
+
+- Real YAS service build commands and Dockerfile paths.
+- Working image list for all runtime services.
+- Functional Kubernetes deployment for YAS.
+- Verified Jenkins webhook, credentials, Docker Hub integration, and kubeconfig access.
+- Evidence screenshots and final `.docx` report.
+
+## Blocking inputs still required
+
+- The actual YAS source tree.
+- Final service inventory to deploy.
+- Docker Hub namespace and Jenkins credential IDs.
+- A reachable Kubernetes cluster and Jenkins host.

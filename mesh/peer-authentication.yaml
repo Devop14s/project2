@@ -1,0 +1,9 @@
+apiVersion: security.istio.io/v1
+kind: PeerAuthentication
+metadata:
+  name: yas-strict-mtls
+  namespace: yas-dev
+spec:
+  mtls:
+    mode: STRICT
+

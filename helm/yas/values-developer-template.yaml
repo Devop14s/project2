@@ -1,0 +1,5 @@
+global:
+  environment: developer
+  namespace: yas-user-dev1
+  domainName: storefront-dev1.yas.local
+
