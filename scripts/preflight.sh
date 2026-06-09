@@ -13,6 +13,7 @@ jenkins/README.md
 jenkins/services.env
 jenkins/services.release-baseline.env
 jenkins/scripts/capture-runtime-evidence.sh
+jenkins/scripts/verify-image-tags.sh
 jenkins/scripts/write-commit-metadata.sh
 helm/yas/Chart.yaml
 helm/yas/values.yaml

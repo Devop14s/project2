@@ -16,6 +16,9 @@ status_report_file="${temp_dir}/status-report.generated.md"
 commit_sha_file="work/commit_sha.txt"
 commit_short_sha_file="work/commit_short_sha.txt"
 commit_metadata_file="work/commit-metadata.json"
+verified_image_list_file="${temp_dir}/verified-image-list.txt"
+verify_image_metadata_file="${temp_dir}/verify-image-metadata.json"
+verify_image_tags_file="${temp_dir}/verify-image-tags.env"
 
 cleanup() {
   restore_work_file "$commit_sha_file"
@@ -118,6 +121,8 @@ grep -q 'env.DOMAIN_NAME = developerBuildTarget' Jenkinsfile
 grep -q 'env."${branchParam}" = developerBuildTarget' Jenkinsfile
 grep -q "if (env.PIPELINE_DISPATCH_MODE != 'true')" jenkins/pipelines/ci.groovy
 grep -q "if (env.PIPELINE_DISPATCH_MODE != 'true')" jenkins/pipelines/developer_build.groovy
+grep -q "stage('Docker Login')" jenkins/pipelines/developer_build.groovy
+grep -q "stage('Verify Image Tags')" jenkins/pipelines/developer_build.groovy
 grep -q "if (env.PIPELINE_DISPATCH_MODE != 'true')" jenkins/pipelines/developer_cleanup.groovy
 grep -q "if (env.PIPELINE_DISPATCH_MODE != 'true')" jenkins/pipelines/dev_cd.groovy
 grep -q "if (env.PIPELINE_DISPATCH_MODE != 'true')" jenkins/pipelines/dev_gitops.groovy
@@ -125,6 +130,10 @@ grep -q "if (env.PIPELINE_DISPATCH_MODE != 'true')" jenkins/pipelines/staging_gi
 grep -q "if (env.PIPELINE_DISPATCH_MODE != 'true')" jenkins/pipelines/staging_release.groovy
 grep -q 'IMAGE_DIGESTS_FILE="work/image-digests.txt"' jenkins/scripts/push-images.sh
 grep -q 'record_repo_digest' jenkins/scripts/push-images.sh
+grep -q 'docker manifest inspect' jenkins/scripts/verify-image-tags.sh
+grep -q 'source "$TAGS_FILE"' jenkins/scripts/verify-image-tags.sh
+grep -q 'VERIFY_IMAGE_TAGS_DRY_RUN' jenkins/scripts/verify-image-tags.sh
+grep -q 'VERIFIED_IMAGE_LIST_FILE="${VERIFIED_IMAGE_LIST_FILE:-work/verified-image-list.txt}"' jenkins/scripts/verify-image-tags.sh
 grep -q 'ENVIRONMENT="${ENVIRONMENT:-developer}"' jenkins/scripts/cleanup-release.sh
 grep -q 'default_namespace "$ENVIRONMENT" "$DEPLOYER_ID"' jenkins/scripts/cleanup-release.sh
 grep -q 'BACKOFFICE_DOMAIN_NAME="${BACKOFFICE_DOMAIN_NAME:-backoffice-${ENVIRONMENT}.yas.local}"' jenkins/scripts/update-manifest-repo.sh
@@ -134,6 +143,18 @@ if (cd "$temp_dir" && powershell -ExecutionPolicy Bypass -File "${repo_root}/scr
   printf 'preflight.ps1 -AsJson should fail outside the repo root when scaffold files are missing.\n' >&2
   exit 1
 fi
+cat > "$verify_image_tags_file" <<'EOF'
+PRODUCT_TAG=test-product-tag
+STOREFRONT_TAG=main
+EOF
+VERIFY_IMAGE_TAGS_DRY_RUN=1 \
+DOCKERHUB_NAMESPACE="$dockerhub_namespace" \
+SERVICE_CATALOG="release-baseline" \
+TAGS_FILE="$verify_image_tags_file" \
+VERIFIED_IMAGE_LIST_FILE="$verified_image_list_file" \
+VERIFY_METADATA_FILE="$verify_image_metadata_file" \
+bash jenkins/scripts/verify-image-tags.sh >/dev/null
+grep -q 'demo-ns/yas-product:test-product-tag' "$verified_image_list_file"
 grep -q 'domainName: storefront-dev.yas.local' "$dev_generated_values_file"
 grep -q 'host: backoffice-dev.yas.local' "$dev_generated_values_file"
 grep -q 'namespace: yas-dev' "$dev_generated_values_file"

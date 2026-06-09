@@ -187,6 +187,14 @@ try {
         throw 'developer_build.groovy no longer skips properties rewrites in dispatch mode.'
     }
 
+    if ($developerBuildPipeline -notmatch "stage\('Docker Login'\)") {
+        throw 'developer_build.groovy is missing the Docker login stage.'
+    }
+
+    if ($developerBuildPipeline -notmatch "stage\('Verify Image Tags'\)") {
+        throw 'developer_build.groovy is missing the image verification stage.'
+    }
+
     $developerCleanupPipeline = Get-Content 'jenkins\pipelines\developer_cleanup.groovy' -Raw
     if ($developerCleanupPipeline -notmatch "if \(env\.PIPELINE_DISPATCH_MODE != 'true'\)") {
         throw 'developer_cleanup.groovy no longer skips properties rewrites in dispatch mode.'
@@ -219,6 +227,23 @@ try {
 
     if ($pushImagesScript -notmatch 'record_repo_digest') {
         throw 'push-images.sh no longer records repo digests after push.'
+    }
+
+    $verifyImageTagsScript = Get-Content 'jenkins\scripts\verify-image-tags.sh' -Raw
+    if ($verifyImageTagsScript -notmatch 'source "\$TAGS_FILE"') {
+        throw 'verify-image-tags.sh no longer loads the resolved branch tags file.'
+    }
+
+    if ($verifyImageTagsScript -notmatch 'VERIFY_IMAGE_TAGS_DRY_RUN') {
+        throw 'verify-image-tags.sh is missing the dry-run path for local verification.'
+    }
+
+    if ($verifyImageTagsScript -notmatch 'docker manifest inspect') {
+        throw 'verify-image-tags.sh no longer checks remote image availability.'
+    }
+
+    if ($verifyImageTagsScript -notmatch 'VERIFIED_IMAGE_LIST_FILE="\$\{VERIFIED_IMAGE_LIST_FILE:-work/verified-image-list.txt\}"') {
+        throw 'verify-image-tags.sh is missing the verified image list artifact.'
     }
 
     $cleanupScript = Get-Content 'jenkins\scripts\cleanup-release.sh' -Raw

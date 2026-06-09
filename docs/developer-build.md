@@ -18,14 +18,20 @@ Deploy a temporary environment where one or more services can use images built f
    - `main` stays `main`
    - any other branch resolves to its latest commit SHA
    - services in the chosen catalog stay enabled, while services outside it are explicitly disabled in the generated overlay
-2. Generate `work/generated-values.yaml`.
-3. Run `helm upgrade --install`.
-4. Wait for rollout and print the resulting `domain:NodePort`.
+2. Log in to the registry and verify that each resolved image tag already exists remotely.
+3. Generate `work/generated-values.yaml`.
+4. Run `helm upgrade --install`.
+5. Wait for rollout and print the resulting `domain:NodePort`.
 
 ## Expected output
 
 - namespace `yas-user-<developer-id>`
 - release `yas-<developer-id>`
+- verified image list under `work/verified-image-list.txt`
 - values file under `work/generated-values.yaml`
 - distinct public endpoints for `storefront` and `backoffice`
 - runtime evidence under `work/runtime-evidence/<namespace>/<release>/`
+
+## Important prerequisite
+
+`developer_build` still deploys prebuilt images; it does not build branch images itself. A non-`main` branch override must already have been built and pushed by CI under the expected commit-SHA tag, or the job now fails during the registry verification step before Helm deploy starts.

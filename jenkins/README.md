@@ -49,7 +49,7 @@ The repository now keeps two catalogs:
 
 ## Developer build note
 
-`jenkins/pipelines/developer_build.groovy` now exposes branch override parameters for the full service catalog and supports separate `DOMAIN_NAME` and `BACKOFFICE_DOMAIN_NAME` values for the two public UIs.
+`jenkins/pipelines/developer_build.groovy` now exposes branch override parameters for the full service catalog, supports separate `DOMAIN_NAME` and `BACKOFFICE_DOMAIN_NAME` values for the two public UIs, and verifies that the resolved image tags already exist in the registry before Helm deploy starts.
 
 ## Recommended first validation
 

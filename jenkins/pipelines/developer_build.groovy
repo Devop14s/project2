@@ -45,6 +45,16 @@ return {
       sh 'jenkins/scripts/resolve-branch-tags.sh'
     }
 
+    stage('Docker Login') {
+      withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+        sh 'jenkins/scripts/docker-login.sh'
+      }
+    }
+
+    stage('Verify Image Tags') {
+      sh 'jenkins/scripts/verify-image-tags.sh'
+    }
+
     stage('Generate Values') {
       sh 'jenkins/scripts/generate-values.sh'
     }
