@@ -11,8 +11,14 @@ dev_generated_values_file="${temp_dir}/dev-generated-values.yaml"
 gitops_values_file="${temp_dir}/gitops-values.yaml"
 chart_values_file="${temp_dir}/chart-values.yaml"
 manifest_values_file="${temp_dir}/dev-values.yaml"
+commit_sha_file="work/commit_sha.txt"
+commit_short_sha_file="work/commit_short_sha.txt"
+commit_metadata_file="work/commit-metadata.json"
 
 cleanup() {
+  restore_work_file "$commit_sha_file"
+  restore_work_file "$commit_short_sha_file"
+  restore_work_file "$commit_metadata_file"
   rm -rf "$temp_dir"
 }
 
@@ -40,6 +46,30 @@ files_match_ignoring_crlf() {
   awk '{ sub(/\r$/, ""); print }' "$expected_file" > "$normalized_expected_file"
   awk '{ sub(/\r$/, ""); print }' "$actual_file" > "$normalized_actual_file"
   cmp -s "$normalized_expected_file" "$normalized_actual_file"
+}
+
+backup_work_file() {
+  file_path="$1"
+  backup_path="${temp_dir}/$(printf '%s' "$file_path" | tr '/\\' '__').bak"
+  missing_marker="${backup_path}.missing"
+
+  if [ -f "$file_path" ]; then
+    cp "$file_path" "$backup_path"
+  else
+    : > "$missing_marker"
+  fi
+}
+
+restore_work_file() {
+  file_path="$1"
+  backup_path="${temp_dir}/$(printf '%s' "$file_path" | tr '/\\' '__').bak"
+  missing_marker="${backup_path}.missing"
+
+  if [ -f "$backup_path" ]; then
+    cp "$backup_path" "$file_path"
+  elif [ -f "$missing_marker" ]; then
+    rm -f "$file_path"
+  fi
 }
 
 sh scripts/validate-services-catalog.sh >/dev/null
@@ -139,6 +169,19 @@ if [ -f "${temp_dir}/helm-render.yaml" ]; then
 fi
 
 if command -v bash >/dev/null 2>&1; then
+  backup_work_file "$commit_sha_file"
+  backup_work_file "$commit_short_sha_file"
+  backup_work_file "$commit_metadata_file"
+  SERVICE_CATALOG="release-baseline" \
+  SOURCE_ROOT="yas-source" \
+  SOURCE_GIT_ROOT="yas-source" \
+  bash jenkins/scripts/write-commit-metadata.sh >/dev/null
+  expected_commit_sha="$(git -C yas-source rev-parse HEAD)"
+  expected_commit_short_sha="$(git -C yas-source rev-parse --short HEAD)"
+  [ "$(cat "$commit_sha_file")" = "$expected_commit_sha" ]
+  [ "$(cat "$commit_short_sha_file")" = "$expected_commit_short_sha" ]
+  grep -q '"source_git_root": "yas-source"' "$commit_metadata_file"
+  grep -q '"services_file": "jenkins/services.release-baseline.env"' "$commit_metadata_file"
   bash -lc '
     source jenkins/scripts/common.sh
     [ "$(resolve_manifest_branch_ref "" "" "origin/main" "HEAD")" = "main" ]
