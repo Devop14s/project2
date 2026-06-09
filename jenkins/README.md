@@ -52,3 +52,7 @@ Example:
 ## GitOps note
 
 `jenkins/scripts/update-manifest-repo.sh` now regenerates the full `argocd/values/*.yaml` file from the service catalog instead of editing only a few existing tag lines.
+
+## Chart note
+
+`helm/yas/values.yaml` is no longer just a hand-maintained baseline. It can be regenerated from `jenkins/services.env` through `scripts/generate-chart-values.ps1` or `scripts/generate-chart-values.sh`.

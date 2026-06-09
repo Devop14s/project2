@@ -21,6 +21,8 @@ $requiredFiles = @(
     'scripts\selftest.sh',
     'scripts\validate-services-catalog.ps1',
     'scripts\validate-services-catalog.sh',
+    'scripts\validate-chart-values.ps1',
+    'scripts\validate-chart-values.sh',
     'scripts\report-status.ps1',
     'scripts\report-status.sh',
     'scripts\resolve-branch-tags.ps1',
@@ -29,6 +31,8 @@ $requiredFiles = @(
     'scripts\generate-values.sh',
     'scripts\generate-gitops-values.ps1',
     'scripts\generate-gitops-values.sh',
+    'scripts\generate-chart-values.ps1',
+    'scripts\generate-chart-values.sh',
     'scripts\update-manifest-values.ps1',
     'scripts\update-manifest-values.sh'
 )

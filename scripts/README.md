@@ -16,6 +16,8 @@ The generated developer values also keep separate ingress hosts for the public `
 - `selftest.sh`
 - `validate-services-catalog.ps1`
 - `validate-services-catalog.sh`
+- `validate-chart-values.ps1`
+- `validate-chart-values.sh`
 - `report-status.ps1`
 - `report-status.sh`
 - `resolve-branch-tags.ps1`
@@ -24,6 +26,8 @@ The generated developer values also keep separate ingress hosts for the public `
 - `generate-values.sh`
 - `generate-gitops-values.ps1`
 - `generate-gitops-values.sh`
+- `generate-chart-values.ps1`
+- `generate-chart-values.sh`
 - `update-manifest-values.ps1`
 - `update-manifest-values.sh`
 
@@ -37,10 +41,12 @@ powershell -ExecutionPolicy Bypass -File scripts\preflight.ps1 -SkipCommandCheck
 powershell -ExecutionPolicy Bypass -File scripts\developer-build-dry-run.ps1 -DockerhubNamespace your-dockerhub-namespace
 powershell -ExecutionPolicy Bypass -File scripts\selftest.ps1
 powershell -ExecutionPolicy Bypass -File scripts\validate-services-catalog.ps1
+powershell -ExecutionPolicy Bypass -File scripts\validate-chart-values.ps1
 powershell -ExecutionPolicy Bypass -File scripts\report-status.ps1 -SkipCommandChecks
 powershell -ExecutionPolicy Bypass -File scripts\resolve-branch-tags.ps1
 powershell -ExecutionPolicy Bypass -File scripts\generate-values.ps1 -DockerhubNamespace your-dockerhub-namespace
 powershell -ExecutionPolicy Bypass -File scripts\generate-gitops-values.ps1 -EnvironmentName dev -OutputFile argocd\values\dev-values.yaml
+powershell -ExecutionPolicy Bypass -File scripts\generate-chart-values.ps1 -OutputFile helm\yas\values.yaml
 powershell -ExecutionPolicy Bypass -File scripts\update-manifest-values.ps1 -ValuesFile argocd\values\dev-values.yaml -Tag main
 ```
 
@@ -52,9 +58,11 @@ sh scripts/preflight.sh --skip-command-checks
 sh scripts/developer-build-dry-run.sh your-dockerhub-namespace
 sh scripts/selftest.sh
 sh scripts/validate-services-catalog.sh
+sh scripts/validate-chart-values.sh
 sh scripts/report-status.sh --skip-command-checks
 sh scripts/resolve-branch-tags.sh
 DOCKERHUB_NAMESPACE=your-dockerhub-namespace sh scripts/generate-values.sh
 ENVIRONMENT=dev OUTPUT_FILE=argocd/values/dev-values.yaml sh scripts/generate-gitops-values.sh
+OUTPUT_FILE=helm/yas/values.yaml sh scripts/generate-chart-values.sh
 sh scripts/update-manifest-values.sh argocd/values/dev-values.yaml main
 ```

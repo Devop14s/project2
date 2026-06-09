@@ -8,6 +8,7 @@ mkdir -p "$temp_dir"
 branch_tags_file="${temp_dir}/branch-tags.env"
 generated_values_file="${temp_dir}/generated-values.yaml"
 gitops_values_file="${temp_dir}/gitops-values.yaml"
+chart_values_file="${temp_dir}/chart-values.yaml"
 manifest_values_file="${temp_dir}/dev-values.yaml"
 
 cleanup() {
@@ -19,6 +20,7 @@ trap cleanup EXIT INT TERM
 cp argocd/values/dev-values.yaml "$manifest_values_file"
 
 sh scripts/validate-services-catalog.sh >/dev/null
+sh scripts/validate-chart-values.sh >/dev/null
 OUTPUT_FILE="$branch_tags_file" sh scripts/resolve-branch-tags.sh >/dev/null
 DOCKERHUB_NAMESPACE="$dockerhub_namespace" \
 TAGS_FILE="$branch_tags_file" \
@@ -28,6 +30,8 @@ TAGS_FILE="$branch_tags_file" \
 OUTPUT_FILE="$gitops_values_file" \
 ENVIRONMENT=dev \
 sh scripts/generate-gitops-values.sh >/dev/null
+OUTPUT_FILE="$chart_values_file" \
+sh scripts/generate-chart-values.sh >/dev/null
 sh scripts/update-manifest-values.sh "$manifest_values_file" test-tag >/dev/null
 
 grep -q 'TAX_TAG=main' "$branch_tags_file"
@@ -39,6 +43,8 @@ grep -q 'metricPort: 8090' "$generated_values_file"
 grep -q 'type: NodePort' "$generated_values_file"
 grep -q 'environment: dev' "$gitops_values_file"
 grep -q 'payment-paypal:' "$gitops_values_file"
+grep -q 'repository: docker.io/example/yas-storefront' "$chart_values_file"
+grep -q 'host: backoffice.yas.local' "$chart_values_file"
 grep -q 'tag: test-tag' "$manifest_values_file"
 
 printf 'Selftest passed.\n'

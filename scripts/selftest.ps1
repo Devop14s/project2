@@ -11,12 +11,14 @@ New-Item -ItemType Directory -Path $tempDir -Force | Out-Null
 $branchTagsFile = Join-Path $tempDir 'branch-tags.env'
 $generatedValuesFile = Join-Path $tempDir 'generated-values.yaml'
 $gitopsValuesFile = Join-Path $tempDir 'gitops-values.yaml'
+$chartValuesFile = Join-Path $tempDir 'chart-values.yaml'
 $manifestValuesFile = Join-Path $tempDir 'dev-values.yaml'
 
 try {
     Copy-Item 'argocd\values\dev-values.yaml' $manifestValuesFile -Force
 
     powershell -ExecutionPolicy Bypass -File scripts\validate-services-catalog.ps1 | Out-Null
+    powershell -ExecutionPolicy Bypass -File scripts\validate-chart-values.ps1 | Out-Null
     powershell -ExecutionPolicy Bypass -File scripts\resolve-branch-tags.ps1 -OutputFile $branchTagsFile | Out-Null
     powershell -ExecutionPolicy Bypass -File scripts\generate-values.ps1 `
         -TagsFile $branchTagsFile `
@@ -26,6 +28,8 @@ try {
         -TagsFile $branchTagsFile `
         -OutputFile $gitopsValuesFile `
         -EnvironmentName dev | Out-Null
+    powershell -ExecutionPolicy Bypass -File scripts\generate-chart-values.ps1 `
+        -OutputFile $chartValuesFile | Out-Null
     powershell -ExecutionPolicy Bypass -File scripts\update-manifest-values.ps1 `
         -ValuesFile $manifestValuesFile `
         -Tag test-tag | Out-Null
@@ -33,6 +37,7 @@ try {
     $branchTags = Get-Content $branchTagsFile -Raw
     $generatedValues = Get-Content $generatedValuesFile -Raw
     $gitopsValues = Get-Content $gitopsValuesFile -Raw
+    $chartValues = Get-Content $chartValuesFile -Raw
     $manifestValues = Get-Content $manifestValuesFile -Raw
 
     if ($branchTags -notmatch 'TAX_TAG=main') {
@@ -69,6 +74,14 @@ try {
 
     if ($gitopsValues -notmatch 'payment-paypal:') {
         throw 'Generated GitOps values are missing payment-paypal.'
+    }
+
+    if ($chartValues -notmatch 'repository: docker.io/example/yas-storefront') {
+        throw 'Generated chart values are missing the expected storefront repository.'
+    }
+
+    if ($chartValues -notmatch 'host: backoffice.yas.local') {
+        throw 'Generated chart values are missing the backoffice ingress host.'
     }
 
     if ($manifestValues -notmatch 'tag: test-tag') {

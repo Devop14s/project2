@@ -22,6 +22,7 @@
 - Upstream-derived YAS service catalog with 18 services and 2 public entrypoints.
 - Workload-aware catalog split between upstream-style `ui` and `backend` services.
 - Cross-platform GitOps values generation for the full service catalog.
+- Cross-platform Helm baseline values generation from the shared service catalog.
 
 ## Not implementable yet in this workspace
 
