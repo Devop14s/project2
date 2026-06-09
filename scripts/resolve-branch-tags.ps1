@@ -20,6 +20,11 @@ if ($outputDir) {
     New-Item -ItemType Directory -Path $outputDir -Force | Out-Null
 }
 
+$metadataDir = Split-Path -Parent $MetadataFile
+if ($metadataDir) {
+    New-Item -ItemType Directory -Path $metadataDir -Force | Out-Null
+}
+
 $resolvedOutputPath = if ([System.IO.Path]::IsPathRooted($OutputFile)) {
     $OutputFile
 } else {

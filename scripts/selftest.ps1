@@ -27,6 +27,7 @@ New-Item -ItemType Directory -Path $tempDir -Force | Out-Null
 
 $branchTagsFile = Join-Path $tempDir 'branch-tags.env'
 $branchTagMetadataFile = Join-Path $tempDir 'branch-tag-metadata.json'
+$branchTagMetadataNestedFile = Join-Path $tempDir 'metadata\branch-tag-metadata.json'
 $sourceGitBranchTagsFile = Join-Path $tempDir 'source-git-branch-tags.env'
 $generatedValuesFile = Join-Path $tempDir 'generated-values.yaml'
 $devGeneratedValuesFile = Join-Path $tempDir 'dev-generated-values.yaml'
@@ -56,12 +57,12 @@ try {
     powershell -ExecutionPolicy Bypass -File scripts\validate-chart-values.ps1 | Out-Null
     powershell -ExecutionPolicy Bypass -File scripts\validate-gitops-values.ps1 | Out-Null
     powershell -ExecutionPolicy Bypass -File scripts\validate-source-alignment.ps1 | Out-Null
-    powershell -ExecutionPolicy Bypass -File scripts\resolve-branch-tags.ps1 -OutputFile $branchTagsFile -MetadataFile $branchTagMetadataFile | Out-Null
+    powershell -ExecutionPolicy Bypass -File scripts\resolve-branch-tags.ps1 -OutputFile $branchTagsFile -MetadataFile $branchTagMetadataNestedFile | Out-Null
 
     $previousProductBranch = [Environment]::GetEnvironmentVariable('PRODUCT_BRANCH')
     [Environment]::SetEnvironmentVariable('PRODUCT_BRANCH', 'HEAD')
     try {
-        powershell -ExecutionPolicy Bypass -File scripts\resolve-branch-tags.ps1 -SourceGitRoot 'yas-source' -OutputFile $sourceGitBranchTagsFile -MetadataFile $branchTagMetadataFile | Out-Null
+        powershell -ExecutionPolicy Bypass -File scripts\resolve-branch-tags.ps1 -SourceGitRoot 'yas-source' -OutputFile $sourceGitBranchTagsFile -MetadataFile $branchTagMetadataNestedFile | Out-Null
     } finally {
         [Environment]::SetEnvironmentVariable('PRODUCT_BRANCH', $previousProductBranch)
     }
@@ -69,7 +70,7 @@ try {
     $previousStorefrontBranch = [Environment]::GetEnvironmentVariable('STOREFRONT_BRANCH')
     [Environment]::SetEnvironmentVariable('STOREFRONT_BRANCH', '')
     try {
-        powershell -ExecutionPolicy Bypass -File scripts\resolve-branch-tags.ps1 -OutputFile $branchTagsFile -MetadataFile $branchTagMetadataFile | Out-Null
+        powershell -ExecutionPolicy Bypass -File scripts\resolve-branch-tags.ps1 -OutputFile $branchTagsFile -MetadataFile $branchTagMetadataNestedFile | Out-Null
     } finally {
         [Environment]::SetEnvironmentVariable('STOREFRONT_BRANCH', $previousStorefrontBranch)
     }
@@ -111,7 +112,11 @@ try {
     }
 
     $branchTags = Get-Content $branchTagsFile -Raw
-    $branchTagMetadata = Get-Content $branchTagMetadataFile -Raw
+    if (-not (Test-Path $branchTagMetadataNestedFile)) {
+        throw 'resolve-branch-tags.ps1 did not create the requested metadata file path.'
+    }
+
+    $branchTagMetadata = Get-Content $branchTagMetadataNestedFile -Raw
     $generatedValues = Get-Content $generatedValuesFile -Raw
     $devGeneratedValues = Get-Content $devGeneratedValuesFile -Raw
     $gitopsValues = Get-Content $gitopsValuesFile -Raw
