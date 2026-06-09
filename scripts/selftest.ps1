@@ -192,6 +192,14 @@ try {
         throw 'ci.groovy no longer skips properties rewrites in dispatch mode.'
     }
 
+    if ($ciPipeline -notmatch "name: 'DOCKERHUB_NAMESPACE'") {
+        throw 'ci.groovy is missing the direct-load DOCKERHUB_NAMESPACE parameter.'
+    }
+
+    if ($ciPipeline -notmatch 'DOCKERHUB_NAMESPACE must be provided as a parameter or Jenkins job environment value\.') {
+        throw 'ci.groovy no longer validates DOCKERHUB_NAMESPACE for direct-load execution.'
+    }
+
     $developerBuildPipeline = Get-Content 'jenkins\pipelines\developer_build.groovy' -Raw
     if ($developerBuildPipeline -notmatch "if \(env\.PIPELINE_DISPATCH_MODE != 'true'\)") {
         throw 'developer_build.groovy no longer skips properties rewrites in dispatch mode.'
@@ -203,6 +211,10 @@ try {
 
     if ($developerBuildPipeline -notmatch "stage\('Verify Image Tags'\)") {
         throw 'developer_build.groovy is missing the image verification stage.'
+    }
+
+    if ($developerBuildPipeline -notmatch "name: 'DOCKERHUB_NAMESPACE'") {
+        throw 'developer_build.groovy is missing the direct-load DOCKERHUB_NAMESPACE parameter.'
     }
 
     $developerBuildDryRunScript = Get-Content 'scripts\developer-build-dry-run.ps1' -Raw
@@ -220,9 +232,17 @@ try {
         throw 'dev_cd.groovy no longer skips properties rewrites in dispatch mode.'
     }
 
+    if ($devCdPipeline -notmatch "name: 'DOCKERHUB_NAMESPACE'") {
+        throw 'dev_cd.groovy is missing the direct-load DOCKERHUB_NAMESPACE parameter.'
+    }
+
     $devGitopsPipeline = Get-Content 'jenkins\pipelines\dev_gitops.groovy' -Raw
     if ($devGitopsPipeline -notmatch "if \(env\.PIPELINE_DISPATCH_MODE != 'true'\)") {
         throw 'dev_gitops.groovy no longer skips properties rewrites in dispatch mode.'
+    }
+
+    if ($devGitopsPipeline -notmatch "name: 'DOCKERHUB_NAMESPACE'") {
+        throw 'dev_gitops.groovy is missing the direct-load DOCKERHUB_NAMESPACE parameter.'
     }
 
     $stagingGitopsPipeline = Get-Content 'jenkins\pipelines\staging_gitops.groovy' -Raw
@@ -230,9 +250,17 @@ try {
         throw 'staging_gitops.groovy no longer skips properties rewrites in dispatch mode.'
     }
 
+    if ($stagingGitopsPipeline -notmatch "name: 'DOCKERHUB_NAMESPACE'") {
+        throw 'staging_gitops.groovy is missing the direct-load DOCKERHUB_NAMESPACE parameter.'
+    }
+
     $stagingReleasePipeline = Get-Content 'jenkins\pipelines\staging_release.groovy' -Raw
     if ($stagingReleasePipeline -notmatch "if \(env\.PIPELINE_DISPATCH_MODE != 'true'\)") {
         throw 'staging_release.groovy no longer skips properties rewrites in dispatch mode.'
+    }
+
+    if ($stagingReleasePipeline -notmatch "name: 'DOCKERHUB_NAMESPACE'") {
+        throw 'staging_release.groovy is missing the direct-load DOCKERHUB_NAMESPACE parameter.'
     }
 
     $pushImagesScript = Get-Content 'jenkins\scripts\push-images.sh' -Raw

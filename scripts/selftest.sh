@@ -123,15 +123,22 @@ grep -q "env.RELEASE_VERSION = stagingTarget" Jenkinsfile
 grep -q 'env.DOMAIN_NAME = developerBuildTarget' Jenkinsfile
 grep -q 'env."${branchParam}" = developerBuildTarget' Jenkinsfile
 grep -q "if (env.PIPELINE_DISPATCH_MODE != 'true')" jenkins/pipelines/ci.groovy
+grep -q "name: 'DOCKERHUB_NAMESPACE'" jenkins/pipelines/ci.groovy
+grep -q 'DOCKERHUB_NAMESPACE must be provided as a parameter or Jenkins job environment value\.' jenkins/pipelines/ci.groovy
 grep -q "if (env.PIPELINE_DISPATCH_MODE != 'true')" jenkins/pipelines/developer_build.groovy
 grep -q "stage('Docker Login')" jenkins/pipelines/developer_build.groovy
 grep -q "stage('Verify Image Tags')" jenkins/pipelines/developer_build.groovy
+grep -q "name: 'DOCKERHUB_NAMESPACE'" jenkins/pipelines/developer_build.groovy
 grep -q "\[string\]\$PaymentBranch = 'main'" scripts/developer-build-dry-run.ps1
 grep -q "if (env.PIPELINE_DISPATCH_MODE != 'true')" jenkins/pipelines/developer_cleanup.groovy
 grep -q "if (env.PIPELINE_DISPATCH_MODE != 'true')" jenkins/pipelines/dev_cd.groovy
+grep -q "name: 'DOCKERHUB_NAMESPACE'" jenkins/pipelines/dev_cd.groovy
 grep -q "if (env.PIPELINE_DISPATCH_MODE != 'true')" jenkins/pipelines/dev_gitops.groovy
+grep -q "name: 'DOCKERHUB_NAMESPACE'" jenkins/pipelines/dev_gitops.groovy
 grep -q "if (env.PIPELINE_DISPATCH_MODE != 'true')" jenkins/pipelines/staging_gitops.groovy
+grep -q "name: 'DOCKERHUB_NAMESPACE'" jenkins/pipelines/staging_gitops.groovy
 grep -q "if (env.PIPELINE_DISPATCH_MODE != 'true')" jenkins/pipelines/staging_release.groovy
+grep -q "name: 'DOCKERHUB_NAMESPACE'" jenkins/pipelines/staging_release.groovy
 grep -q 'IMAGE_DIGESTS_FILE="work/image-digests.txt"' jenkins/scripts/push-images.sh
 grep -q 'record_repo_digest' jenkins/scripts/push-images.sh
 grep -q 'docker manifest inspect' jenkins/scripts/verify-image-tags.sh
