@@ -47,6 +47,8 @@ product_build_verified=0
 payment_build_verified=0
 payment_paypal_build_verified=0
 recommendation_build_verified=0
+inventory_build_verified=0
+order_build_verified=0
 sampledata_package_verified=0
 search_package_verified=0
 product_image_verified=0
@@ -56,6 +58,8 @@ backoffice_bff_image_verified=0
 payment_image_verified=0
 payment_paypal_image_verified=0
 recommendation_image_verified=0
+inventory_image_verified=0
+order_image_verified=0
 sampledata_image_verified=0
 search_image_verified=0
 helm_lint_verified=0
@@ -108,6 +112,12 @@ fi
 if [ -f "yas-source/recommendation/target/recommendation-1.0-SNAPSHOT.jar" ]; then
   recommendation_build_verified=1
 fi
+if [ -f "yas-source/inventory/target/inventory-1.0-SNAPSHOT.jar" ]; then
+  inventory_build_verified=1
+fi
+if [ -f "yas-source/order/target/order-1.0-SNAPSHOT.jar" ]; then
+  order_build_verified=1
+fi
 if [ -f "yas-source/sampledata/target/sampledata-1.0-SNAPSHOT.jar" ]; then
   sampledata_package_verified=1
 fi
@@ -135,6 +145,12 @@ if command -v docker >/dev/null 2>&1; then
   fi
   if docker image inspect yas-recommendation:codex-verified >/dev/null 2>&1; then
     recommendation_image_verified=1
+  fi
+  if docker image inspect yas-inventory:codex-verified >/dev/null 2>&1; then
+    inventory_image_verified=1
+  fi
+  if docker image inspect yas-order:codex-verified >/dev/null 2>&1; then
+    order_image_verified=1
   fi
   if docker image inspect yas-sampledata:codex-verified >/dev/null 2>&1; then
     sampledata_image_verified=1
@@ -219,6 +235,12 @@ fi
   if [ "$recommendation_build_verified" -eq 1 ]; then
     printf '%s\n' '- A real `recommendation` Maven backend build completed successfully and produced a runnable JAR artifact.'
   fi
+  if [ "$inventory_build_verified" -eq 1 ]; then
+    printf '%s\n' '- A real `inventory` Maven backend build completed successfully and produced a runnable JAR artifact.'
+  fi
+  if [ "$order_build_verified" -eq 1 ]; then
+    printf '%s\n' '- A real `order` Maven backend build completed successfully and produced a runnable JAR artifact.'
+  fi
   if [ "$sampledata_package_verified" -eq 1 ]; then
     printf '%s\n' '- A packaged `sampledata` JAR was produced successfully in this workspace using a test-skipped Maven build.'
   fi
@@ -245,6 +267,12 @@ fi
   fi
   if [ "$recommendation_image_verified" -eq 1 ]; then
     printf '%s\n' '- A real `recommendation` Docker image build completed successfully in this workspace.'
+  fi
+  if [ "$inventory_image_verified" -eq 1 ]; then
+    printf '%s\n' '- A real `inventory` Docker image build completed successfully in this workspace.'
+  fi
+  if [ "$order_image_verified" -eq 1 ]; then
+    printf '%s\n' '- A real `order` Docker image build completed successfully in this workspace.'
   fi
   if [ "$sampledata_image_verified" -eq 1 ]; then
     printf '%s\n' '- A real `sampledata` Docker image build completed successfully in this workspace.'

@@ -60,6 +60,8 @@ $productBuildVerified = (Test-Path 'yas-source\product\target\product-1.0-SNAPSH
 $paymentBuildVerified = (Test-Path 'yas-source\payment\target\payment-1.0-SNAPSHOT.jar')
 $paymentPaypalBuildVerified = (Test-Path 'yas-source\payment-paypal\target\payment-paypal-1.0-SNAPSHOT.jar')
 $recommendationBuildVerified = (Test-Path 'yas-source\recommendation\target\recommendation-1.0-SNAPSHOT.jar')
+$inventoryBuildVerified = (Test-Path 'yas-source\inventory\target\inventory-1.0-SNAPSHOT.jar')
+$orderBuildVerified = (Test-Path 'yas-source\order\target\order-1.0-SNAPSHOT.jar')
 $sampledataPackageVerified = (Test-Path 'yas-source\sampledata\target\sampledata-1.0-SNAPSHOT.jar')
 $searchPackageVerified = (Test-Path 'yas-source\search\target\search-1.0-SNAPSHOT.jar')
 $productImageVerified = $false
@@ -69,6 +71,8 @@ $backofficeBffImageVerified = $false
 $paymentImageVerified = $false
 $paymentPaypalImageVerified = $false
 $recommendationImageVerified = $false
+$inventoryImageVerified = $false
+$orderImageVerified = $false
 $sampledataImageVerified = $false
 $searchImageVerified = $false
 $helmExecutable = Get-HelmExecutable
@@ -147,6 +151,20 @@ if ($null -ne (Get-Command docker -ErrorAction SilentlyContinue)) {
         $recommendationImageVerified = ($LASTEXITCODE -eq 0)
     } catch {
         $recommendationImageVerified = $false
+    }
+
+    try {
+        docker image inspect 'yas-inventory:codex-verified' *> $null
+        $inventoryImageVerified = ($LASTEXITCODE -eq 0)
+    } catch {
+        $inventoryImageVerified = $false
+    }
+
+    try {
+        docker image inspect 'yas-order:codex-verified' *> $null
+        $orderImageVerified = ($LASTEXITCODE -eq 0)
+    } catch {
+        $orderImageVerified = $false
     }
 
     try {
@@ -253,6 +271,12 @@ if ($paymentPaypalBuildVerified) {
 if ($recommendationBuildVerified) {
     $content.Add('- A real `recommendation` Maven backend build completed successfully and produced a runnable JAR artifact.')
 }
+if ($inventoryBuildVerified) {
+    $content.Add('- A real `inventory` Maven backend build completed successfully and produced a runnable JAR artifact.')
+}
+if ($orderBuildVerified) {
+    $content.Add('- A real `order` Maven backend build completed successfully and produced a runnable JAR artifact.')
+}
 if ($sampledataPackageVerified) {
     $content.Add('- A packaged `sampledata` JAR was produced successfully in this workspace using a test-skipped Maven build.')
 }
@@ -279,6 +303,12 @@ if ($paymentPaypalImageVerified) {
 }
 if ($recommendationImageVerified) {
     $content.Add('- A real `recommendation` Docker image build completed successfully in this workspace.')
+}
+if ($inventoryImageVerified) {
+    $content.Add('- A real `inventory` Docker image build completed successfully in this workspace.')
+}
+if ($orderImageVerified) {
+    $content.Add('- A real `order` Docker image build completed successfully in this workspace.')
 }
 if ($sampledataImageVerified) {
     $content.Add('- A real `sampledata` Docker image build completed successfully in this workspace.')
