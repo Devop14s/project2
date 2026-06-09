@@ -219,6 +219,11 @@ try {
         throw 'cleanup-release.sh no longer uses environment-aware namespace defaults.'
     }
 
+    $updateManifestRepoScript = Get-Content 'jenkins\scripts\update-manifest-repo.sh' -Raw
+    if ($updateManifestRepoScript -notmatch 'BACKOFFICE_DOMAIN_NAME="\$\{BACKOFFICE_DOMAIN_NAME:-backoffice-\$\{ENVIRONMENT\}\.yas\.local\}"') {
+        throw 'update-manifest-repo.sh is missing the backoffice GitOps hostname default.'
+    }
+
     $preflightScript = Get-Content 'scripts\preflight.ps1' -Raw
     if ($preflightScript -notmatch 'docker version') {
         throw 'preflight.ps1 no longer distinguishes Docker CLI presence from daemon access.'
@@ -309,6 +314,14 @@ try {
         throw 'Baseline GitOps values should disable payment.'
     }
 
+    if ($baselineGitopsValues -notmatch 'host: storefront-dev\.yas\.local') {
+        throw 'Baseline GitOps values should override the storefront dev ingress host.'
+    }
+
+    if ($baselineGitopsValues -notmatch 'host: backoffice-dev\.yas\.local') {
+        throw 'Baseline GitOps values should override the backoffice dev ingress host.'
+    }
+
     $committedDevGitopsValues = (Get-Content 'argocd\values\dev-values.yaml' -Raw).Replace("`r`n", "`n").TrimEnd()
     if ($baselineGitopsValues.Replace("`r`n", "`n").TrimEnd() -ne $committedDevGitopsValues) {
         throw 'Committed argocd/values/dev-values.yaml is out of sync with the baseline generator.'
@@ -320,6 +333,14 @@ try {
         -EnvironmentName staging `
         -ReleaseVersion 'v1.0.0' | Out-Null
     $baselineStagingGitopsValues = Get-Content $gitopsValuesFile -Raw
+    if ($baselineStagingGitopsValues -notmatch 'host: storefront-staging\.yas\.local') {
+        throw 'Baseline GitOps values should override the storefront staging ingress host.'
+    }
+
+    if ($baselineStagingGitopsValues -notmatch 'host: backoffice-staging\.yas\.local') {
+        throw 'Baseline GitOps values should override the backoffice staging ingress host.'
+    }
+
     $committedStagingGitopsValues = (Get-Content 'argocd\values\staging-values.yaml' -Raw).Replace("`r`n", "`n").TrimEnd()
     if ($baselineStagingGitopsValues.Replace("`r`n", "`n").TrimEnd() -ne $committedStagingGitopsValues) {
         throw 'Committed argocd/values/staging-values.yaml is out of sync with the baseline generator.'

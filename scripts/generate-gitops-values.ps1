@@ -5,6 +5,7 @@ param(
     [string]$EnvironmentName = 'dev',
     [string]$NamespaceName = '',
     [string]$DomainName = '',
+    [string]$BackofficeDomainName = '',
     [string]$ReleaseVersion = 'main'
 )
 
@@ -28,6 +29,10 @@ if ([string]::IsNullOrWhiteSpace($NamespaceName)) {
 
 if ([string]::IsNullOrWhiteSpace($DomainName)) {
     $DomainName = "storefront-$EnvironmentName.yas.local"
+}
+
+if ([string]::IsNullOrWhiteSpace($BackofficeDomainName)) {
+    $BackofficeDomainName = "backoffice-$EnvironmentName.yas.local"
 }
 
 $tagMap = @{}
@@ -54,6 +59,20 @@ foreach ($line in Get-Content $ServicesFile) {
 function Get-TagEnvName {
     param([string]$ServiceName)
     return (($ServiceName.ToUpper() -replace '-', '_') + '_TAG')
+}
+
+function Get-IngressHost {
+    param([string]$ServiceName)
+
+    if ($ServiceName -eq 'storefront') {
+        return $DomainName
+    }
+
+    if ($ServiceName -eq 'backoffice') {
+        return $BackofficeDomainName
+    }
+
+    return "$ServiceName-$EnvironmentName.yas.local"
 }
 
 $outputDir = Split-Path -Parent $OutputFile
@@ -96,6 +115,12 @@ foreach ($line in Get-Content $AllServicesFile) {
     $out.Add('    enabled: true')
     $out.Add('    image:')
     $out.Add("      tag: $tagValue")
+
+    if ($parts.Count -ge 5 -and $parts[4] -eq 'true') {
+        $out.Add('    ingress:')
+        $out.Add('      enabled: true')
+        $out.Add("      host: $(Get-IngressHost -ServiceName $service)")
+    }
 }
 
 foreach ($service in $selectedServices.Keys) {
@@ -109,6 +134,12 @@ foreach ($service in $selectedServices.Keys) {
     $out.Add('    enabled: true')
     $out.Add('    image:')
     $out.Add("      tag: $tagValue")
+
+    if ($parts.Count -ge 5 -and $parts[4] -eq 'true') {
+        $out.Add('    ingress:')
+        $out.Add('      enabled: true')
+        $out.Add("      host: $(Get-IngressHost -ServiceName $service)")
+    }
 }
 
 [System.IO.File]::WriteAllLines($resolvedOutputPath, $out)

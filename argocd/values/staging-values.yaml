@@ -8,10 +8,16 @@ services:
     enabled: true
     image:
       tag: v1.0.0
+    ingress:
+      enabled: true
+      host: storefront-staging.yas.local
   backoffice:
     enabled: true
     image:
       tag: v1.0.0
+    ingress:
+      enabled: true
+      host: backoffice-staging.yas.local
   storefront-bff:
     enabled: true
     image:

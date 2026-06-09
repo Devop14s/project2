@@ -125,6 +125,7 @@ grep -q 'IMAGE_DIGESTS_FILE="work/image-digests.txt"' jenkins/scripts/push-image
 grep -q 'record_repo_digest' jenkins/scripts/push-images.sh
 grep -q 'ENVIRONMENT="${ENVIRONMENT:-developer}"' jenkins/scripts/cleanup-release.sh
 grep -q 'default_namespace "$ENVIRONMENT" "$DEPLOYER_ID"' jenkins/scripts/cleanup-release.sh
+grep -q 'BACKOFFICE_DOMAIN_NAME="${BACKOFFICE_DOMAIN_NAME:-backoffice-${ENVIRONMENT}.yas.local}"' jenkins/scripts/update-manifest-repo.sh
 grep -q 'docker version' scripts/preflight.sh
 grep -q 'present but daemon inaccessible' scripts/preflight.sh
 grep -q 'domainName: storefront-dev.yas.local' "$dev_generated_values_file"
@@ -163,6 +164,8 @@ if ! service_block_has_enabled_value "$gitops_values_file" "payment" "false"; th
   printf 'Baseline GitOps values should disable payment.\n' >&2
   exit 1
 fi
+grep -q 'host: storefront-dev.yas.local' "$gitops_values_file"
+grep -q 'host: backoffice-dev.yas.local' "$gitops_values_file"
 if ! files_match_ignoring_crlf "$gitops_values_file" "argocd/values/dev-values.yaml"; then
   printf 'Committed argocd/values/dev-values.yaml is out of sync with the baseline generator.\n' >&2
   exit 1
@@ -172,6 +175,8 @@ OUTPUT_FILE="$gitops_values_file" \
 ENVIRONMENT=staging \
 RELEASE_VERSION="v1.0.0" \
 sh scripts/generate-gitops-values.sh >/dev/null
+grep -q 'host: storefront-staging.yas.local' "$gitops_values_file"
+grep -q 'host: backoffice-staging.yas.local' "$gitops_values_file"
 if ! files_match_ignoring_crlf "$gitops_values_file" "argocd/values/staging-values.yaml"; then
   printf 'Committed argocd/values/staging-values.yaml is out of sync with the baseline generator.\n' >&2
   exit 1

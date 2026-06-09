@@ -10,6 +10,7 @@ output_file="${OUTPUT_FILE:-work/gitops-values.yaml}"
 environment_name="${ENVIRONMENT:-dev}"
 namespace_name="${NAMESPACE:-yas-${environment_name}}"
 domain_name="${DOMAIN_NAME:-storefront-${environment_name}.yas.local}"
+backoffice_domain_name="${BACKOFFICE_DOMAIN_NAME:-backoffice-${environment_name}.yas.local}"
 release_version="${RELEASE_VERSION:-main}"
 
 [ -f "$services_file" ] || {
@@ -50,6 +51,22 @@ tag_var_name() {
   printf '%s_TAG' "$(printf '%s' "$1" | tr '[:lower:]-' '[:upper:]_')"
 }
 
+ingress_host_for() {
+  service="$1"
+
+  case "$service" in
+    storefront)
+      printf '%s' "$domain_name"
+      ;;
+    backoffice)
+      printf '%s' "$backoffice_domain_name"
+      ;;
+    *)
+      printf '%s-%s.yas.local' "$service" "$environment_name"
+      ;;
+  esac
+}
+
 iter_catalog_services "$all_services_file" | while IFS='|' read -r service path dockerfile port expose node_port workload_type; do
 
   if ! grep -qx "$service" "$selected_services_file"; then
@@ -69,6 +86,14 @@ EOF
     image:
       tag: ${tag_value}
 EOF
+
+  if [ "$expose" = "true" ]; then
+    cat >> "$output_file" <<EOF
+    ingress:
+      enabled: true
+      host: $(ingress_host_for "$service")
+EOF
+  fi
 done
 
 printf 'Generated %s\n' "$output_file"
