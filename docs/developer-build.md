@@ -11,6 +11,7 @@ Deploy a temporary environment where one or more services can use images built f
 - `BACKOFFICE_DOMAIN_NAME` for the backoffice UI
 - `SERVICE_CATALOG`, typically `release-baseline` for the first deployable subset or `full` for the complete catalog
 - optional per-service branch overrides for any service in the chosen catalog
+- registry access that can read the expected image repositories for the resolved tags
 
 ## Flow
 

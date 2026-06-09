@@ -26,7 +26,7 @@ Each job can point to the same `Jenkinsfile` and pass a fixed `PIPELINE_TARGET`,
 
 ## Required environment values
 
-- `DOCKERHUB_NAMESPACE` for pipelines that build or push images: `yas-ci`, `yas-developer-build`, `yas-dev-cd`, `yas-staging-release`, `yas-dev-gitops`, and `yas-staging-gitops`
+- `DOCKERHUB_NAMESPACE` for pipelines that build, push, or verify remote image tags: `yas-ci`, `yas-developer-build`, `yas-dev-cd`, `yas-staging-release`, `yas-dev-gitops`, and `yas-staging-gitops`
 - `SERVICES_FILE` if you want a direct-load Jenkins job to use something other than the default full catalog
 - `SERVICE_CATALOG` as a simpler alternative to `SERVICES_FILE`, using either `release-baseline` or `full`
 - `SOURCE_ROOT` when the service source tree is not checked out at the workspace root; leave it blank to auto-detect `yas-source/` or the workspace root

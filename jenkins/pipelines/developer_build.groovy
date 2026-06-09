@@ -3,7 +3,7 @@ return {
     properties([
       parameters([
         string(name: 'DEPLOYER_ID', defaultValue: 'dev1', description: 'Developer identifier used in namespace and hostname'),
-        choice(name: 'SERVICE_CATALOG', choices: ['release-baseline', 'full'], description: 'Service catalog to build and deploy'),
+        choice(name: 'SERVICE_CATALOG', choices: ['release-baseline', 'full'], description: 'Service catalog to verify and deploy from prebuilt image tags'),
         string(name: 'SOURCE_ROOT', defaultValue: '', description: 'Optional relative path to the YAS source tree; leave blank to auto-detect workspace root or yas-source/'),
         string(name: 'SOURCE_GIT_ROOT', defaultValue: '', description: 'Optional separate Git checkout used for branch resolution'),
         string(name: 'DOMAIN_NAME', defaultValue: 'storefront-dev1.yas.local', description: 'Hostname shown to the developer'),
