@@ -218,6 +218,7 @@ grep -q '"last_image": "${last_image}"' jenkins/scripts/verify-image-tags.sh
 grep -q 'copied-artifacts.txt' jenkins/scripts/capture-runtime-evidence.sh
 grep -q 'work/branch-tag-metadata.json' jenkins/scripts/capture-runtime-evidence.sh
 grep -q 'work/branch-tag-metadata.json' scripts/report-status.sh
+grep -q "printf '%s%s%s\\\\n' '- Service catalog paths and Dockerfiles were verified against the configured source root \`' \"\\\$source_root\" '\`.'" scripts/report-status.sh
 grep -q 'work/image-digests.txt' jenkins/scripts/capture-runtime-evidence.sh
 grep -q 'work/commit-metadata.json' jenkins/scripts/capture-runtime-evidence.sh
 grep -q 'CAPTURE_RUNTIME_EXIT_CODE' jenkins/scripts/capture-runtime-evidence.sh

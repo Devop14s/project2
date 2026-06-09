@@ -367,7 +367,7 @@ fi
     printf '%s\n' '- A frozen first-release service catalog exists in `jenkins/services.release-baseline.env`.'
   fi
   if [ "$source_aligned" -eq 1 ]; then
-    printf '%s\n' "- Service catalog paths and Dockerfiles were verified against the configured source root \`${source_root}\`."
+    printf '%s%s%s\n' '- Service catalog paths and Dockerfiles were verified against the configured source root `' "$source_root" '`.'
   fi
   if [ "$storefront_build_verified" -eq 1 ]; then
     printf '%s\n' '- A real `storefront` Next.js production build completed successfully in the cloned source tree.'

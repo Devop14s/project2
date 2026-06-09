@@ -515,6 +515,11 @@ try {
         throw 'report-status.sh no longer treats branch-tag metadata as part of the runtime evidence provenance contract.'
     }
 
+    $expectedSourceRootReportLine = 'printf ''%s%s%s\n'' ''- Service catalog paths and Dockerfiles were verified against the configured source root `'' "$source_root" ''`.'''
+    if (-not $reportStatusShellScript.Contains($expectedSourceRootReportLine)) {
+        throw 'report-status.sh should render the source-root markdown line without relying on escaped backticks inside a double-quoted shell string.'
+    }
+
     if ($captureRuntimeEvidenceScript -notmatch 'work/image-digests\.txt') {
         throw 'capture-runtime-evidence.sh no longer snapshots pushed image digests into the per-run evidence directory.'
     }
