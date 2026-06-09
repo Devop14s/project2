@@ -173,6 +173,10 @@ grep -q 'VERIFIED_IMAGE_LIST_FILE="${VERIFIED_IMAGE_LIST_FILE:-work/verified-ima
 grep -q 'copied-artifacts.txt' jenkins/scripts/capture-runtime-evidence.sh
 grep -q 'work/image-digests.txt' jenkins/scripts/capture-runtime-evidence.sh
 grep -q 'work/commit-metadata.json' jenkins/scripts/capture-runtime-evidence.sh
+grep -q 'CAPTURE_RUNTIME_EXIT_CODE' jenkins/scripts/capture-runtime-evidence.sh
+grep -q 'write_namespace_missing_note' jenkins/scripts/capture-runtime-evidence.sh
+grep -q 'capture_runtime_evidence_on_exit' jenkins/scripts/deploy-helm.sh
+grep -q 'CAPTURE_RUNTIME_REASON="deploy-helm"' jenkins/scripts/deploy-helm.sh
 grep -q 'ENVIRONMENT="${ENVIRONMENT:-developer}"' jenkins/scripts/cleanup-release.sh
 grep -q 'default_namespace "$ENVIRONMENT" "$DEPLOYER_ID"' jenkins/scripts/cleanup-release.sh
 grep -q 'ALLOW_SHARED_ENVIRONMENT_CLEANUP="${ALLOW_SHARED_ENVIRONMENT_CLEANUP:-0}"' jenkins/scripts/cleanup-release.sh

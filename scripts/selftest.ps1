@@ -385,6 +385,23 @@ try {
         throw 'capture-runtime-evidence.sh no longer snapshots commit metadata into the per-run evidence directory.'
     }
 
+    if ($captureRuntimeEvidenceScript -notmatch 'CAPTURE_RUNTIME_EXIT_CODE') {
+        throw 'capture-runtime-evidence.sh is missing the captured exit-code context.'
+    }
+
+    if ($captureRuntimeEvidenceScript -notmatch 'write_namespace_missing_note') {
+        throw 'capture-runtime-evidence.sh no longer handles missing namespaces for failure diagnostics.'
+    }
+
+    $deployHelmScript = Get-Content 'jenkins\scripts\deploy-helm.sh' -Raw
+    if ($deployHelmScript -notmatch 'capture_runtime_evidence_on_exit') {
+        throw 'deploy-helm.sh is missing the failure-safe runtime evidence trap.'
+    }
+
+    if ($deployHelmScript -notmatch 'CAPTURE_RUNTIME_REASON="deploy-helm"') {
+        throw 'deploy-helm.sh no longer labels captured evidence with the deploy-helm reason.'
+    }
+
     $cleanupScript = Get-Content 'jenkins\scripts\cleanup-release.sh' -Raw
     if ($cleanupScript -notmatch 'ENVIRONMENT="\$\{ENVIRONMENT:-developer\}"') {
         throw 'cleanup-release.sh is missing the environment-aware default.'

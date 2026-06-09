@@ -19,4 +19,5 @@ Run for an explicit release version such as `v1.2.3`.
 - Save `work/runtime-evidence/yas-staging/yas-staging/` after a successful run for screenshots and rollout evidence.
 - Save `work/commit-metadata.json` as the source-of-truth link between the release tag and the exact source commit that was built.
 - The runtime evidence directory now also snapshots those provenance files locally, so `image-digests.txt`, `commit_sha.txt`, and `commit-metadata.json` remain tied to that specific staging run.
+- Failed deploy or rollout attempts now also leave partial runtime evidence and capture status markers there, so staging diagnostics are not lost on the first failing run.
 
