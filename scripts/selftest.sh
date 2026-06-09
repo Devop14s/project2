@@ -179,6 +179,8 @@ grep -q 'CAPTURE_RUNTIME_EXIT_CODE' jenkins/scripts/capture-runtime-evidence.sh
 grep -q 'write_namespace_missing_note' jenkins/scripts/capture-runtime-evidence.sh
 grep -q 'capture_runtime_evidence_on_exit' jenkins/scripts/deploy-helm.sh
 grep -q 'CAPTURE_RUNTIME_REASON="deploy-helm"' jenkins/scripts/deploy-helm.sh
+grep -q 'capture_runtime_evidence_on_exit' jenkins/scripts/smoke-test.sh
+grep -q 'CAPTURE_RUNTIME_REASON="smoke-test"' jenkins/scripts/smoke-test.sh
 grep -q 'ENVIRONMENT="${ENVIRONMENT:-developer}"' jenkins/scripts/cleanup-release.sh
 grep -q 'default_namespace "$ENVIRONMENT" "$DEPLOYER_ID"' jenkins/scripts/cleanup-release.sh
 grep -q 'ALLOW_SHARED_ENVIRONMENT_CLEANUP="${ALLOW_SHARED_ENVIRONMENT_CLEANUP:-0}"' jenkins/scripts/cleanup-release.sh
@@ -224,6 +226,7 @@ grep -q 'host: backoffice.yas.local' "$chart_values_file"
 grep -q 'tag: test-tag' "$manifest_values_file"
 grep -q '## Runtime Access Notes' "$status_report_file"
 grep -q 'Runtime evidence directories now snapshot commit, build, push, and verification artifacts' "$status_report_file"
+grep -q 'Deploy and smoke-test helpers now capture partial runtime diagnostics' "$status_report_file"
 grep -q 'Cleanup helpers now require explicit opt-in for shared targets' "$status_report_file"
 DOCKERHUB_NAMESPACE="$dockerhub_namespace" \
 SERVICES_FILE="jenkins/services.release-baseline.env" \

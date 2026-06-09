@@ -410,6 +410,15 @@ try {
         throw 'deploy-helm.sh no longer labels captured evidence with the deploy-helm reason.'
     }
 
+    $smokeTestScript = Get-Content 'jenkins\scripts\smoke-test.sh' -Raw
+    if ($smokeTestScript -notmatch 'capture_runtime_evidence_on_exit') {
+        throw 'smoke-test.sh is missing the failure-safe runtime evidence trap.'
+    }
+
+    if ($smokeTestScript -notmatch 'CAPTURE_RUNTIME_REASON="smoke-test"') {
+        throw 'smoke-test.sh no longer labels captured evidence with the smoke-test reason.'
+    }
+
     $cleanupScript = Get-Content 'jenkins\scripts\cleanup-release.sh' -Raw
     if ($cleanupScript -notmatch 'ENVIRONMENT="\$\{ENVIRONMENT:-developer\}"') {
         throw 'cleanup-release.sh is missing the environment-aware default.'
@@ -533,6 +542,10 @@ try {
 
     if ($statusReport -notmatch 'Runtime evidence directories now snapshot commit, build, push, and verification artifacts') {
         throw 'Generated status report is missing the per-run provenance snapshot note.'
+    }
+
+    if ($statusReport -notmatch 'Deploy and smoke-test helpers now capture partial runtime diagnostics') {
+        throw 'Generated status report is missing the failure-safe deploy and smoke-test diagnostics note.'
     }
 
     if ($statusReport -notmatch 'Cleanup helpers now require explicit opt-in for shared targets') {

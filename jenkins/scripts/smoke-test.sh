@@ -15,6 +15,19 @@ evidence_dir="${EVIDENCE_ROOT}/${NAMESPACE}/${RELEASE_NAME}"
 mkdir -p "$evidence_dir"
 : > "${evidence_dir}/public-endpoints.txt"
 
+capture_runtime_evidence_on_exit() {
+  local exit_code="$1"
+
+  NAMESPACE="$NAMESPACE" \
+  RELEASE_NAME="$RELEASE_NAME" \
+  EVIDENCE_ROOT="$EVIDENCE_ROOT" \
+  CAPTURE_RUNTIME_REASON="smoke-test" \
+  CAPTURE_RUNTIME_EXIT_CODE="$exit_code" \
+  jenkins/scripts/capture-runtime-evidence.sh || true
+}
+
+trap 'capture_runtime_evidence_on_exit $?' EXIT
+
 if [[ -z "$DOMAIN_NAME" ]]; then
   if [[ "$ENVIRONMENT" == "developer" ]]; then
     DOMAIN_NAME="storefront-${DEPLOYER_ID}.yas.local"

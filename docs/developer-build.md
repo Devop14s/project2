@@ -33,7 +33,7 @@ Deploy a temporary environment where one or more services can use images built f
 - distinct public endpoints for `storefront` and `backoffice`
 - runtime evidence under `work/runtime-evidence/<namespace>/<release>/`
 - copied provenance inside that evidence directory, including `verified-image-list.txt` and `commit-metadata.json` when available
-- deploy failures now also capture partial runtime evidence there, including missing-release or missing-namespace notes when rollout breaks early
+- deploy and smoke-test failures now also capture partial runtime evidence there, including missing-release or missing-namespace notes when rollout breaks early and the public-endpoint list when verification fails later
 
 ## Important prerequisite
 

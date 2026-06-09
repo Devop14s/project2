@@ -267,7 +267,8 @@ if grep -q 'copied-artifacts.txt' jenkins/scripts/capture-runtime-evidence.sh 2>
 fi
 if grep -q 'CAPTURE_RUNTIME_EXIT_CODE' jenkins/scripts/capture-runtime-evidence.sh 2>/dev/null && \
    grep -q 'write_namespace_missing_note' jenkins/scripts/capture-runtime-evidence.sh 2>/dev/null && \
-   grep -q 'capture_runtime_evidence_on_exit' jenkins/scripts/deploy-helm.sh 2>/dev/null; then
+   grep -q 'capture_runtime_evidence_on_exit' jenkins/scripts/deploy-helm.sh 2>/dev/null && \
+   grep -q 'capture_runtime_evidence_on_exit' jenkins/scripts/smoke-test.sh 2>/dev/null; then
   failure_safe_runtime_evidence_verified=1
 fi
 if grep -q 'ALLOW_SHARED_ENVIRONMENT_CLEANUP="${ALLOW_SHARED_ENVIRONMENT_CLEANUP:-0}"' jenkins/scripts/cleanup-release.sh 2>/dev/null && \
@@ -427,7 +428,7 @@ fi
     printf '%s\n' '- Runtime evidence directories now snapshot commit, build, push, and verification artifacts such as `commit-metadata.json` and `image-digests.txt` per run.'
   fi
   if [ "$failure_safe_runtime_evidence_verified" -eq 1 ]; then
-    printf '%s\n' '- Deploy helpers now capture partial runtime diagnostics even when `helm upgrade` or rollout checks fail, reducing lost evidence on first-failure runs.'
+    printf '%s\n' '- Deploy and smoke-test helpers now capture partial runtime diagnostics even when rollout or endpoint verification fails, reducing lost evidence on first-failure runs.'
   fi
   if [ "$cleanup_guard_verified" -eq 1 ]; then
     printf '%s\n' '- Cleanup helpers now require explicit opt-in for shared targets and a second explicit opt-in before deleting shared namespaces.'

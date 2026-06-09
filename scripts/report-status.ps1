@@ -309,6 +309,7 @@ if (Test-Path $releaseBaselineServicesFile) {
 
 $captureRuntimeEvidenceScript = if (Test-Path 'jenkins\scripts\capture-runtime-evidence.sh') { Get-Content 'jenkins\scripts\capture-runtime-evidence.sh' -Raw } else { '' }
 $deployHelmScript = if (Test-Path 'jenkins\scripts\deploy-helm.sh') { Get-Content 'jenkins\scripts\deploy-helm.sh' -Raw } else { '' }
+$smokeTestScript = if (Test-Path 'jenkins\scripts\smoke-test.sh') { Get-Content 'jenkins\scripts\smoke-test.sh' -Raw } else { '' }
 $cleanupScript = if (Test-Path 'jenkins\scripts\cleanup-release.sh') { Get-Content 'jenkins\scripts\cleanup-release.sh' -Raw } else { '' }
 $devCdPipeline = if (Test-Path 'jenkins\pipelines\dev_cd.groovy') { Get-Content 'jenkins\pipelines\dev_cd.groovy' -Raw } else { '' }
 $devGitopsPipeline = if (Test-Path 'jenkins\pipelines\dev_gitops.groovy') { Get-Content 'jenkins\pipelines\dev_gitops.groovy' -Raw } else { '' }
@@ -324,7 +325,8 @@ $runtimeEvidenceProvenanceVerified = (
 $failureSafeRuntimeEvidenceVerified = (
     $captureRuntimeEvidenceScript -match 'CAPTURE_RUNTIME_EXIT_CODE' -and
     $captureRuntimeEvidenceScript -match 'write_namespace_missing_note' -and
-    $deployHelmScript -match 'capture_runtime_evidence_on_exit'
+    $deployHelmScript -match 'capture_runtime_evidence_on_exit' -and
+    $smokeTestScript -match 'capture_runtime_evidence_on_exit'
 )
 
 $cleanupGuardVerified = (
@@ -489,7 +491,7 @@ if ($runtimeEvidenceProvenanceVerified) {
     $content.Add('- Runtime evidence directories now snapshot commit, build, push, and verification artifacts such as `commit-metadata.json` and `image-digests.txt` per run.')
 }
 if ($failureSafeRuntimeEvidenceVerified) {
-    $content.Add('- Deploy helpers now capture partial runtime diagnostics even when `helm upgrade` or rollout checks fail, reducing lost evidence on first-failure runs.')
+    $content.Add('- Deploy and smoke-test helpers now capture partial runtime diagnostics even when rollout or endpoint verification fails, reducing lost evidence on first-failure runs.')
 }
 if ($cleanupGuardVerified) {
     $content.Add('- Cleanup helpers now require explicit opt-in for shared targets and a second explicit opt-in before deleting shared namespaces.')
