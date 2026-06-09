@@ -249,6 +249,14 @@ try {
         throw 'validate-argocd-apps.ps1 no longer verifies the required CreateNamespace sync option.'
     }
 
+    if ($validateArgocdAppsScript -notmatch 'selfHeal:\\s\+true') {
+        throw 'validate-argocd-apps.ps1 no longer verifies the dev automated self-heal policy.'
+    }
+
+    if ($validateArgocdAppsScript -notmatch 'staging manifest should remain manual-sync') {
+        throw 'validate-argocd-apps.ps1 no longer protects the staging manual-sync contract.'
+    }
+
     $developerCleanupPipeline = Get-Content 'jenkins\pipelines\developer_cleanup.groovy' -Raw
     if ($developerCleanupPipeline -notmatch "if \(env\.PIPELINE_DISPATCH_MODE != 'true'\)") {
         throw 'developer_cleanup.groovy no longer skips properties rewrites in dispatch mode.'

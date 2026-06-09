@@ -24,7 +24,8 @@ function Test-AppFile {
         [string]$ExpectedTargetRevision,
         [string]$ExpectedValuesFile,
         [string]$ExpectedNamespace,
-        [string]$ExpectedProject = 'default'
+        [string]$ExpectedProject = 'default',
+        [bool]$RequireAutomatedSync = $false
     )
 
     if (-not (Test-Path $FilePath)) {
@@ -46,9 +47,18 @@ function Test-AppFile {
     Assert-Match -Content $content -Pattern '(?m)^    server:\s+https://kubernetes\.default\.svc\s*$' -Message "ArgoCD destination.server mismatch in $FilePath"
     Assert-Match -Content $content -Pattern ("(?m)^    namespace:\s+" + [regex]::Escape($ExpectedNamespace) + "\s*$") -Message "ArgoCD destination.namespace mismatch in $FilePath"
     Assert-Match -Content $content -Pattern '(?m)^\s*-\s+CreateNamespace=true\s*$' -Message "ArgoCD syncOptions should keep CreateNamespace=true in $FilePath"
+
+    if ($RequireAutomatedSync) {
+        Assert-Match -Content $content -Pattern '(?m)^    automated:\s*$' -Message "ArgoCD automated sync block is missing in $FilePath"
+        Assert-Match -Content $content -Pattern '(?m)^      prune:\s+true\s*$' -Message "ArgoCD automated prune=true is missing in $FilePath"
+        Assert-Match -Content $content -Pattern '(?m)^      selfHeal:\s+true\s*$' -Message "ArgoCD automated selfHeal=true is missing in $FilePath"
+    } elseif ($content -match '(?m)^    automated:\s*$') {
+        Write-Error "ArgoCD staging manifest should remain manual-sync in $FilePath"
+        exit 1
+    }
 }
 
-Test-AppFile -FilePath $DevAppFile -ExpectedName 'yas-dev' -ExpectedRepoUrl 'https://github.com/Devop14s/project2.git' -ExpectedTargetRevision 'main' -ExpectedValuesFile '../../argocd/values/dev-values.yaml' -ExpectedNamespace 'yas-dev'
+Test-AppFile -FilePath $DevAppFile -ExpectedName 'yas-dev' -ExpectedRepoUrl 'https://github.com/Devop14s/project2.git' -ExpectedTargetRevision 'main' -ExpectedValuesFile '../../argocd/values/dev-values.yaml' -ExpectedNamespace 'yas-dev' -RequireAutomatedSync $true
 Test-AppFile -FilePath $StagingAppFile -ExpectedName 'yas-staging' -ExpectedRepoUrl 'https://github.com/Devop14s/project2.git' -ExpectedTargetRevision 'main' -ExpectedValuesFile '../../argocd/values/staging-values.yaml' -ExpectedNamespace 'yas-staging'
 
 Write-Host "ArgoCD application manifests are valid: $DevAppFile and $StagingAppFile"

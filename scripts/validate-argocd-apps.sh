@@ -23,6 +23,7 @@ test_app_file() {
   expected_values_file="$5"
   expected_namespace="$6"
   expected_project="${7:-default}"
+  require_automated_sync="${8:-0}"
 
   [ -f "$file_path" ] || {
     printf 'ArgoCD application file not found: %s\n' "$file_path" >&2
@@ -41,9 +42,18 @@ test_app_file() {
   assert_match "$file_path" '^[[:space:]]*server:[[:space:]]+https://kubernetes\.default\.svc[[:space:]]*$' "ArgoCD destination.server mismatch in $file_path"
   assert_match "$file_path" "^[[:space:]]*namespace:[[:space:]]+${expected_namespace}[[:space:]]*$" "ArgoCD destination.namespace mismatch in $file_path"
   assert_match "$file_path" '^[[:space:]]*-[[:space:]]+CreateNamespace=true[[:space:]]*$' "ArgoCD syncOptions should keep CreateNamespace=true in $file_path"
+
+  if [ "$require_automated_sync" = "1" ]; then
+    assert_match "$file_path" '^[[:space:]]*automated:[[:space:]]*$' "ArgoCD automated sync block is missing in $file_path"
+    assert_match "$file_path" '^[[:space:]]*prune:[[:space:]]+true[[:space:]]*$' "ArgoCD automated prune=true is missing in $file_path"
+    assert_match "$file_path" '^[[:space:]]*selfHeal:[[:space:]]+true[[:space:]]*$' "ArgoCD automated selfHeal=true is missing in $file_path"
+  elif grep -Eq '^[[:space:]]*automated:[[:space:]]*$' "$file_path"; then
+    printf 'ArgoCD staging manifest should remain manual-sync in %s\n' "$file_path" >&2
+    exit 1
+  fi
 }
 
-test_app_file "$dev_app_file" "yas-dev" "https://github.com/Devop14s/project2.git" "main" "../../argocd/values/dev-values.yaml" "yas-dev"
+test_app_file "$dev_app_file" "yas-dev" "https://github.com/Devop14s/project2.git" "main" "../../argocd/values/dev-values.yaml" "yas-dev" "default" "1"
 test_app_file "$staging_app_file" "yas-staging" "https://github.com/Devop14s/project2.git" "main" "../../argocd/values/staging-values.yaml" "yas-staging"
 
 printf 'ArgoCD application manifests are valid: %s and %s\n' "$dev_app_file" "$staging_app_file"
