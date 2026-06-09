@@ -39,16 +39,26 @@ pipeline {
     stage('Dispatch') {
       steps {
         script {
+          def pipelineRequiresDockerhubNamespace = [
+            'ci',
+            'developer_build',
+            'dev_cd',
+            'staging_release',
+            'dev_gitops',
+            'staging_gitops'
+          ].contains(params.PIPELINE_TARGET)
           def dockerhubNamespace = params.DOCKERHUB_NAMESPACE?.trim()
           if (!dockerhubNamespace) {
             dockerhubNamespace = env.DOCKERHUB_NAMESPACE?.trim()
           }
 
-          if (!dockerhubNamespace) {
+          if (pipelineRequiresDockerhubNamespace && !dockerhubNamespace) {
             error('DOCKERHUB_NAMESPACE must be provided as a parameter or Jenkins job environment value.')
           }
 
-          env.DOCKERHUB_NAMESPACE = dockerhubNamespace
+          if (dockerhubNamespace) {
+            env.DOCKERHUB_NAMESPACE = dockerhubNamespace
+          }
           env.SERVICE_CATALOG = params.SERVICE_CATALOG
           env.SOURCE_ROOT = params.SOURCE_ROOT?.trim()
           env.SOURCE_GIT_ROOT = params.SOURCE_GIT_ROOT?.trim()
