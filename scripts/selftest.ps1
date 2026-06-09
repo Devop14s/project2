@@ -121,6 +121,15 @@ try {
         throw 'Jenkinsfile no longer guards DOCKERHUB_NAMESPACE by pipeline target.'
     }
 
+    $cleanupScript = Get-Content 'jenkins\scripts\cleanup-release.sh' -Raw
+    if ($cleanupScript -notmatch 'ENVIRONMENT="\$\{ENVIRONMENT:-developer\}"') {
+        throw 'cleanup-release.sh is missing the environment-aware default.'
+    }
+
+    if ($cleanupScript -notmatch 'default_namespace "\$ENVIRONMENT" "\$DEPLOYER_ID"') {
+        throw 'cleanup-release.sh no longer uses environment-aware namespace defaults.'
+    }
+
     if ($devGeneratedValues -notmatch 'domainName: storefront-dev.yas.local') {
         throw 'Dev generated values are missing the expected storefront dev domain.'
     }

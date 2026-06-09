@@ -67,6 +67,8 @@ The shared-environment deploy jobs should follow the same pattern as the develop
 - `yas-dev-cd` deploys to `yas-dev` and then runs `jenkins/scripts/smoke-test.sh`
 - `yas-staging-release` deploys to `yas-staging` and then runs `jenkins/scripts/smoke-test.sh`
 
+`jenkins/scripts/cleanup-release.sh` now uses the same environment-aware namespace and release defaults as the deploy helpers. With `ENVIRONMENT=dev` it targets `yas-dev`, with `ENVIRONMENT=staging` it targets `yas-staging`, and without an explicit environment it keeps the developer-style defaults from `DEPLOYER_ID`.
+
 ## GitOps note
 
 `jenkins/scripts/update-manifest-repo.sh` now regenerates the full `argocd/values/*.yaml` file from the service catalog instead of editing only a few existing tag lines.
