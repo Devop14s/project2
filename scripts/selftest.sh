@@ -139,6 +139,8 @@ grep -q "name: 'DOCKERHUB_NAMESPACE'" jenkins/pipelines/developer_build.groovy
 grep -q "\[string\]\$PaymentBranch = 'main'" scripts/developer-build-dry-run.ps1
 grep -q 'helm/yas' scripts/validate-argocd-apps.sh
 grep -q 'staging-values.yaml' scripts/validate-argocd-apps.sh
+grep -q 'https://github.com/Devop14s/project2.git' scripts/validate-argocd-apps.sh
+grep -q 'CreateNamespace=true' scripts/validate-argocd-apps.sh
 grep -q "if (env.PIPELINE_DISPATCH_MODE != 'true')" jenkins/pipelines/developer_cleanup.groovy
 grep -q "if (env.PIPELINE_DISPATCH_MODE != 'true')" jenkins/pipelines/dev_cd.groovy
 grep -q "name: 'DOCKERHUB_NAMESPACE'" jenkins/pipelines/dev_cd.groovy

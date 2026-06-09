@@ -241,6 +241,14 @@ try {
         throw 'validate-argocd-apps.ps1 no longer verifies the staging values file path.'
     }
 
+    if ($validateArgocdAppsScript -notmatch 'https://github\.com/Devop14s/project2\.git') {
+        throw 'validate-argocd-apps.ps1 no longer verifies the expected Git repository URL.'
+    }
+
+    if ($validateArgocdAppsScript -notmatch 'CreateNamespace=true') {
+        throw 'validate-argocd-apps.ps1 no longer verifies the required CreateNamespace sync option.'
+    }
+
     $developerCleanupPipeline = Get-Content 'jenkins\pipelines\developer_cleanup.groovy' -Raw
     if ($developerCleanupPipeline -notmatch "if \(env\.PIPELINE_DISPATCH_MODE != 'true'\)") {
         throw 'developer_cleanup.groovy no longer skips properties rewrites in dispatch mode.'

@@ -27,6 +27,8 @@ Use Jenkins only for build-and-update, then let ArgoCD reconcile the runtime sta
 - `scripts/generate-gitops-values.ps1`
 - `scripts/generate-gitops-values.sh`
 
+The ArgoCD app validators now also lock the expected repo URL, `targetRevision`, Helm chart path, environment values file, destination namespace, and `CreateNamespace=true` sync option so the GitOps entrypoints cannot silently drift away from the scaffold contract.
+
 ## Still required for real execution
 
 - a reachable ArgoCD installation
