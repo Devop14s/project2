@@ -196,6 +196,15 @@ try {
         throw 'staging_release.groovy no longer skips properties rewrites in dispatch mode.'
     }
 
+    $pushImagesScript = Get-Content 'jenkins\scripts\push-images.sh' -Raw
+    if ($pushImagesScript -notmatch 'IMAGE_DIGESTS_FILE="work/image-digests.txt"') {
+        throw 'push-images.sh is missing the image-digests artifact output.'
+    }
+
+    if ($pushImagesScript -notmatch 'record_repo_digest') {
+        throw 'push-images.sh no longer records repo digests after push.'
+    }
+
     $cleanupScript = Get-Content 'jenkins\scripts\cleanup-release.sh' -Raw
     if ($cleanupScript -notmatch 'ENVIRONMENT="\$\{ENVIRONMENT:-developer\}"') {
         throw 'cleanup-release.sh is missing the environment-aware default.'

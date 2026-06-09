@@ -119,6 +119,8 @@ grep -q "if (env.PIPELINE_DISPATCH_MODE != 'true')" jenkins/pipelines/dev_cd.gro
 grep -q "if (env.PIPELINE_DISPATCH_MODE != 'true')" jenkins/pipelines/dev_gitops.groovy
 grep -q "if (env.PIPELINE_DISPATCH_MODE != 'true')" jenkins/pipelines/staging_gitops.groovy
 grep -q "if (env.PIPELINE_DISPATCH_MODE != 'true')" jenkins/pipelines/staging_release.groovy
+grep -q 'IMAGE_DIGESTS_FILE="work/image-digests.txt"' jenkins/scripts/push-images.sh
+grep -q 'record_repo_digest' jenkins/scripts/push-images.sh
 grep -q 'ENVIRONMENT="${ENVIRONMENT:-developer}"' jenkins/scripts/cleanup-release.sh
 grep -q 'default_namespace "$ENVIRONMENT" "$DEPLOYER_ID"' jenkins/scripts/cleanup-release.sh
 grep -q 'domainName: storefront-dev.yas.local' "$dev_generated_values_file"

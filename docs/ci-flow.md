@@ -28,6 +28,7 @@ Build and push service images on every branch push. The image tag must equal the
 - `work/commit-metadata.json`
 - `work/built-image-list.txt`
 - `work/image-list.txt`
+- `work/image-digests.txt`
 - `work/image-metadata.json`
 
 ## Source-of-truth note

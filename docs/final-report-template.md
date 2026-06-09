@@ -31,6 +31,7 @@
 - image naming and tags
 - screenshots and logs
 - one successful build-and-push example with tag and digest
+- `work/image-digests.txt` excerpt or equivalent digest evidence
 - evidence that branch builds use commit SHA or the chosen rule
 
 ## 5. Developer deployment flow
