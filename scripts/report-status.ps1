@@ -55,10 +55,14 @@ $sourceAligned = $false
 $storefrontBuildVerified = (Test-Path 'yas-source\storefront\.next')
 $backofficeBuildVerified = (Test-Path 'yas-source\backoffice\.next')
 $storefrontBffBuildVerified = (Test-Path 'yas-source\storefront-bff\target\storefront-bff-1.0-SNAPSHOT.jar')
+$backofficeBffBuildVerified = (Test-Path 'yas-source\backoffice-bff\target\backoffice-bff-1.0-SNAPSHOT.jar')
 $productBuildVerified = (Test-Path 'yas-source\product\target\product-1.0-SNAPSHOT.jar')
+$paymentBuildVerified = (Test-Path 'yas-source\payment\target\payment-1.0-SNAPSHOT.jar')
 $productImageVerified = $false
 $backofficeImageVerified = $false
 $storefrontBffImageVerified = $false
+$backofficeBffImageVerified = $false
+$paymentImageVerified = $false
 $helmExecutable = Get-HelmExecutable
 $helmLintVerified = $false
 $helmTemplateVerified = $false
@@ -107,6 +111,20 @@ if ($null -ne (Get-Command docker -ErrorAction SilentlyContinue)) {
         $storefrontBffImageVerified = ($LASTEXITCODE -eq 0)
     } catch {
         $storefrontBffImageVerified = $false
+    }
+
+    try {
+        docker image inspect 'yas-backoffice-bff:codex-verified' *> $null
+        $backofficeBffImageVerified = ($LASTEXITCODE -eq 0)
+    } catch {
+        $backofficeBffImageVerified = $false
+    }
+
+    try {
+        docker image inspect 'yas-payment:codex-verified' *> $null
+        $paymentImageVerified = ($LASTEXITCODE -eq 0)
+    } catch {
+        $paymentImageVerified = $false
     }
 }
 
@@ -184,8 +202,14 @@ if ($backofficeBuildVerified) {
 if ($storefrontBffBuildVerified) {
     $content.Add('- A real `storefront-bff` Maven build completed successfully and produced a runnable JAR artifact.')
 }
+if ($backofficeBffBuildVerified) {
+    $content.Add('- A real `backoffice-bff` Maven verification completed successfully and produced a runnable JAR artifact.')
+}
 if ($productBuildVerified) {
     $content.Add('- A real `product` Maven backend build completed successfully and produced a runnable JAR artifact.')
+}
+if ($paymentBuildVerified) {
+    $content.Add('- A real `payment` Maven backend build completed successfully and produced a runnable JAR artifact.')
 }
 if ($productImageVerified) {
     $content.Add('- A real `product` Docker image build completed successfully in this workspace.')
@@ -195,6 +219,12 @@ if ($backofficeImageVerified) {
 }
 if ($storefrontBffImageVerified) {
     $content.Add('- A real `storefront-bff` Docker image build completed successfully in this workspace.')
+}
+if ($backofficeBffImageVerified) {
+    $content.Add('- A real `backoffice-bff` Docker image build completed successfully in this workspace.')
+}
+if ($paymentImageVerified) {
+    $content.Add('- A real `payment` Docker image build completed successfully in this workspace.')
 }
 if ($helmLintVerified) {
     $content.Add('- A real Helm chart lint completed successfully against `helm/yas`.')

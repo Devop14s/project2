@@ -21,11 +21,15 @@ Checked directly in the cloned source:
 - `backoffice`: `npm run build` passed and produced `.next`, but the build log still printed `quill` SSR `document is not defined` traces after route generation.
 - `backoffice`: `npm run lint` passed.
 - `storefront-bff`: `mvn clean install -pl storefront-bff -am` passed using local Temurin 25 and Maven 3.9.11, and produced `storefront-bff/target/storefront-bff-1.0-SNAPSHOT.jar`.
+- `backoffice-bff`: upstream-style `mvn clean verify -f backoffice-bff` passed using local Temurin 25 and Maven 3.9.11, and produced `backoffice-bff/target/backoffice-bff-1.0-SNAPSHOT.jar`.
 - `product`: `mvn clean install -pl product -am` passed using local Temurin 25 and Maven 3.9.11, and produced `product/target/product-1.0-SNAPSHOT.jar`.
+- `payment`: upstream-style `mvn clean install -pl payment -am` passed using local Temurin 25 and Maven 3.9.11, including tests and Testcontainers-backed integration flow, and produced `payment/target/payment-1.0-SNAPSHOT.jar`.
 - Docker daemon is reachable outside the sandbox on this host.
 - `docker build` for `product` passed and produced local image `yas-product:codex-verified`.
 - `docker build` for `backoffice` passed and produced local image `yas-backoffice:codex-verified`.
 - `docker build` for `storefront-bff` passed and produced local image `yas-storefront-bff:codex-verified`.
+- `docker build` for `backoffice-bff` passed and produced local image `yas-backoffice-bff:codex-verified`.
+- `docker build` for `payment` passed and produced local image `yas-payment:codex-verified`.
 - `docker build` for `storefront` was attempted earlier but timed out before producing a local image.
 - `helm lint helm/yas` passed with Helm 4.2.0.
 - `helm template yas helm/yas` passed and rendered chart output locally.
@@ -42,7 +46,7 @@ Checked directly in the cloned source:
 | Service | Source path | CI build command | Docker context | Upstream image | App port | Context path | Runtime command | Notes |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | storefront-bff | `yas-source/storefront-bff` | `mvn clean install -pl storefront-bff -am` | `./storefront-bff` | `ghcr.io/nashtech-garage/yas-storefront-bff:latest` | `8087` | n/a | `java -jar /app.jar` | Real Maven build and Docker image build were both verified locally. Routes to Next.js storefront in `application-prod.yaml`. |
-| backoffice-bff | `yas-source/backoffice-bff` | `mvn clean install -pl backoffice-bff -am` | `./backoffice-bff` | `ghcr.io/nashtech-garage/yas-backoffice-bff:latest` | `8087` | n/a | `java -jar /app.jar` | Routes to Next.js backoffice in `application-prod.yaml`. |
+| backoffice-bff | `yas-source/backoffice-bff` | `mvn clean verify -f backoffice-bff` | `./backoffice-bff` | `ghcr.io/nashtech-garage/yas-backoffice-bff:latest` | `8087` | n/a | `java -jar /app.jar` | Real Maven verify and Docker image build were both verified locally. Routes to Next.js backoffice in `application-prod.yaml`. |
 
 ## Backend services
 
@@ -63,7 +67,7 @@ Checked directly in the cloned source:
 | payment-paypal | `yas-source/payment-paypal` | `mvn clean install -pl payment-paypal -am` | `./payment-paypal` | `ghcr.io/nashtech-garage/yas-payment-paypal:latest` | `8093` | `/payment-paypal` | `java -jar /app.jar` | Payment provider plugin service. |
 | sampledata | `yas-source/sampledata` | `mvn clean install -pl sampledata -am` | `./sampledata` | `ghcr.io/nashtech-garage/yas-sampledata:latest` | `8094` | `/sampledata` | `java -jar /app.jar` | Seed/sample data workload. |
 | recommendation | `yas-source/recommendation` | `mvn clean install -pl recommendation -am` | `./recommendation` | `ghcr.io/nashtech-garage/yas-recommendation:latest` | `8095` | `/recommendation` | `java -jar /app.jar` | Present in CI and chart; commented out in main compose baseline. |
-| payment | `yas-source/payment` | `mvn clean install -pl payment -am` | `./payment` | `ghcr.io/nashtech-garage/yas-payment:latest` | `8081` | `/payment` | `java -jar /app.jar` | Standard Spring Boot JAR packaging. |
+| payment | `yas-source/payment` | `mvn clean install -pl payment -am` | `./payment` | `ghcr.io/nashtech-garage/yas-payment:latest` | `8081` | `/payment` | `java -jar /app.jar` | Real Maven build and Docker image build were both verified locally; tests exercised container-backed integration flow. |
 
 ## Notes
 

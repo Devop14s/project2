@@ -42,10 +42,14 @@ source_aligned=0
 storefront_build_verified=0
 backoffice_build_verified=0
 storefront_bff_build_verified=0
+backoffice_bff_build_verified=0
 product_build_verified=0
+payment_build_verified=0
 product_image_verified=0
 backoffice_image_verified=0
 storefront_bff_image_verified=0
+backoffice_bff_image_verified=0
+payment_image_verified=0
 helm_lint_verified=0
 helm_template_verified=0
 if [ -f "jenkins/services.env" ]; then
@@ -81,8 +85,14 @@ fi
 if [ -f "yas-source/storefront-bff/target/storefront-bff-1.0-SNAPSHOT.jar" ]; then
   storefront_bff_build_verified=1
 fi
+if [ -f "yas-source/backoffice-bff/target/backoffice-bff-1.0-SNAPSHOT.jar" ]; then
+  backoffice_bff_build_verified=1
+fi
 if [ -f "yas-source/product/target/product-1.0-SNAPSHOT.jar" ]; then
   product_build_verified=1
+fi
+if [ -f "yas-source/payment/target/payment-1.0-SNAPSHOT.jar" ]; then
+  payment_build_verified=1
 fi
 if command -v docker >/dev/null 2>&1; then
   if docker image inspect yas-product:codex-verified >/dev/null 2>&1; then
@@ -93,6 +103,12 @@ if command -v docker >/dev/null 2>&1; then
   fi
   if docker image inspect yas-storefront-bff:codex-verified >/dev/null 2>&1; then
     storefront_bff_image_verified=1
+  fi
+  if docker image inspect yas-backoffice-bff:codex-verified >/dev/null 2>&1; then
+    backoffice_bff_image_verified=1
+  fi
+  if docker image inspect yas-payment:codex-verified >/dev/null 2>&1; then
+    payment_image_verified=1
   fi
 fi
 if command -v helm >/dev/null 2>&1; then
@@ -156,8 +172,14 @@ fi
   if [ "$storefront_bff_build_verified" -eq 1 ]; then
     printf '%s\n' '- A real `storefront-bff` Maven build completed successfully and produced a runnable JAR artifact.'
   fi
+  if [ "$backoffice_bff_build_verified" -eq 1 ]; then
+    printf '%s\n' '- A real `backoffice-bff` Maven verification completed successfully and produced a runnable JAR artifact.'
+  fi
   if [ "$product_build_verified" -eq 1 ]; then
     printf '%s\n' '- A real `product` Maven backend build completed successfully and produced a runnable JAR artifact.'
+  fi
+  if [ "$payment_build_verified" -eq 1 ]; then
+    printf '%s\n' '- A real `payment` Maven backend build completed successfully and produced a runnable JAR artifact.'
   fi
   if [ "$product_image_verified" -eq 1 ]; then
     printf '%s\n' '- A real `product` Docker image build completed successfully in this workspace.'
@@ -167,6 +189,12 @@ fi
   fi
   if [ "$storefront_bff_image_verified" -eq 1 ]; then
     printf '%s\n' '- A real `storefront-bff` Docker image build completed successfully in this workspace.'
+  fi
+  if [ "$backoffice_bff_image_verified" -eq 1 ]; then
+    printf '%s\n' '- A real `backoffice-bff` Docker image build completed successfully in this workspace.'
+  fi
+  if [ "$payment_image_verified" -eq 1 ]; then
+    printf '%s\n' '- A real `payment` Docker image build completed successfully in this workspace.'
   fi
   if [ "$helm_lint_verified" -eq 1 ]; then
     printf '%s\n' '- A real Helm chart lint completed successfully against `helm/yas`.'

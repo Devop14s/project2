@@ -25,9 +25,9 @@
 - Cross-platform Helm baseline values generation from the shared service catalog.
 - Source-alignment validation against the local `yas-source` clone.
 - Source-based build and runtime matrix in `docs/source-build-runtime-matrix.md`.
-- Real local build verification for `storefront`, `backoffice`, `storefront-bff`, and `product`.
+- Real local build verification for `storefront`, `backoffice`, `storefront-bff`, `backoffice-bff`, `product`, and `payment`.
 - Local Java and Maven enablement for upstream-style backend builds.
-- Real local Docker image verification for `backoffice`, `storefront-bff`, and `product`.
+- Real local Docker image verification for `backoffice`, `storefront-bff`, `backoffice-bff`, `product`, and `payment`.
 - Real local Helm lint and template validation for `helm/yas`.
 
 ## Not implementable yet in this workspace
