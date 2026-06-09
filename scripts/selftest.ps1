@@ -152,10 +152,44 @@ try {
         throw 'resolve-branch-tags.sh should remain POSIX-safe and must not use process substitution.'
     }
 
+    if ($resolveBranchTagsShellScript -notmatch 'Services file not found: %s') {
+        throw 'resolve-branch-tags.sh should fail fast when the selected services catalog is missing.'
+    }
+
+    if ($resolveBranchTagsShellScript -notmatch 'Source git root not found: %s') {
+        throw 'resolve-branch-tags.sh should fail fast when SOURCE_GIT_ROOT points to a missing directory.'
+    }
+
+    if ($resolveBranchTagsShellScript -notmatch 'Source git root is not a git repository: %s') {
+        throw 'resolve-branch-tags.sh should fail fast when SOURCE_GIT_ROOT is not a Git repository.'
+    }
+
     $expectedSourceHead = (& git -C 'yas-source' rev-parse HEAD).Trim()
     $sourceGitBranchTags = Get-Content $sourceGitBranchTagsFile -Raw
     if ($sourceGitBranchTags -notmatch ("PRODUCT_TAG=" + [regex]::Escape($expectedSourceHead))) {
         throw 'Branch tag resolution did not use the expected source Git root.'
+    }
+
+    $missingServicesBranchTagsFile = Join-Path $tempDir 'missing-services-branch-tags.env'
+    $missingServicesBranchMetadataFile = Join-Path $tempDir 'missing-services-branch-tag-metadata.json'
+    powershell -ExecutionPolicy Bypass -File scripts\resolve-branch-tags.ps1 `
+        -ServicesFile (Join-Path $tempDir 'missing-services.env') `
+        -OutputFile $missingServicesBranchTagsFile `
+        -MetadataFile $missingServicesBranchMetadataFile *> $null
+    if ($LASTEXITCODE -eq 0) {
+        throw 'resolve-branch-tags.ps1 should fail when the selected services catalog does not exist.'
+    }
+
+    $nonGitSourceRoot = Join-Path $tempDir 'non-git-source'
+    New-Item -ItemType Directory -Path $nonGitSourceRoot -Force | Out-Null
+    $invalidSourceRootBranchTagsFile = Join-Path $tempDir 'invalid-source-root-branch-tags.env'
+    $invalidSourceRootMetadataFile = Join-Path $tempDir 'invalid-source-root-branch-tag-metadata.json'
+    powershell -ExecutionPolicy Bypass -File scripts\resolve-branch-tags.ps1 `
+        -SourceGitRoot $nonGitSourceRoot `
+        -OutputFile $invalidSourceRootBranchTagsFile `
+        -MetadataFile $invalidSourceRootMetadataFile *> $null
+    if ($LASTEXITCODE -eq 0) {
+        throw 'resolve-branch-tags.ps1 should fail when SOURCE_GIT_ROOT is not a Git repository.'
     }
 
     if ($generatedValues -notmatch 'repository: demo-ns/yas-storefront-bff') {

@@ -15,6 +15,17 @@ if (-not (Test-Path $ServicesFile)) {
     exit 1
 }
 
+if (-not (Test-Path $SourceGitRoot -PathType Container)) {
+    Write-Error "Source git root not found: $SourceGitRoot"
+    exit 1
+}
+
+& git -C $SourceGitRoot rev-parse --is-inside-work-tree *> $null
+if ($LASTEXITCODE -ne 0) {
+    Write-Error "Source git root is not a git repository: $SourceGitRoot"
+    exit 1
+}
+
 $outputDir = Split-Path -Parent $OutputFile
 if ($outputDir) {
     New-Item -ItemType Directory -Path $outputDir -Force | Out-Null

@@ -9,6 +9,21 @@ source_git_root="$(resolve_source_git_root)"
 output_file="${OUTPUT_FILE:-work/branch-tags.env}"
 metadata_file="${BRANCH_TAG_METADATA_FILE:-work/branch-tag-metadata.json}"
 
+[ -f "$services_file" ] || {
+  printf 'Services file not found: %s\n' "$services_file" >&2
+  exit 1
+}
+
+[ -d "$source_git_root" ] || {
+  printf 'Source git root not found: %s\n' "$source_git_root" >&2
+  exit 1
+}
+
+git -C "$source_git_root" rev-parse --is-inside-work-tree >/dev/null 2>&1 || {
+  printf 'Source git root is not a git repository: %s\n' "$source_git_root" >&2
+  exit 1
+}
+
 mkdir -p "$(dirname "$output_file")"
 mkdir -p "$(dirname "$metadata_file")"
 : > "$output_file"

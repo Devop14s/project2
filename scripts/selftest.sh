@@ -121,6 +121,9 @@ if grep -q 'done < <(' scripts/resolve-branch-tags.sh; then
   printf 'resolve-branch-tags.sh should remain POSIX-safe and must not use process substitution.\n' >&2
   exit 1
 fi
+grep -q 'Services file not found: %s' scripts/resolve-branch-tags.sh
+grep -q 'Source git root not found: %s' scripts/resolve-branch-tags.sh
+grep -q 'Source git root is not a git repository: %s' scripts/resolve-branch-tags.sh
 grep -q 'repository: demo-ns/yas-storefront-bff' "$generated_values_file"
 grep -q 'workloadType: ui' "$generated_values_file"
 grep -q 'host: storefront-dev1.yas.local' "$generated_values_file"
@@ -363,6 +366,15 @@ if command -v bash >/dev/null 2>&1; then
   STOREFRONT_BRANCH="" OUTPUT_FILE="${temp_dir}/blank-branch-tags.env" BRANCH_TAG_METADATA_FILE="${temp_dir}/blank-branch-tag-metadata.json" bash scripts/resolve-branch-tags.sh >/dev/null
   grep -q '^STOREFRONT_TAG=main$' "${temp_dir}/blank-branch-tags.env"
   grep -q '"service":"storefront"' "${temp_dir}/blank-branch-tag-metadata.json"
+  mkdir -p "${temp_dir}/non-git-source"
+  if SERVICES_FILE="${temp_dir}/missing-services.env" OUTPUT_FILE="${temp_dir}/missing-services-branch-tags.env" BRANCH_TAG_METADATA_FILE="${temp_dir}/missing-services-branch-tag-metadata.json" sh scripts/resolve-branch-tags.sh >/dev/null 2>&1; then
+    printf 'resolve-branch-tags.sh should fail when the selected services catalog does not exist.\n' >&2
+    exit 1
+  fi
+  if SOURCE_GIT_ROOT="${temp_dir}/non-git-source" OUTPUT_FILE="${temp_dir}/invalid-source-root-branch-tags.env" BRANCH_TAG_METADATA_FILE="${temp_dir}/invalid-source-root-branch-tag-metadata.json" sh scripts/resolve-branch-tags.sh >/dev/null 2>&1; then
+    printf 'resolve-branch-tags.sh should fail when SOURCE_GIT_ROOT is not a Git repository.\n' >&2
+    exit 1
+  fi
   SERVICE_CATALOG="release-baseline" \
   SOURCE_ROOT="yas-source" \
   SOURCE_GIT_ROOT="yas-source" \
