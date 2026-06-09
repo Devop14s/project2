@@ -30,6 +30,7 @@ $sourceGitBranchTagsFile = Join-Path $tempDir 'source-git-branch-tags.env'
 $generatedValuesFile = Join-Path $tempDir 'generated-values.yaml'
 $devGeneratedValuesFile = Join-Path $tempDir 'dev-generated-values.yaml'
 $gitopsValuesFile = Join-Path $tempDir 'gitops-values.yaml'
+$gitopsNamespaceValuesFile = Join-Path $tempDir 'gitops-values-with-namespace.yaml'
 $chartValuesFile = Join-Path $tempDir 'chart-values.yaml'
 $manifestValuesFile = Join-Path $tempDir 'dev-values.yaml'
 $helmRenderFile = Join-Path $tempDir 'helm-render.yaml'
@@ -83,6 +84,11 @@ try {
         -TagsFile $branchTagsFile `
         -OutputFile $gitopsValuesFile `
         -EnvironmentName dev | Out-Null
+    powershell -ExecutionPolicy Bypass -File scripts\generate-gitops-values.ps1 `
+        -TagsFile $branchTagsFile `
+        -OutputFile $gitopsNamespaceValuesFile `
+        -EnvironmentName dev `
+        -DockerhubNamespace $DockerhubNamespace | Out-Null
     powershell -ExecutionPolicy Bypass -File scripts\generate-chart-values.ps1 `
         -OutputFile $chartValuesFile | Out-Null
     powershell -ExecutionPolicy Bypass -File scripts\update-manifest-values.ps1 `
@@ -106,6 +112,7 @@ try {
     $generatedValues = Get-Content $generatedValuesFile -Raw
     $devGeneratedValues = Get-Content $devGeneratedValuesFile -Raw
     $gitopsValues = Get-Content $gitopsValuesFile -Raw
+    $gitopsNamespaceValues = Get-Content $gitopsNamespaceValuesFile -Raw
     $chartValues = Get-Content $chartValuesFile -Raw
     $manifestValues = Get-Content $manifestValuesFile -Raw
     $statusReport = Get-Content $statusReportFile -Raw
@@ -358,6 +365,14 @@ try {
 
     if ($gitopsValues -notmatch 'payment-paypal:') {
         throw 'Generated GitOps values are missing payment-paypal.'
+    }
+
+    if ($gitopsValues -notmatch 'repository: docker\.io/example/yas-storefront') {
+        throw 'Generated GitOps values should default to the example registry repository.'
+    }
+
+    if ($gitopsNamespaceValues -notmatch 'repository: demo-ns/yas-storefront') {
+        throw 'Generated GitOps values should honor the requested Dockerhub namespace.'
     }
 
     if ($chartValues -notmatch 'repository: docker.io/example/yas-storefront') {

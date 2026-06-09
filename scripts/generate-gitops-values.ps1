@@ -6,7 +6,8 @@ param(
     [string]$NamespaceName = '',
     [string]$DomainName = '',
     [string]$BackofficeDomainName = '',
-    [string]$ReleaseVersion = 'main'
+    [string]$ReleaseVersion = 'main',
+    [string]$DockerhubNamespace = ''
 )
 
 . "$PSScriptRoot\catalog.ps1"
@@ -33,6 +34,14 @@ if ([string]::IsNullOrWhiteSpace($DomainName)) {
 
 if ([string]::IsNullOrWhiteSpace($BackofficeDomainName)) {
     $BackofficeDomainName = "backoffice-$EnvironmentName.yas.local"
+}
+
+if ([string]::IsNullOrWhiteSpace($DockerhubNamespace)) {
+    $DockerhubNamespace = $env:DOCKERHUB_NAMESPACE
+}
+
+if ([string]::IsNullOrWhiteSpace($DockerhubNamespace)) {
+    $DockerhubNamespace = 'docker.io/example'
 }
 
 $tagMap = @{}
@@ -114,6 +123,7 @@ foreach ($line in Get-Content $AllServicesFile) {
     $tagValue = if ($tagMap.ContainsKey($tagVar)) { $tagMap[$tagVar] } else { $ReleaseVersion }
     $out.Add('    enabled: true')
     $out.Add('    image:')
+    $out.Add("      repository: $DockerhubNamespace/yas-$service")
     $out.Add("      tag: $tagValue")
 
     if ($parts.Count -ge 5 -and $parts[4] -eq 'true') {
@@ -133,6 +143,7 @@ foreach ($service in $selectedServices.Keys) {
     $out.Add("  ${service}:")
     $out.Add('    enabled: true')
     $out.Add('    image:')
+    $out.Add("      repository: $DockerhubNamespace/yas-$service")
     $out.Add("      tag: $tagValue")
 
     if ($parts.Count -ge 5 -and $parts[4] -eq 'true') {

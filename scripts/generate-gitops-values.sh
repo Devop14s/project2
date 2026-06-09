@@ -12,6 +12,7 @@ namespace_name="${NAMESPACE:-yas-${environment_name}}"
 domain_name="${DOMAIN_NAME:-storefront-${environment_name}.yas.local}"
 backoffice_domain_name="${BACKOFFICE_DOMAIN_NAME:-backoffice-${environment_name}.yas.local}"
 release_version="${RELEASE_VERSION:-main}"
+dockerhub_namespace="${DOCKERHUB_NAMESPACE:-docker.io/example}"
 
 [ -f "$services_file" ] || {
   printf 'Services file not found: %s\n' "$services_file" >&2
@@ -84,6 +85,7 @@ EOF
   ${service}:
     enabled: true
     image:
+      repository: ${dockerhub_namespace}/yas-${service}
       tag: ${tag_value}
 EOF
 

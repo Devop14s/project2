@@ -7,6 +7,7 @@ services:
   storefront:
     enabled: true
     image:
+      repository: docker.io/example/yas-storefront
       tag: v1.0.0
     ingress:
       enabled: true
@@ -14,6 +15,7 @@ services:
   backoffice:
     enabled: true
     image:
+      repository: docker.io/example/yas-backoffice
       tag: v1.0.0
     ingress:
       enabled: true
@@ -21,44 +23,54 @@ services:
   storefront-bff:
     enabled: true
     image:
+      repository: docker.io/example/yas-storefront-bff
       tag: v1.0.0
   backoffice-bff:
     enabled: true
     image:
+      repository: docker.io/example/yas-backoffice-bff
       tag: v1.0.0
   product:
     enabled: true
     image:
+      repository: docker.io/example/yas-product
       tag: v1.0.0
   media:
     enabled: false
   cart:
     enabled: true
     image:
+      repository: docker.io/example/yas-cart
       tag: v1.0.0
   customer:
     enabled: true
     image:
+      repository: docker.io/example/yas-customer
       tag: v1.0.0
   rating:
     enabled: true
     image:
+      repository: docker.io/example/yas-rating
       tag: v1.0.0
   location:
     enabled: true
     image:
+      repository: docker.io/example/yas-location
       tag: v1.0.0
   order:
     enabled: true
     image:
+      repository: docker.io/example/yas-order
       tag: v1.0.0
   inventory:
     enabled: true
     image:
+      repository: docker.io/example/yas-inventory
       tag: v1.0.0
   tax:
     enabled: true
     image:
+      repository: docker.io/example/yas-tax
       tag: v1.0.0
   search:
     enabled: false
