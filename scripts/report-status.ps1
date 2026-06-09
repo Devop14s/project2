@@ -147,6 +147,10 @@ $helmExecutable = Get-HelmExecutable
 $helmLintVerified = $false
 $helmTemplateVerified = $false
 $gitopsValuesVerified = $false
+$runtimeEvidenceProvenanceVerified = $false
+$failureSafeRuntimeEvidenceVerified = $false
+$cleanupGuardVerified = $false
+$sharedPromotionCommitMetadataVerified = $false
 
 if (Test-Path $servicesFile) {
     foreach ($line in Get-Content $servicesFile) {
@@ -303,6 +307,39 @@ if (Test-Path $releaseBaselineServicesFile) {
     }
 }
 
+$captureRuntimeEvidenceScript = if (Test-Path 'jenkins\scripts\capture-runtime-evidence.sh') { Get-Content 'jenkins\scripts\capture-runtime-evidence.sh' -Raw } else { '' }
+$deployHelmScript = if (Test-Path 'jenkins\scripts\deploy-helm.sh') { Get-Content 'jenkins\scripts\deploy-helm.sh' -Raw } else { '' }
+$cleanupScript = if (Test-Path 'jenkins\scripts\cleanup-release.sh') { Get-Content 'jenkins\scripts\cleanup-release.sh' -Raw } else { '' }
+$devCdPipeline = if (Test-Path 'jenkins\pipelines\dev_cd.groovy') { Get-Content 'jenkins\pipelines\dev_cd.groovy' -Raw } else { '' }
+$devGitopsPipeline = if (Test-Path 'jenkins\pipelines\dev_gitops.groovy') { Get-Content 'jenkins\pipelines\dev_gitops.groovy' -Raw } else { '' }
+$stagingReleasePipeline = if (Test-Path 'jenkins\pipelines\staging_release.groovy') { Get-Content 'jenkins\pipelines\staging_release.groovy' -Raw } else { '' }
+$stagingGitopsPipeline = if (Test-Path 'jenkins\pipelines\staging_gitops.groovy') { Get-Content 'jenkins\pipelines\staging_gitops.groovy' -Raw } else { '' }
+
+$runtimeEvidenceProvenanceVerified = (
+    $captureRuntimeEvidenceScript -match 'copied-artifacts\.txt' -and
+    $captureRuntimeEvidenceScript -match 'work/image-digests\.txt' -and
+    $captureRuntimeEvidenceScript -match 'work/commit-metadata\.json'
+)
+
+$failureSafeRuntimeEvidenceVerified = (
+    $captureRuntimeEvidenceScript -match 'CAPTURE_RUNTIME_EXIT_CODE' -and
+    $captureRuntimeEvidenceScript -match 'write_namespace_missing_note' -and
+    $deployHelmScript -match 'capture_runtime_evidence_on_exit'
+)
+
+$cleanupGuardVerified = (
+    $cleanupScript -match 'ALLOW_SHARED_ENVIRONMENT_CLEANUP="\$\{ALLOW_SHARED_ENVIRONMENT_CLEANUP:-0\}"' -and
+    $cleanupScript -match 'ALLOW_SHARED_NAMESPACE_DELETE="\$\{ALLOW_SHARED_NAMESPACE_DELETE:-0\}"' -and
+    $cleanupScript -match 'shared_target_detected='
+)
+
+$sharedPromotionCommitMetadataVerified = (
+    $devCdPipeline -match 'jenkins/scripts/write-commit-metadata\.sh' -and
+    $devGitopsPipeline -match 'jenkins/scripts/write-commit-metadata\.sh' -and
+    $stagingReleasePipeline -match 'jenkins/scripts/write-commit-metadata\.sh' -and
+    $stagingGitopsPipeline -match 'jenkins/scripts/write-commit-metadata\.sh'
+)
+
 $fileLines = foreach ($file in $requiredFiles) {
     $status = if (Test-Path $file) { 'ok' } else { 'missing' }
     "- ${file}: $status"
@@ -444,6 +481,18 @@ if ($helmTemplateVerified) {
 }
 if ($gitopsValuesVerified) {
     $content.Add('- The committed GitOps values under `argocd/values/` are in sync with the frozen release baseline generator.')
+}
+if ($sharedPromotionCommitMetadataVerified) {
+    $content.Add('- Shared `dev` and `staging` promotion flows now record commit metadata so mutable and release-tagged deployments can be traced back to an exact source commit.')
+}
+if ($runtimeEvidenceProvenanceVerified) {
+    $content.Add('- Runtime evidence directories now snapshot commit, build, push, and verification artifacts such as `commit-metadata.json` and `image-digests.txt` per run.')
+}
+if ($failureSafeRuntimeEvidenceVerified) {
+    $content.Add('- Deploy helpers now capture partial runtime diagnostics even when `helm upgrade` or rollout checks fail, reducing lost evidence on first-failure runs.')
+}
+if ($cleanupGuardVerified) {
+    $content.Add('- Cleanup helpers now require explicit opt-in for shared targets and a second explicit opt-in before deleting shared namespaces.')
 }
 $content.Add('')
 $content.Add('## Runtime Access Notes')

@@ -223,6 +223,8 @@ grep -q 'repository: docker.io/example/yas-storefront' "$chart_values_file"
 grep -q 'host: backoffice.yas.local' "$chart_values_file"
 grep -q 'tag: test-tag' "$manifest_values_file"
 grep -q '## Runtime Access Notes' "$status_report_file"
+grep -q 'Runtime evidence directories now snapshot commit, build, push, and verification artifacts' "$status_report_file"
+grep -q 'Cleanup helpers now require explicit opt-in for shared targets' "$status_report_file"
 DOCKERHUB_NAMESPACE="$dockerhub_namespace" \
 SERVICES_FILE="jenkins/services.release-baseline.env" \
 OUTPUT_FILE="$generated_values_file" \

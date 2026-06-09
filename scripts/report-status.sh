@@ -133,6 +133,10 @@ docker_daemon_reachable=0
 helm_lint_verified=0
 helm_template_verified=0
 gitops_values_verified=0
+runtime_evidence_provenance_verified=0
+failure_safe_runtime_evidence_verified=0
+cleanup_guard_verified=0
+shared_promotion_commit_metadata_verified=0
 normalized_services_file="$(mktemp "${TMPDIR:-/tmp}/yas-report-services.XXXXXX")"
 normalized_release_baseline_file="$(mktemp "${TMPDIR:-/tmp}/yas-report-release-baseline.XXXXXX")"
 trap 'rm -f "$normalized_services_file" "$normalized_release_baseline_file"' EXIT INT TERM
@@ -255,6 +259,27 @@ if command -v helm >/dev/null 2>&1; then
 fi
 if [ -f "jenkins/services.release-baseline.env" ] && sh scripts/validate-gitops-values.sh jenkins/services.release-baseline.env >/dev/null 2>&1; then
   gitops_values_verified=1
+fi
+if grep -q 'copied-artifacts.txt' jenkins/scripts/capture-runtime-evidence.sh 2>/dev/null && \
+   grep -q 'work/image-digests.txt' jenkins/scripts/capture-runtime-evidence.sh 2>/dev/null && \
+   grep -q 'work/commit-metadata.json' jenkins/scripts/capture-runtime-evidence.sh 2>/dev/null; then
+  runtime_evidence_provenance_verified=1
+fi
+if grep -q 'CAPTURE_RUNTIME_EXIT_CODE' jenkins/scripts/capture-runtime-evidence.sh 2>/dev/null && \
+   grep -q 'write_namespace_missing_note' jenkins/scripts/capture-runtime-evidence.sh 2>/dev/null && \
+   grep -q 'capture_runtime_evidence_on_exit' jenkins/scripts/deploy-helm.sh 2>/dev/null; then
+  failure_safe_runtime_evidence_verified=1
+fi
+if grep -q 'ALLOW_SHARED_ENVIRONMENT_CLEANUP="${ALLOW_SHARED_ENVIRONMENT_CLEANUP:-0}"' jenkins/scripts/cleanup-release.sh 2>/dev/null && \
+   grep -q 'ALLOW_SHARED_NAMESPACE_DELETE="${ALLOW_SHARED_NAMESPACE_DELETE:-0}"' jenkins/scripts/cleanup-release.sh 2>/dev/null && \
+   grep -q 'shared_target_detected=' jenkins/scripts/cleanup-release.sh 2>/dev/null; then
+  cleanup_guard_verified=1
+fi
+if grep -q 'jenkins/scripts/write-commit-metadata.sh' jenkins/pipelines/dev_cd.groovy 2>/dev/null && \
+   grep -q 'jenkins/scripts/write-commit-metadata.sh' jenkins/pipelines/dev_gitops.groovy 2>/dev/null && \
+   grep -q 'jenkins/scripts/write-commit-metadata.sh' jenkins/pipelines/staging_release.groovy 2>/dev/null && \
+   grep -q 'jenkins/scripts/write-commit-metadata.sh' jenkins/pipelines/staging_gitops.groovy 2>/dev/null; then
+  shared_promotion_commit_metadata_verified=1
 fi
 
 {
@@ -394,6 +419,18 @@ fi
   fi
   if [ "$gitops_values_verified" -eq 1 ]; then
     printf '%s\n' '- The committed GitOps values under `argocd/values/` are in sync with the frozen release baseline generator.'
+  fi
+  if [ "$shared_promotion_commit_metadata_verified" -eq 1 ]; then
+    printf '%s\n' '- Shared `dev` and `staging` promotion flows now record commit metadata so mutable and release-tagged deployments can be traced back to an exact source commit.'
+  fi
+  if [ "$runtime_evidence_provenance_verified" -eq 1 ]; then
+    printf '%s\n' '- Runtime evidence directories now snapshot commit, build, push, and verification artifacts such as `commit-metadata.json` and `image-digests.txt` per run.'
+  fi
+  if [ "$failure_safe_runtime_evidence_verified" -eq 1 ]; then
+    printf '%s\n' '- Deploy helpers now capture partial runtime diagnostics even when `helm upgrade` or rollout checks fail, reducing lost evidence on first-failure runs.'
+  fi
+  if [ "$cleanup_guard_verified" -eq 1 ]; then
+    printf '%s\n' '- Cleanup helpers now require explicit opt-in for shared targets and a second explicit opt-in before deleting shared namespaces.'
   fi
   printf '\n'
   printf '## Runtime Access Notes\n'

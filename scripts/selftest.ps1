@@ -531,6 +531,14 @@ try {
         throw 'Generated status report is missing the runtime access notes section.'
     }
 
+    if ($statusReport -notmatch 'Runtime evidence directories now snapshot commit, build, push, and verification artifacts') {
+        throw 'Generated status report is missing the per-run provenance snapshot note.'
+    }
+
+    if ($statusReport -notmatch 'Cleanup helpers now require explicit opt-in for shared targets') {
+        throw 'Generated status report is missing the shared-cleanup safety note.'
+    }
+
     powershell -ExecutionPolicy Bypass -File scripts\generate-values.ps1 `
         -ServicesFile 'jenkins\services.release-baseline.env' `
         -OutputFile $generatedValuesFile `
