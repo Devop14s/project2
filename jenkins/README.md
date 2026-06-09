@@ -78,6 +78,7 @@ The shared-environment deploy jobs should follow the same pattern as the develop
 `jenkins/scripts/update-manifest-repo.sh` now regenerates the full `argocd/values/*.yaml` file from the service catalog instead of editing only a few existing tag lines.
 When the Jenkins checkout is detached, the same helper now also falls back from `BRANCH_NAME` to `GIT_BRANCH` before failing branch detection for the manifest push.
 The regenerated GitOps overlays now also carry `image.repository`, `image.tag`, and the environment-specific ingress hosts for both `storefront` and `backoffice`, so ArgoCD does not fall back to the placeholder registry or static host defaults from `helm/yas/values.yaml`.
+The same manifest-update helper now also writes `work/manifest-update-metadata.json` for every attempt, including no-op runs, with the resolved branch, commit/push state, and final action marker.
 
 ## Chart note
 

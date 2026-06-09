@@ -527,6 +527,22 @@ try {
         throw 'update-manifest-repo.sh is missing the backoffice GitOps hostname default.'
     }
 
+    if ($updateManifestRepoScript -notmatch 'MANIFEST_METADATA_FILE="\$\{MANIFEST_METADATA_FILE:-work/manifest-update-metadata\.json\}"') {
+        throw 'update-manifest-repo.sh is missing the manifest-update metadata artifact.'
+    }
+
+    if ($updateManifestRepoScript -notmatch 'trap ''write_manifest_metadata \$\?'' EXIT') {
+        throw 'update-manifest-repo.sh is missing the failure-safe manifest metadata trap.'
+    }
+
+    if ($updateManifestRepoScript -notmatch '"manifest_commit_sha": "\$\{manifest_commit_sha\}"') {
+        throw 'update-manifest-repo.sh is missing the manifest commit SHA in its metadata artifact.'
+    }
+
+    if ($updateManifestRepoScript -notmatch '"last_action": "\$\{last_action\}"') {
+        throw 'update-manifest-repo.sh is missing the final action marker in its metadata artifact.'
+    }
+
     $preflightScript = Get-Content 'scripts\preflight.ps1' -Raw
     if ($preflightScript -notmatch 'docker version') {
         throw 'preflight.ps1 no longer distinguishes Docker CLI presence from daemon access.'
@@ -612,6 +628,10 @@ try {
 
     if ($statusReport -notmatch 'Commit metadata artifacts now embed the exact commit SHA and short SHA directly in `commit-metadata.json`') {
         throw 'Generated status report is missing the self-contained commit metadata note.'
+    }
+
+    if ($statusReport -notmatch 'GitOps manifest-update helpers now preserve a dedicated metadata artifact') {
+        throw 'Generated status report is missing the manifest-update metadata note.'
     }
 
     if ($statusReport -notmatch 'Build, push, and remote-tag verification helpers now preserve partial metadata artifacts') {

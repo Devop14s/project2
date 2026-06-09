@@ -149,6 +149,7 @@ $helmTemplateVerified = $false
 $gitopsValuesVerified = $false
 $runtimeEvidenceProvenanceVerified = $false
 $selfContainedCommitMetadataVerified = $false
+$gitopsManifestMetadataVerified = $false
 $partialImageMetadataVerified = $false
 $failureSafeRuntimeEvidenceVerified = $false
 $cleanupGuardVerified = $false
@@ -314,6 +315,7 @@ $writeCommitMetadataScript = if (Test-Path 'jenkins\scripts\write-commit-metadat
 $buildImagesScript = if (Test-Path 'jenkins\scripts\build-images.sh') { Get-Content 'jenkins\scripts\build-images.sh' -Raw } else { '' }
 $pushImagesScript = if (Test-Path 'jenkins\scripts\push-images.sh') { Get-Content 'jenkins\scripts\push-images.sh' -Raw } else { '' }
 $verifyImageTagsScript = if (Test-Path 'jenkins\scripts\verify-image-tags.sh') { Get-Content 'jenkins\scripts\verify-image-tags.sh' -Raw } else { '' }
+$updateManifestRepoScript = if (Test-Path 'jenkins\scripts\update-manifest-repo.sh') { Get-Content 'jenkins\scripts\update-manifest-repo.sh' -Raw } else { '' }
 $deployHelmScript = if (Test-Path 'jenkins\scripts\deploy-helm.sh') { Get-Content 'jenkins\scripts\deploy-helm.sh' -Raw } else { '' }
 $smokeTestScript = if (Test-Path 'jenkins\scripts\smoke-test.sh') { Get-Content 'jenkins\scripts\smoke-test.sh' -Raw } else { '' }
 $cleanupScript = if (Test-Path 'jenkins\scripts\cleanup-release.sh') { Get-Content 'jenkins\scripts\cleanup-release.sh' -Raw } else { '' }
@@ -332,6 +334,13 @@ $selfContainedCommitMetadataVerified = (
     $writeCommitMetadataScript -match '"commit_sha": "\$\{commit_sha\}"' -and
     $writeCommitMetadataScript -match '"commit_short_sha": "\$\{commit_short_sha\}"' -and
     $writeCommitMetadataScript -match '"generated_at":'
+)
+
+$gitopsManifestMetadataVerified = (
+    $updateManifestRepoScript -match 'MANIFEST_METADATA_FILE="\$\{MANIFEST_METADATA_FILE:-work/manifest-update-metadata\.json\}"' -and
+    $updateManifestRepoScript -match 'write_manifest_metadata' -and
+    $updateManifestRepoScript -match '"manifest_commit_sha": "\$\{manifest_commit_sha\}"' -and
+    $updateManifestRepoScript -match '"last_action": "\$\{last_action\}"'
 )
 
 $partialImageMetadataVerified = (
@@ -513,6 +522,9 @@ if ($runtimeEvidenceProvenanceVerified) {
 }
 if ($selfContainedCommitMetadataVerified) {
     $content.Add('- Commit metadata artifacts now embed the exact commit SHA and short SHA directly in `commit-metadata.json`, not only in sidecar text files.')
+}
+if ($gitopsManifestMetadataVerified) {
+    $content.Add('- GitOps manifest-update helpers now preserve a dedicated metadata artifact with branch, commit, push, and no-op state for each attempted overlay update.')
 }
 if ($partialImageMetadataVerified) {
     $content.Add('- Build, push, and remote-tag verification helpers now preserve partial metadata artifacts with completion state and the last attempted image when a run fails mid-stream.')

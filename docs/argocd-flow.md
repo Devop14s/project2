@@ -12,6 +12,7 @@ Use Jenkins only for build-and-update, then let ArgoCD reconcile the runtime sta
 4. The generated values file also carries `image.repository`, `image.tag`, and environment-specific ingress hosts so ArgoCD does not fall back to the placeholder registry entries in `helm/yas/values.yaml`.
 5. Jenkins commits and pushes that manifest change.
 6. ArgoCD watches the repo and syncs the target namespace.
+7. Jenkins also writes `work/manifest-update-metadata.json` so the manifest-update branch, no-op/commit/push state, and resulting commit SHA are preserved as provenance.
 
 For `dev_gitops`, the scaffold intentionally keeps the shared `main` tag in the committed overlay and relies on `work/commit_sha.txt` plus `work/commit-metadata.json` to identify which source revision the mutable `main` tag represented for that promotion run. The JSON artifact now embeds `commit_sha` and `commit_short_sha` directly.
 For `staging_gitops`, the scaffold still commits an explicit release tag into the overlay, but it now also records `work/commit_sha.txt` and `work/commit-metadata.json` so the release tag can be tied back to the exact source commit that produced it.

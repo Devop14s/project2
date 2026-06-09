@@ -135,6 +135,7 @@ helm_template_verified=0
 gitops_values_verified=0
 runtime_evidence_provenance_verified=0
 self_contained_commit_metadata_verified=0
+gitops_manifest_metadata_verified=0
 partial_image_metadata_verified=0
 failure_safe_runtime_evidence_verified=0
 cleanup_guard_verified=0
@@ -271,6 +272,12 @@ if grep -q '"commit_sha": "${commit_sha}"' jenkins/scripts/write-commit-metadata
    grep -q '"commit_short_sha": "${commit_short_sha}"' jenkins/scripts/write-commit-metadata.sh 2>/dev/null && \
    grep -q '"generated_at":' jenkins/scripts/write-commit-metadata.sh 2>/dev/null; then
   self_contained_commit_metadata_verified=1
+fi
+if grep -q 'MANIFEST_METADATA_FILE="${MANIFEST_METADATA_FILE:-work/manifest-update-metadata.json}"' jenkins/scripts/update-manifest-repo.sh 2>/dev/null && \
+   grep -q 'write_manifest_metadata' jenkins/scripts/update-manifest-repo.sh 2>/dev/null && \
+   grep -q '"manifest_commit_sha": "${manifest_commit_sha}"' jenkins/scripts/update-manifest-repo.sh 2>/dev/null && \
+   grep -q '"last_action": "${last_action}"' jenkins/scripts/update-manifest-repo.sh 2>/dev/null; then
+  gitops_manifest_metadata_verified=1
 fi
 if grep -q 'write_build_metadata' jenkins/scripts/build-images.sh 2>/dev/null && \
    grep -q '"completed": ${build_completed}' jenkins/scripts/build-images.sh 2>/dev/null && \
@@ -444,6 +451,9 @@ fi
   fi
   if [ "$self_contained_commit_metadata_verified" -eq 1 ]; then
     printf '%s\n' '- Commit metadata artifacts now embed the exact commit SHA and short SHA directly in `commit-metadata.json`, not only in sidecar text files.'
+  fi
+  if [ "$gitops_manifest_metadata_verified" -eq 1 ]; then
+    printf '%s\n' '- GitOps manifest-update helpers now preserve a dedicated metadata artifact with branch, commit, push, and no-op state for each attempted overlay update.'
   fi
   if [ "$partial_image_metadata_verified" -eq 1 ]; then
     printf '%s\n' '- Build, push, and remote-tag verification helpers now preserve partial metadata artifacts with completion state and the last attempted image when a run fails mid-stream.'

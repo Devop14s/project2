@@ -208,6 +208,10 @@ grep -q 'shared_target_detected=' jenkins/scripts/cleanup-release.sh
 grep -q 'ALLOW_SHARED_NAMESPACE_DELETE="${ALLOW_SHARED_NAMESPACE_DELETE:-0}"' jenkins/scripts/cleanup-release.sh
 grep -q 'Refusing namespace deletion for shared target' jenkins/scripts/cleanup-release.sh
 grep -q 'BACKOFFICE_DOMAIN_NAME="${BACKOFFICE_DOMAIN_NAME:-backoffice-${ENVIRONMENT}.yas.local}"' jenkins/scripts/update-manifest-repo.sh
+grep -q 'MANIFEST_METADATA_FILE="${MANIFEST_METADATA_FILE:-work/manifest-update-metadata.json}"' jenkins/scripts/update-manifest-repo.sh
+grep -q "trap 'write_manifest_metadata \$?' EXIT" jenkins/scripts/update-manifest-repo.sh
+grep -q '"manifest_commit_sha": "${manifest_commit_sha}"' jenkins/scripts/update-manifest-repo.sh
+grep -q '"last_action": "${last_action}"' jenkins/scripts/update-manifest-repo.sh
 grep -q 'docker version' scripts/preflight.sh
 grep -q 'present but daemon inaccessible' scripts/preflight.sh
 grep -q 'validate-gitops-values' scripts/preflight.ps1
@@ -243,6 +247,7 @@ grep -q 'tag: test-tag' "$manifest_values_file"
 grep -q '## Runtime Access Notes' "$status_report_file"
 grep -q 'Runtime evidence directories now snapshot commit, build, push, and verification artifacts' "$status_report_file"
 grep -q 'Commit metadata artifacts now embed the exact commit SHA and short SHA directly in `commit-metadata.json`' "$status_report_file"
+grep -q 'GitOps manifest-update helpers now preserve a dedicated metadata artifact' "$status_report_file"
 grep -q 'Build, push, and remote-tag verification helpers now preserve partial metadata artifacts' "$status_report_file"
 grep -q 'Deploy and smoke-test helpers now capture partial runtime diagnostics' "$status_report_file"
 grep -q 'Cleanup helpers now require explicit opt-in for shared targets' "$status_report_file"
