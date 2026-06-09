@@ -173,6 +173,7 @@ if grep -q 'set -- \$selected_entry' scripts/generate-values.sh; then
   printf 'generate-values.sh should preserve empty nodePort columns and must not parse selected entries with set -- $selected_entry.\n' >&2
   exit 1
 fi
+grep -q 'Services file not found: %s' scripts/generate-values.sh
 grep -q "if (env.PIPELINE_DISPATCH_MODE != 'true')" jenkins/pipelines/developer_cleanup.groovy
 grep -q "name: 'DELETE_NAMESPACE'" jenkins/pipelines/developer_cleanup.groovy
 grep -q "name: 'ALLOW_SHARED_ENVIRONMENT_CLEANUP'" jenkins/pipelines/developer_cleanup.groovy

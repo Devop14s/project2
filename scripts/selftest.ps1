@@ -324,6 +324,10 @@ try {
         throw 'generate-values.sh should preserve empty nodePort columns and must not parse selected entries with set -- $selected_entry.'
     }
 
+    if ($generateValuesShellScript -notmatch 'Services file not found: %s') {
+        throw 'generate-values.sh should fail fast when the selected services file is missing.'
+    }
+
     $developerCleanupPipeline = Get-Content 'jenkins\pipelines\developer_cleanup.groovy' -Raw
     if ($developerCleanupPipeline -notmatch "if \(env\.PIPELINE_DISPATCH_MODE != 'true'\)") {
         throw 'developer_cleanup.groovy no longer skips properties rewrites in dispatch mode.'

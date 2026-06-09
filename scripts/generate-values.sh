@@ -21,6 +21,11 @@ dockerhub_namespace="${DOCKERHUB_NAMESPACE:-}"
   exit 1
 }
 
+[ -f "$services_file" ] || {
+  printf 'Services file not found: %s\n' "$services_file" >&2
+  exit 1
+}
+
 [ -f "$all_services_file" ] || {
   printf 'Reference services file not found: %s\n' "$all_services_file" >&2
   exit 1
