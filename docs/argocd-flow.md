@@ -14,6 +14,7 @@ Use Jenkins only for build-and-update, then let ArgoCD reconcile the runtime sta
 6. ArgoCD watches the repo and syncs the target namespace.
 
 For `dev_gitops`, the scaffold intentionally keeps the shared `main` tag in the committed overlay and relies on `work/commit_sha.txt` plus `work/commit-metadata.json` to identify which source revision the mutable `main` tag represented for that promotion run.
+For `staging_gitops`, the scaffold still commits an explicit release tag into the overlay, but it now also records `work/commit_sha.txt` and `work/commit-metadata.json` so the release tag can be tied back to the exact source commit that produced it.
 
 ## Files in this repository
 

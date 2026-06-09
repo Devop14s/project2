@@ -30,6 +30,10 @@ return {
       }
     }
 
+    stage('Resolve Commit Metadata') {
+      sh 'jenkins/scripts/write-commit-metadata.sh'
+    }
+
     stage('Build And Push Release Images') {
       sh '''
         export RELEASE_VERSION="${RELEASE_VERSION}"

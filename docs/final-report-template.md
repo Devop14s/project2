@@ -59,6 +59,7 @@
 - actual image tag promoted to `dev`
 - `work/commit_sha.txt` or `work/commit-metadata.json` excerpt showing which source commit the `dev` promotion used
 - actual image tag promoted to `staging`
+- `work/commit_sha.txt` or `work/commit-metadata.json` excerpt showing which source commit the `staging` release or GitOps promotion used
 
 ## 8. Advanced section
 

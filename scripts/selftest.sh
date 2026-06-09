@@ -158,8 +158,12 @@ grep -q "stage('Resolve Commit Metadata')" jenkins/pipelines/dev_gitops.groovy
 grep -q 'jenkins/scripts/write-commit-metadata.sh' jenkins/pipelines/dev_gitops.groovy
 grep -q "if (env.PIPELINE_DISPATCH_MODE != 'true')" jenkins/pipelines/staging_gitops.groovy
 grep -q "name: 'DOCKERHUB_NAMESPACE'" jenkins/pipelines/staging_gitops.groovy
+grep -q "stage('Resolve Commit Metadata')" jenkins/pipelines/staging_gitops.groovy
+grep -q 'jenkins/scripts/write-commit-metadata.sh' jenkins/pipelines/staging_gitops.groovy
 grep -q "if (env.PIPELINE_DISPATCH_MODE != 'true')" jenkins/pipelines/staging_release.groovy
 grep -q "name: 'DOCKERHUB_NAMESPACE'" jenkins/pipelines/staging_release.groovy
+grep -q "stage('Resolve Commit Metadata')" jenkins/pipelines/staging_release.groovy
+grep -q 'jenkins/scripts/write-commit-metadata.sh' jenkins/pipelines/staging_release.groovy
 grep -q 'IMAGE_DIGESTS_FILE="work/image-digests.txt"' jenkins/scripts/push-images.sh
 grep -q 'record_repo_digest' jenkins/scripts/push-images.sh
 grep -q 'docker manifest inspect' jenkins/scripts/verify-image-tags.sh

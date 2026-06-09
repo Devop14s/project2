@@ -321,6 +321,14 @@ try {
         throw 'staging_gitops.groovy is missing the direct-load DOCKERHUB_NAMESPACE parameter.'
     }
 
+    if ($stagingGitopsPipeline -notmatch "stage\('Resolve Commit Metadata'\)") {
+        throw 'staging_gitops.groovy is missing the commit-metadata stage for release traceability.'
+    }
+
+    if ($stagingGitopsPipeline -notmatch 'jenkins/scripts/write-commit-metadata\.sh') {
+        throw 'staging_gitops.groovy no longer records commit metadata before updating staging GitOps values.'
+    }
+
     $stagingReleasePipeline = Get-Content 'jenkins\pipelines\staging_release.groovy' -Raw
     if ($stagingReleasePipeline -notmatch "if \(env\.PIPELINE_DISPATCH_MODE != 'true'\)") {
         throw 'staging_release.groovy no longer skips properties rewrites in dispatch mode.'
@@ -328,6 +336,14 @@ try {
 
     if ($stagingReleasePipeline -notmatch "name: 'DOCKERHUB_NAMESPACE'") {
         throw 'staging_release.groovy is missing the direct-load DOCKERHUB_NAMESPACE parameter.'
+    }
+
+    if ($stagingReleasePipeline -notmatch "stage\('Resolve Commit Metadata'\)") {
+        throw 'staging_release.groovy is missing the commit-metadata stage for release traceability.'
+    }
+
+    if ($stagingReleasePipeline -notmatch 'jenkins/scripts/write-commit-metadata\.sh') {
+        throw 'staging_release.groovy no longer records commit metadata before promoting a release.'
     }
 
     $pushImagesScript = Get-Content 'jenkins\scripts\push-images.sh' -Raw
