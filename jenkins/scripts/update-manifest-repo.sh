@@ -8,6 +8,11 @@ ENVIRONMENT="${ENVIRONMENT:-dev}"
 TAGS_FILE="${TAGS_FILE:-}"
 NAMESPACE_NAME="${NAMESPACE_NAME:-yas-${ENVIRONMENT}}"
 DOMAIN_NAME="${DOMAIN_NAME:-storefront-${ENVIRONMENT}.yas.local}"
+MANIFEST_BRANCH="${MANIFEST_BRANCH:-${BRANCH_NAME:-$(git rev-parse --abbrev-ref HEAD)}}"
+GIT_AUTHOR_NAME="${GIT_AUTHOR_NAME:-Jenkins Bot}"
+GIT_AUTHOR_EMAIL="${GIT_AUTHOR_EMAIL:-jenkins@example.local}"
+MANIFEST_COMMIT_MESSAGE="${MANIFEST_COMMIT_MESSAGE:-Update ${ENVIRONMENT} GitOps values for ${TAG}}"
+MANIFEST_BRANCH="${MANIFEST_BRANCH##*/}"
 
 [[ -f "$VALUES_FILE" ]] || fail "Values file not found: ${VALUES_FILE}"
 SERVICES_FILE="${SERVICES_FILE:-jenkins/services.env}" \
@@ -19,5 +24,19 @@ DOMAIN_NAME="${DOMAIN_NAME}" \
 RELEASE_VERSION="${TAG}" \
 sh scripts/generate-gitops-values.sh
 
-log "Generated ${VALUES_FILE} for ${ENVIRONMENT} with default tag ${TAG}"
-log "Commit and push logic must be wired after Git credentials and manifest repo strategy are finalized."
+if git diff --quiet -- "${VALUES_FILE}"; then
+  log "No GitOps changes detected in ${VALUES_FILE}"
+  exit 0
+fi
+
+if [[ "${MANIFEST_BRANCH}" == "HEAD" ]]; then
+  fail "Unable to determine manifest branch. Set MANIFEST_BRANCH or BRANCH_NAME."
+fi
+
+git config user.name "${GIT_AUTHOR_NAME}"
+git config user.email "${GIT_AUTHOR_EMAIL}"
+git add "${VALUES_FILE}"
+git commit -m "${MANIFEST_COMMIT_MESSAGE}"
+git push origin "HEAD:${MANIFEST_BRANCH}"
+
+log "Committed and pushed ${VALUES_FILE} to ${MANIFEST_BRANCH}"
