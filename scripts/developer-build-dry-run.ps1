@@ -5,6 +5,7 @@ param(
     [string]$OutputDir = 'work/dry-run',
     [string]$DeployerId = 'dev1',
     [string]$DomainName = '',
+    [string]$BackofficeDomainName = '',
     [string]$TaxBranch = 'main',
     [string]$ProductBranch = 'main',
     [string]$StorefrontBffBranch = 'main'
@@ -12,6 +13,10 @@ param(
 
 if ([string]::IsNullOrWhiteSpace($DomainName)) {
     $DomainName = "storefront-$DeployerId.yas.local"
+}
+
+if ([string]::IsNullOrWhiteSpace($BackofficeDomainName)) {
+    $BackofficeDomainName = "backoffice-$DeployerId.yas.local"
 }
 
 New-Item -ItemType Directory -Path $OutputDir -Force | Out-Null
@@ -34,7 +39,8 @@ try {
         -OutputFile $generatedValuesFile `
         -DockerhubNamespace $DockerhubNamespace `
         -DeployerId $DeployerId `
-        -DomainName $DomainName
+        -DomainName $DomainName `
+        -BackofficeDomainName $BackofficeDomainName
 
     Write-Host ''
     Write-Host 'Generated files:'
@@ -45,4 +51,3 @@ try {
     $env:PRODUCT_BRANCH = $previousProductBranch
     $env:STOREFRONT_BFF_BRANCH = $previousStorefrontBffBranch
 }
-

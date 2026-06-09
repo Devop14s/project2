@@ -7,6 +7,7 @@ output_file="${OUTPUT_FILE:-work/generated-values.yaml}"
 environment_name="${ENVIRONMENT:-developer}"
 deployer_id="${DEPLOYER_ID:-dev1}"
 domain_name="${DOMAIN_NAME:-storefront-${deployer_id}.yas.local}"
+backoffice_domain_name="${BACKOFFICE_DOMAIN_NAME:-backoffice-${deployer_id}.yas.local}"
 namespace_name="${NAMESPACE:-yas-user-${deployer_id}}"
 release_name="${RELEASE_NAME:-yas-${deployer_id}}"
 release_version="${RELEASE_VERSION:-main}"
@@ -38,6 +39,22 @@ EOF
 
 tag_var_name() {
   printf '%s_TAG' "$(printf '%s' "$1" | tr '[:lower:]-' '[:upper:]_')"
+}
+
+ingress_host_for() {
+  service="$1"
+
+  case "$service" in
+    storefront)
+      printf '%s' "$domain_name"
+      ;;
+    backoffice)
+      printf '%s' "$backoffice_domain_name"
+      ;;
+    *)
+      printf '%s-%s.yas.local' "$service" "$deployer_id"
+      ;;
+  esac
 }
 
 while IFS='|' read -r service path dockerfile port expose node_port workload_type; do
@@ -79,7 +96,7 @@ EOF
       nodePort: ${node_port:-32080}
     ingress:
       enabled: true
-      host: ${domain_name}
+      host: $(ingress_host_for "$service")
 EOF
   fi
 done < "$services_file"

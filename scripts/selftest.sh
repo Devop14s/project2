@@ -33,6 +33,8 @@ sh scripts/update-manifest-values.sh "$manifest_values_file" test-tag >/dev/null
 grep -q 'TAX_TAG=main' "$branch_tags_file"
 grep -q 'repository: demo-ns/yas-storefront-bff' "$generated_values_file"
 grep -q 'workloadType: ui' "$generated_values_file"
+grep -q 'host: storefront-dev1.yas.local' "$generated_values_file"
+grep -q 'host: backoffice-dev1.yas.local' "$generated_values_file"
 grep -q 'metricPort: 8090' "$generated_values_file"
 grep -q 'type: NodePort' "$generated_values_file"
 grep -q 'environment: dev' "$gitops_values_file"

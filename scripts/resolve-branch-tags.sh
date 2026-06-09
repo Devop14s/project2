@@ -37,7 +37,7 @@ resolve_tag() {
   exit 1
 }
 
-while IFS='|' read -r service path dockerfile port expose node_port; do
+while IFS='|' read -r service path dockerfile port expose node_port workload_type; do
   [ -n "$service" ] || continue
   case "$service" in
     \#*) continue ;;
@@ -51,4 +51,3 @@ while IFS='|' read -r service path dockerfile port expose node_port; do
 done < "$services_file"
 
 printf 'Resolved branch tags into %s\n' "$output_file"
-

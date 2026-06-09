@@ -5,6 +5,7 @@ param(
     [string]$EnvironmentName = 'developer',
     [string]$DeployerId = 'dev1',
     [string]$DomainName = '',
+    [string]$BackofficeDomainName = '',
     [string]$NamespaceName = '',
     [string]$ReleaseName = '',
     [string]$ReleaseVersion = 'main',
@@ -29,6 +30,10 @@ if ([string]::IsNullOrWhiteSpace($DomainName)) {
     $DomainName = "storefront-$DeployerId.yas.local"
 }
 
+if ([string]::IsNullOrWhiteSpace($BackofficeDomainName)) {
+    $BackofficeDomainName = "backoffice-$DeployerId.yas.local"
+}
+
 if ([string]::IsNullOrWhiteSpace($NamespaceName)) {
     $NamespaceName = "yas-user-$DeployerId"
 }
@@ -51,6 +56,20 @@ if (Test-Path $TagsFile) {
 function Get-TagEnvName {
     param([string]$ServiceName)
     return (($ServiceName.ToUpper() -replace '-', '_') + '_TAG')
+}
+
+function Get-IngressHost {
+    param([string]$ServiceName)
+
+    if ($ServiceName -eq 'storefront') {
+        return $DomainName
+    }
+
+    if ($ServiceName -eq 'backoffice') {
+        return $BackofficeDomainName
+    }
+
+    return "$ServiceName-$DeployerId.yas.local"
 }
 
 $outputDir = Split-Path -Parent $OutputFile
@@ -111,7 +130,7 @@ foreach ($line in Get-Content $ServicesFile) {
         $out.Add("      nodePort: $nodePort")
         $out.Add('    ingress:')
         $out.Add('      enabled: true')
-        $out.Add("      host: $DomainName")
+        $out.Add("      host: $(Get-IngressHost -ServiceName $service)")
     }
 }
 

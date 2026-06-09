@@ -47,6 +47,14 @@ try {
         throw 'Generated values are missing ui workload classification.'
     }
 
+    if ($generatedValues -notmatch 'host: storefront-dev1.yas.local') {
+        throw 'Generated values are missing the storefront ingress host.'
+    }
+
+    if ($generatedValues -notmatch 'host: backoffice-dev1.yas.local') {
+        throw 'Generated values are missing the backoffice ingress host.'
+    }
+
     if ($generatedValues -notmatch 'metricPort: 8090') {
         throw 'Generated values are missing backend metricPort.'
     }

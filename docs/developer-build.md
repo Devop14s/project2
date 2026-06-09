@@ -7,8 +7,9 @@ Deploy a temporary environment where one or more services can use images built f
 ## Inputs
 
 - `DEPLOYER_ID`
-- `DOMAIN_NAME`
-- optional per-service branch overrides such as `TAX_BRANCH` or `PRODUCT_BRANCH`
+- `DOMAIN_NAME` for the storefront UI
+- `BACKOFFICE_DOMAIN_NAME` for the backoffice UI
+- optional per-service branch overrides for any service in `jenkins/services.env`
 
 ## Flow
 
@@ -24,4 +25,4 @@ Deploy a temporary environment where one or more services can use images built f
 - namespace `yas-user-<developer-id>`
 - release `yas-<developer-id>`
 - values file under `work/generated-values.yaml`
-
+- distinct public endpoints for `storefront` and `backoffice`

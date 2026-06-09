@@ -38,6 +38,10 @@ Example:
 
 `storefront|storefront|storefront/Dockerfile|3000|true|32080|ui`
 
+## Developer build note
+
+`jenkins/pipelines/developer_build.groovy` now exposes branch override parameters for the full service catalog and supports separate `DOMAIN_NAME` and `BACKOFFICE_DOMAIN_NAME` values for the two public UIs.
+
 ## Recommended first validation
 
 1. Provide `DOCKERHUB_NAMESPACE` either as a Jenkins parameter or job environment value.

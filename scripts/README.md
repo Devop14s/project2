@@ -4,6 +4,8 @@ This directory contains local helper scripts in both PowerShell and POSIX shell 
 
 The current helpers understand the YAS service catalog format, including `workloadType` values such as `ui` and `backend`.
 
+The generated developer values also keep separate ingress hosts for the public `storefront` and `backoffice` UIs.
+
 ## Available pairs
 
 - `preflight.ps1`
