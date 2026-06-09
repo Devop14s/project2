@@ -1,12 +1,14 @@
 return {
-  properties([
-    parameters([
-      choice(name: 'SERVICE_CATALOG', choices: ['release-baseline', 'full'], description: 'Service catalog to build, push, and deploy'),
-      string(name: 'SOURCE_ROOT', defaultValue: '', description: 'Optional relative path to the YAS source tree; leave blank to auto-detect workspace root or yas-source/'),
-      string(name: 'SOURCE_GIT_ROOT', defaultValue: '', description: 'Optional separate Git checkout used for commit resolution'),
-      string(name: 'RELEASE_VERSION', defaultValue: 'v1.0.0', description: 'Version tag to build and deploy')
+  if (env.PIPELINE_DISPATCH_MODE != 'true') {
+    properties([
+      parameters([
+        choice(name: 'SERVICE_CATALOG', choices: ['release-baseline', 'full'], description: 'Service catalog to build, push, and deploy'),
+        string(name: 'SOURCE_ROOT', defaultValue: '', description: 'Optional relative path to the YAS source tree; leave blank to auto-detect workspace root or yas-source/'),
+        string(name: 'SOURCE_GIT_ROOT', defaultValue: '', description: 'Optional separate Git checkout used for commit resolution'),
+        string(name: 'RELEASE_VERSION', defaultValue: 'v1.0.0', description: 'Version tag to build and deploy')
+      ])
     ])
-  ])
+  }
 
   node {
     stage('Checkout') {

@@ -8,7 +8,7 @@
 - `yas-dev-cd`
 - `yas-staging-release`
 
-Each job can point to the same `Jenkinsfile` and pass a fixed `PIPELINE_TARGET`, or each job can load the corresponding pipeline script directly.
+Each job can point to the same `Jenkinsfile` and pass a fixed `PIPELINE_TARGET`, or each job can load the corresponding pipeline script directly. The top-level `Jenkinsfile` now carries the superset of shared parameters used by the dispatched pipelines, while the pipeline-specific Groovy files skip `properties(...)` rewrites when they are executed through that dispatcher.
 
 ## Required Jenkins credentials
 

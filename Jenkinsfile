@@ -33,6 +33,56 @@ pipeline {
       defaultValue: '',
       description: 'Docker registry namespace, for example docker.io/your-org'
     )
+    string(
+      name: 'RELEASE_VERSION',
+      defaultValue: 'v1.0.0',
+      description: 'Release tag used by staging pipelines and shared release flows'
+    )
+    string(
+      name: 'DEPLOYER_ID',
+      defaultValue: 'dev1',
+      description: 'Developer identifier used by developer build and cleanup flows'
+    )
+    string(
+      name: 'DOMAIN_NAME',
+      defaultValue: 'storefront-dev1.yas.local',
+      description: 'Optional storefront hostname override for developer flows'
+    )
+    string(
+      name: 'BACKOFFICE_DOMAIN_NAME',
+      defaultValue: 'backoffice-dev1.yas.local',
+      description: 'Optional backoffice hostname override for developer flows'
+    )
+    string(
+      name: 'NAMESPACE',
+      defaultValue: '',
+      description: 'Optional explicit namespace override for cleanup or manual deploy flows'
+    )
+    string(
+      name: 'RELEASE_NAME',
+      defaultValue: '',
+      description: 'Optional explicit release-name override for cleanup or manual deploy flows'
+    )
+    string(name: 'STOREFRONT_BRANCH', defaultValue: 'main', description: 'Developer-build branch override for storefront')
+    string(name: 'BACKOFFICE_BRANCH', defaultValue: 'main', description: 'Developer-build branch override for backoffice')
+    string(name: 'STOREFRONT_BFF_BRANCH', defaultValue: 'main', description: 'Developer-build branch override for storefront-bff')
+    string(name: 'BACKOFFICE_BFF_BRANCH', defaultValue: 'main', description: 'Developer-build branch override for backoffice-bff')
+    string(name: 'PRODUCT_BRANCH', defaultValue: 'main', description: 'Developer-build branch override for product')
+    string(name: 'MEDIA_BRANCH', defaultValue: 'main', description: 'Developer-build branch override for media')
+    string(name: 'CART_BRANCH', defaultValue: 'main', description: 'Developer-build branch override for cart')
+    string(name: 'CUSTOMER_BRANCH', defaultValue: 'main', description: 'Developer-build branch override for customer')
+    string(name: 'RATING_BRANCH', defaultValue: 'main', description: 'Developer-build branch override for rating')
+    string(name: 'LOCATION_BRANCH', defaultValue: 'main', description: 'Developer-build branch override for location')
+    string(name: 'ORDER_BRANCH', defaultValue: 'main', description: 'Developer-build branch override for order')
+    string(name: 'INVENTORY_BRANCH', defaultValue: 'main', description: 'Developer-build branch override for inventory')
+    string(name: 'TAX_BRANCH', defaultValue: 'main', description: 'Developer-build branch override for tax')
+    string(name: 'SEARCH_BRANCH', defaultValue: 'main', description: 'Developer-build branch override for search')
+    string(name: 'PROMOTION_BRANCH', defaultValue: 'main', description: 'Developer-build branch override for promotion')
+    string(name: 'PAYMENT_BRANCH', defaultValue: 'main', description: 'Developer-build branch override for payment')
+    string(name: 'PAYMENT_PAYPAL_BRANCH', defaultValue: 'main', description: 'Developer-build branch override for payment-paypal')
+    string(name: 'RECOMMENDATION_BRANCH', defaultValue: 'main', description: 'Developer-build branch override for recommendation')
+    string(name: 'SAMPLEDATA_BRANCH', defaultValue: 'main', description: 'Developer-build branch override for sampledata')
+    string(name: 'WEBHOOK_BRANCH', defaultValue: 'main', description: 'Developer-build branch override for webhook')
   }
 
   stages {
@@ -59,6 +109,7 @@ pipeline {
           if (dockerhubNamespace) {
             env.DOCKERHUB_NAMESPACE = dockerhubNamespace
           }
+          env.PIPELINE_DISPATCH_MODE = 'true'
           env.SERVICE_CATALOG = params.SERVICE_CATALOG
           env.SOURCE_ROOT = params.SOURCE_ROOT?.trim()
           env.SOURCE_GIT_ROOT = params.SOURCE_GIT_ROOT?.trim()

@@ -1,12 +1,14 @@
 return {
-  properties([
-    parameters([
-      string(name: 'DEPLOYER_ID', defaultValue: 'dev1', description: 'Developer identifier used in namespace and release name'),
-      choice(name: 'SERVICE_CATALOG', choices: ['release-baseline', 'full'], description: 'Service catalog associated with the deployment being cleaned up'),
-      string(name: 'NAMESPACE', defaultValue: '', description: 'Optional explicit namespace'),
-      string(name: 'RELEASE_NAME', defaultValue: '', description: 'Optional explicit release name')
+  if (env.PIPELINE_DISPATCH_MODE != 'true') {
+    properties([
+      parameters([
+        string(name: 'DEPLOYER_ID', defaultValue: 'dev1', description: 'Developer identifier used in namespace and release name'),
+        choice(name: 'SERVICE_CATALOG', choices: ['release-baseline', 'full'], description: 'Service catalog associated with the deployment being cleaned up'),
+        string(name: 'NAMESPACE', defaultValue: '', description: 'Optional explicit namespace'),
+        string(name: 'RELEASE_NAME', defaultValue: '', description: 'Optional explicit release name')
+      ])
     ])
-  ])
+  }
 
   node {
     stage('Checkout') {

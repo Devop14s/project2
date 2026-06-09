@@ -105,6 +105,17 @@ grep -q 'host: storefront-dev1.yas.local' "$generated_values_file"
 grep -q 'host: backoffice-dev1.yas.local' "$generated_values_file"
 grep -q "'developer_cleanup'" Jenkinsfile
 grep -q 'pipelineRequiresDockerhubNamespace' Jenkinsfile
+grep -q "name: 'RELEASE_VERSION'" Jenkinsfile
+grep -q "name: 'DEPLOYER_ID'" Jenkinsfile
+grep -q "name: 'STOREFRONT_BRANCH'" Jenkinsfile
+grep -q "PIPELINE_DISPATCH_MODE = 'true'" Jenkinsfile
+grep -q "if (env.PIPELINE_DISPATCH_MODE != 'true')" jenkins/pipelines/ci.groovy
+grep -q "if (env.PIPELINE_DISPATCH_MODE != 'true')" jenkins/pipelines/developer_build.groovy
+grep -q "if (env.PIPELINE_DISPATCH_MODE != 'true')" jenkins/pipelines/developer_cleanup.groovy
+grep -q "if (env.PIPELINE_DISPATCH_MODE != 'true')" jenkins/pipelines/dev_cd.groovy
+grep -q "if (env.PIPELINE_DISPATCH_MODE != 'true')" jenkins/pipelines/dev_gitops.groovy
+grep -q "if (env.PIPELINE_DISPATCH_MODE != 'true')" jenkins/pipelines/staging_gitops.groovy
+grep -q "if (env.PIPELINE_DISPATCH_MODE != 'true')" jenkins/pipelines/staging_release.groovy
 grep -q 'ENVIRONMENT="${ENVIRONMENT:-developer}"' jenkins/scripts/cleanup-release.sh
 grep -q 'default_namespace "$ENVIRONMENT" "$DEPLOYER_ID"' jenkins/scripts/cleanup-release.sh
 grep -q 'domainName: storefront-dev.yas.local' "$dev_generated_values_file"

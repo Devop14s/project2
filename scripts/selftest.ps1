@@ -121,6 +121,57 @@ try {
         throw 'Jenkinsfile no longer guards DOCKERHUB_NAMESPACE by pipeline target.'
     }
 
+    if ($jenkinsfile -notmatch "name: 'RELEASE_VERSION'") {
+        throw 'Jenkinsfile is missing the shared RELEASE_VERSION parameter.'
+    }
+
+    if ($jenkinsfile -notmatch "name: 'DEPLOYER_ID'") {
+        throw 'Jenkinsfile is missing the shared DEPLOYER_ID parameter.'
+    }
+
+    if ($jenkinsfile -notmatch "name: 'STOREFRONT_BRANCH'") {
+        throw 'Jenkinsfile is missing the shared branch-override parameters for dispatch mode.'
+    }
+
+    if ($jenkinsfile -notmatch "PIPELINE_DISPATCH_MODE = 'true'") {
+        throw 'Jenkinsfile no longer marks dispatched pipeline execution.'
+    }
+
+    $ciPipeline = Get-Content 'jenkins\pipelines\ci.groovy' -Raw
+    if ($ciPipeline -notmatch "if \(env\.PIPELINE_DISPATCH_MODE != 'true'\)") {
+        throw 'ci.groovy no longer skips properties rewrites in dispatch mode.'
+    }
+
+    $developerBuildPipeline = Get-Content 'jenkins\pipelines\developer_build.groovy' -Raw
+    if ($developerBuildPipeline -notmatch "if \(env\.PIPELINE_DISPATCH_MODE != 'true'\)") {
+        throw 'developer_build.groovy no longer skips properties rewrites in dispatch mode.'
+    }
+
+    $developerCleanupPipeline = Get-Content 'jenkins\pipelines\developer_cleanup.groovy' -Raw
+    if ($developerCleanupPipeline -notmatch "if \(env\.PIPELINE_DISPATCH_MODE != 'true'\)") {
+        throw 'developer_cleanup.groovy no longer skips properties rewrites in dispatch mode.'
+    }
+
+    $devCdPipeline = Get-Content 'jenkins\pipelines\dev_cd.groovy' -Raw
+    if ($devCdPipeline -notmatch "if \(env\.PIPELINE_DISPATCH_MODE != 'true'\)") {
+        throw 'dev_cd.groovy no longer skips properties rewrites in dispatch mode.'
+    }
+
+    $devGitopsPipeline = Get-Content 'jenkins\pipelines\dev_gitops.groovy' -Raw
+    if ($devGitopsPipeline -notmatch "if \(env\.PIPELINE_DISPATCH_MODE != 'true'\)") {
+        throw 'dev_gitops.groovy no longer skips properties rewrites in dispatch mode.'
+    }
+
+    $stagingGitopsPipeline = Get-Content 'jenkins\pipelines\staging_gitops.groovy' -Raw
+    if ($stagingGitopsPipeline -notmatch "if \(env\.PIPELINE_DISPATCH_MODE != 'true'\)") {
+        throw 'staging_gitops.groovy no longer skips properties rewrites in dispatch mode.'
+    }
+
+    $stagingReleasePipeline = Get-Content 'jenkins\pipelines\staging_release.groovy' -Raw
+    if ($stagingReleasePipeline -notmatch "if \(env\.PIPELINE_DISPATCH_MODE != 'true'\)") {
+        throw 'staging_release.groovy no longer skips properties rewrites in dispatch mode.'
+    }
+
     $cleanupScript = Get-Content 'jenkins\scripts\cleanup-release.sh' -Raw
     if ($cleanupScript -notmatch 'ENVIRONMENT="\$\{ENVIRONMENT:-developer\}"') {
         throw 'cleanup-release.sh is missing the environment-aware default.'
