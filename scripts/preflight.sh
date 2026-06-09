@@ -19,7 +19,13 @@ helm/yas/Chart.yaml
 helm/yas/values.yaml
 docs/status-report.md
 argocd/app-dev.yaml
+argocd/app-staging.yaml
+argocd/values/dev-values.yaml
+argocd/values/staging-values.yaml
+mesh/authorization-policy.yaml
+mesh/destination-rule.yaml
 mesh/peer-authentication.yaml
+mesh/virtual-service-retry.yaml
 scripts/preflight.ps1
 scripts/preflight.sh
 scripts/developer-build-dry-run.ps1
