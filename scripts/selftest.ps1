@@ -2,6 +2,23 @@ param(
     [string]$DockerhubNamespace = 'demo-ns'
 )
 
+function Get-HelmExecutable {
+    $helmCommand = Get-Command helm -ErrorAction SilentlyContinue
+    if ($helmCommand) {
+        return $helmCommand.Source
+    }
+
+    $localHelm = Get-ChildItem -Path 'work\tools' -Filter 'helm.exe' -Recurse -ErrorAction SilentlyContinue |
+        Where-Object { $_.FullName -like '*windows-amd64*' } |
+        Select-Object -First 1
+
+    if ($localHelm) {
+        return $localHelm.FullName
+    }
+
+    return $null
+}
+
 $tempDir = Join-Path $env:TEMP 'yas-scaffold-selftest'
 if (Test-Path $tempDir) {
     Remove-Item $tempDir -Recurse -Force
@@ -13,6 +30,8 @@ $generatedValuesFile = Join-Path $tempDir 'generated-values.yaml'
 $gitopsValuesFile = Join-Path $tempDir 'gitops-values.yaml'
 $chartValuesFile = Join-Path $tempDir 'chart-values.yaml'
 $manifestValuesFile = Join-Path $tempDir 'dev-values.yaml'
+$helmRenderFile = Join-Path $tempDir 'helm-render.yaml'
+$helmExecutable = Get-HelmExecutable
 
 try {
     Copy-Item 'argocd\values\dev-values.yaml' $manifestValuesFile -Force
@@ -34,12 +53,17 @@ try {
     powershell -ExecutionPolicy Bypass -File scripts\update-manifest-values.ps1 `
         -ValuesFile $manifestValuesFile `
         -Tag test-tag | Out-Null
+    if ($helmExecutable) {
+        & $helmExecutable lint 'helm\yas' | Out-Null
+        & $helmExecutable template yas 'helm\yas' | Out-File -FilePath $helmRenderFile -Encoding utf8
+    }
 
     $branchTags = Get-Content $branchTagsFile -Raw
     $generatedValues = Get-Content $generatedValuesFile -Raw
     $gitopsValues = Get-Content $gitopsValuesFile -Raw
     $chartValues = Get-Content $chartValuesFile -Raw
     $manifestValues = Get-Content $manifestValuesFile -Raw
+    $helmRender = if (Test-Path $helmRenderFile) { Get-Content $helmRenderFile -Raw } else { '' }
 
     if ($branchTags -notmatch 'TAX_TAG=main') {
         throw 'Branch tag resolution failed for tax service.'
@@ -87,6 +111,10 @@ try {
 
     if ($manifestValues -notmatch 'tag: test-tag') {
         throw 'Manifest values update did not apply the expected tag.'
+    }
+
+    if ($helmExecutable -and $helmRender -notmatch 'kind: Deployment') {
+        throw 'Helm template output is missing Deployment resources.'
     }
 
     Write-Host 'Selftest passed.'

@@ -41,9 +41,13 @@ backend_count=0
 source_aligned=0
 storefront_build_verified=0
 backoffice_build_verified=0
+storefront_bff_build_verified=0
 product_build_verified=0
 product_image_verified=0
 backoffice_image_verified=0
+storefront_bff_image_verified=0
+helm_lint_verified=0
+helm_template_verified=0
 if [ -f "jenkins/services.env" ]; then
   while IFS='|' read -r service path dockerfile port expose node_port workload_type; do
     [ -n "$service" ] || continue
@@ -74,6 +78,9 @@ fi
 if [ -d "yas-source/backoffice/.next" ]; then
   backoffice_build_verified=1
 fi
+if [ -f "yas-source/storefront-bff/target/storefront-bff-1.0-SNAPSHOT.jar" ]; then
+  storefront_bff_build_verified=1
+fi
 if [ -f "yas-source/product/target/product-1.0-SNAPSHOT.jar" ]; then
   product_build_verified=1
 fi
@@ -83,6 +90,17 @@ if command -v docker >/dev/null 2>&1; then
   fi
   if docker image inspect yas-backoffice:codex-verified >/dev/null 2>&1; then
     backoffice_image_verified=1
+  fi
+  if docker image inspect yas-storefront-bff:codex-verified >/dev/null 2>&1; then
+    storefront_bff_image_verified=1
+  fi
+fi
+if command -v helm >/dev/null 2>&1; then
+  if helm lint helm/yas >/dev/null 2>&1; then
+    helm_lint_verified=1
+  fi
+  if helm template yas helm/yas >/dev/null 2>&1; then
+    helm_template_verified=1
   fi
 fi
 
@@ -135,6 +153,9 @@ fi
   if [ "$backoffice_build_verified" -eq 1 ]; then
     printf '%s\n' '- A real `backoffice` Next.js production build completed successfully in the cloned source tree.'
   fi
+  if [ "$storefront_bff_build_verified" -eq 1 ]; then
+    printf '%s\n' '- A real `storefront-bff` Maven build completed successfully and produced a runnable JAR artifact.'
+  fi
   if [ "$product_build_verified" -eq 1 ]; then
     printf '%s\n' '- A real `product` Maven backend build completed successfully and produced a runnable JAR artifact.'
   fi
@@ -143,6 +164,15 @@ fi
   fi
   if [ "$backoffice_image_verified" -eq 1 ]; then
     printf '%s\n' '- A real `backoffice` Docker image build completed successfully in this workspace.'
+  fi
+  if [ "$storefront_bff_image_verified" -eq 1 ]; then
+    printf '%s\n' '- A real `storefront-bff` Docker image build completed successfully in this workspace.'
+  fi
+  if [ "$helm_lint_verified" -eq 1 ]; then
+    printf '%s\n' '- A real Helm chart lint completed successfully against `helm/yas`.'
+  fi
+  if [ "$helm_template_verified" -eq 1 ]; then
+    printf '%s\n' '- A real Helm chart template render completed successfully against `helm/yas`.'
   fi
   printf '\n'
   printf '## Still Blocked In This Workspace\n'

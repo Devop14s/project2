@@ -20,11 +20,15 @@ Checked directly in the cloned source:
 - `backoffice`: `npm ci` passed.
 - `backoffice`: `npm run build` passed and produced `.next`, but the build log still printed `quill` SSR `document is not defined` traces after route generation.
 - `backoffice`: `npm run lint` passed.
+- `storefront-bff`: `mvn clean install -pl storefront-bff -am` passed using local Temurin 25 and Maven 3.9.11, and produced `storefront-bff/target/storefront-bff-1.0-SNAPSHOT.jar`.
 - `product`: `mvn clean install -pl product -am` passed using local Temurin 25 and Maven 3.9.11, and produced `product/target/product-1.0-SNAPSHOT.jar`.
 - Docker daemon is reachable outside the sandbox on this host.
 - `docker build` for `product` passed and produced local image `yas-product:codex-verified`.
 - `docker build` for `backoffice` passed and produced local image `yas-backoffice:codex-verified`.
+- `docker build` for `storefront-bff` passed and produced local image `yas-storefront-bff:codex-verified`.
 - `docker build` for `storefront` was attempted earlier but timed out before producing a local image.
+- `helm lint helm/yas` passed with Helm 4.2.0.
+- `helm template yas helm/yas` passed and rendered chart output locally.
 
 ## UI services
 
@@ -37,7 +41,7 @@ Checked directly in the cloned source:
 
 | Service | Source path | CI build command | Docker context | Upstream image | App port | Context path | Runtime command | Notes |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| storefront-bff | `yas-source/storefront-bff` | `mvn clean install -pl storefront-bff -am` | `./storefront-bff` | `ghcr.io/nashtech-garage/yas-storefront-bff:latest` | `8087` | n/a | `java -jar /app.jar` | Routes to Next.js storefront in `application-prod.yaml`. |
+| storefront-bff | `yas-source/storefront-bff` | `mvn clean install -pl storefront-bff -am` | `./storefront-bff` | `ghcr.io/nashtech-garage/yas-storefront-bff:latest` | `8087` | n/a | `java -jar /app.jar` | Real Maven build and Docker image build were both verified locally. Routes to Next.js storefront in `application-prod.yaml`. |
 | backoffice-bff | `yas-source/backoffice-bff` | `mvn clean install -pl backoffice-bff -am` | `./backoffice-bff` | `ghcr.io/nashtech-garage/yas-backoffice-bff:latest` | `8087` | n/a | `java -jar /app.jar` | Routes to Next.js backoffice in `application-prod.yaml`. |
 
 ## Backend services
@@ -66,5 +70,6 @@ Checked directly in the cloned source:
 - The upstream UI workflows use Node 20.
 - The upstream backend workflows use Maven multi-module builds from the repo root with `-pl <service> -am`.
 - Local backend verification on this host used Temurin JDK 25.0.3 and Apache Maven 3.9.11 to match the upstream Java baseline.
+- Local chart verification on this host used Helm 4.2.0 from `work/tools/helm-v4.2.0/windows-amd64/helm.exe`.
 - The backend Dockerfiles expect a prebuilt JAR in `target/`; they are not multi-stage Maven builds.
 - The scaffold still normalizes Kubernetes service port exposure to `80` for backend services, while the app processes themselves listen on ports such as `8080` to `8095` inside their own containers in local development.

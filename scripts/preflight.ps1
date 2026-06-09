@@ -3,6 +3,25 @@ param(
     [switch]$SkipCommandChecks
 )
 
+function Test-ToolAvailable {
+    param(
+        [string]$CommandName
+    )
+
+    if ($null -ne (Get-Command $CommandName -ErrorAction SilentlyContinue)) {
+        return $true
+    }
+
+    if ($CommandName -eq 'helm') {
+        $localHelm = Get-ChildItem -Path 'work\tools' -Filter 'helm.exe' -Recurse -ErrorAction SilentlyContinue |
+            Where-Object { $_.FullName -like '*windows-amd64*' } |
+            Select-Object -First 1
+        return $null -ne $localHelm
+    }
+
+    return $false
+}
+
 $requiredFiles = @(
     'README.md',
     'Jenkinsfile',
@@ -55,7 +74,7 @@ $fileResults = foreach ($file in $requiredFiles) {
 }
 
 $commandResults = foreach ($cmd in $requiredCommands) {
-    $exists = $null -ne (Get-Command $cmd -ErrorAction SilentlyContinue)
+    $exists = Test-ToolAvailable -CommandName $cmd
     [pscustomobject]@{
         type = 'command'
         name = $cmd

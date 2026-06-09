@@ -6,6 +6,8 @@ The current helpers understand the YAS service catalog format, including `worklo
 
 The generated developer values also keep separate ingress hosts for the public `storefront` and `backoffice` UIs.
 
+On Windows, `preflight.ps1`, `selftest.ps1`, and `report-status.ps1` can also pick up a portable Helm binary under `work/tools/helm-v*/windows-amd64/helm.exe`, so Helm chart validation does not depend on a global install.
+
 ## Available pairs
 
 - `preflight.ps1`

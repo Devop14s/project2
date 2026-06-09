@@ -3,6 +3,23 @@ param(
     [switch]$SkipCommandChecks
 )
 
+function Get-HelmExecutable {
+    $helmCommand = Get-Command helm -ErrorAction SilentlyContinue
+    if ($helmCommand) {
+        return $helmCommand.Source
+    }
+
+    $localHelm = Get-ChildItem -Path 'work\tools' -Filter 'helm.exe' -Recurse -ErrorAction SilentlyContinue |
+        Where-Object { $_.FullName -like '*windows-amd64*' } |
+        Select-Object -First 1
+
+    if ($localHelm) {
+        return $localHelm.FullName
+    }
+
+    return $null
+}
+
 $outputDir = Split-Path -Parent $OutputFile
 if ($outputDir) {
     New-Item -ItemType Directory -Path $outputDir -Force | Out-Null
@@ -37,9 +54,14 @@ $backendCount = 0
 $sourceAligned = $false
 $storefrontBuildVerified = (Test-Path 'yas-source\storefront\.next')
 $backofficeBuildVerified = (Test-Path 'yas-source\backoffice\.next')
+$storefrontBffBuildVerified = (Test-Path 'yas-source\storefront-bff\target\storefront-bff-1.0-SNAPSHOT.jar')
 $productBuildVerified = (Test-Path 'yas-source\product\target\product-1.0-SNAPSHOT.jar')
 $productImageVerified = $false
 $backofficeImageVerified = $false
+$storefrontBffImageVerified = $false
+$helmExecutable = Get-HelmExecutable
+$helmLintVerified = $false
+$helmTemplateVerified = $false
 
 if (Test-Path $servicesFile) {
     foreach ($line in Get-Content $servicesFile) {
@@ -79,6 +101,29 @@ if ($null -ne (Get-Command docker -ErrorAction SilentlyContinue)) {
     } catch {
         $backofficeImageVerified = $false
     }
+
+    try {
+        docker image inspect 'yas-storefront-bff:codex-verified' *> $null
+        $storefrontBffImageVerified = ($LASTEXITCODE -eq 0)
+    } catch {
+        $storefrontBffImageVerified = $false
+    }
+}
+
+if ($helmExecutable) {
+    try {
+        & $helmExecutable lint 'helm\yas' *> $null
+        $helmLintVerified = ($LASTEXITCODE -eq 0)
+    } catch {
+        $helmLintVerified = $false
+    }
+
+    try {
+        & $helmExecutable template yas 'helm\yas' *> $null
+        $helmTemplateVerified = ($LASTEXITCODE -eq 0)
+    } catch {
+        $helmTemplateVerified = $false
+    }
 }
 
 $fileLines = foreach ($file in $requiredFiles) {
@@ -87,7 +132,11 @@ $fileLines = foreach ($file in $requiredFiles) {
 }
 
 $commandLines = foreach ($cmd in $requiredCommands) {
-    $status = if ($null -ne (Get-Command $cmd -ErrorAction SilentlyContinue)) { 'ok' } else { 'missing' }
+    $status = if ($cmd -eq 'helm') {
+        if ($helmExecutable) { 'ok' } else { 'missing' }
+    } else {
+        if ($null -ne (Get-Command $cmd -ErrorAction SilentlyContinue)) { 'ok' } else { 'missing' }
+    }
     "- ${cmd}: $status"
 }
 
@@ -132,6 +181,9 @@ if ($storefrontBuildVerified) {
 if ($backofficeBuildVerified) {
     $content.Add('- A real `backoffice` Next.js production build completed successfully in the cloned source tree.')
 }
+if ($storefrontBffBuildVerified) {
+    $content.Add('- A real `storefront-bff` Maven build completed successfully and produced a runnable JAR artifact.')
+}
 if ($productBuildVerified) {
     $content.Add('- A real `product` Maven backend build completed successfully and produced a runnable JAR artifact.')
 }
@@ -140,6 +192,15 @@ if ($productImageVerified) {
 }
 if ($backofficeImageVerified) {
     $content.Add('- A real `backoffice` Docker image build completed successfully in this workspace.')
+}
+if ($storefrontBffImageVerified) {
+    $content.Add('- A real `storefront-bff` Docker image build completed successfully in this workspace.')
+}
+if ($helmLintVerified) {
+    $content.Add('- A real Helm chart lint completed successfully against `helm/yas`.')
+}
+if ($helmTemplateVerified) {
+    $content.Add('- A real Helm chart template render completed successfully against `helm/yas`.')
 }
 $content.Add('')
 $content.Add('## Still Blocked In This Workspace')

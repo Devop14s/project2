@@ -34,6 +34,10 @@ sh scripts/generate-gitops-values.sh >/dev/null
 OUTPUT_FILE="$chart_values_file" \
 sh scripts/generate-chart-values.sh >/dev/null
 sh scripts/update-manifest-values.sh "$manifest_values_file" test-tag >/dev/null
+if command -v helm >/dev/null 2>&1; then
+  helm lint helm/yas >/dev/null
+  helm template yas helm/yas > "${temp_dir}/helm-render.yaml"
+fi
 
 grep -q 'TAX_TAG=main' "$branch_tags_file"
 grep -q 'repository: demo-ns/yas-storefront-bff' "$generated_values_file"
@@ -47,5 +51,8 @@ grep -q 'payment-paypal:' "$gitops_values_file"
 grep -q 'repository: docker.io/example/yas-storefront' "$chart_values_file"
 grep -q 'host: backoffice.yas.local' "$chart_values_file"
 grep -q 'tag: test-tag' "$manifest_values_file"
+if [ -f "${temp_dir}/helm-render.yaml" ]; then
+  grep -q 'kind: Deployment' "${temp_dir}/helm-render.yaml"
+fi
 
 printf 'Selftest passed.\n'
