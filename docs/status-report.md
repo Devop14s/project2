@@ -1,47 +1,71 @@
 # Status Report
 
-## Implemented in this repository
+Last updated: June 9, 2026
 
-- Assignment breakdown and phased execution plan in `plan/`.
-- Delivery repo scaffold in `jenkins/`, `helm/`, and `docs/`.
-- Advanced scaffold in `argocd/` and `mesh/`.
-- Jenkins pipeline entrypoints for CI, developer deploy, cleanup, dev, and staging.
-- GitOps pipeline entrypoints for `dev` and `staging`.
-- Reusable shell-script skeletons for Docker login, image build/push, values generation, deploy, cleanup, and smoke test.
-- Reusable shell-script skeleton for GitOps values updates.
-- Helm chart skeleton with per-service image overrides and environment overlays.
-- Helm chart scaffold aligned more closely with upstream YAS `ui` and `backend` workload patterns.
-- Documentation templates for service inventory, image mapping, deployment topology, and runbooks.
-- Local preflight script for checking scaffold completeness and tool availability.
-- Cross-platform local helpers in both PowerShell and shell form.
-- Cross-platform local helpers for preflight, branch-tag resolution, values generation, and GitOps values updates.
-- Cross-platform dry-run flow for the developer deployment path.
-- Cross-platform scaffold selftest for local helper integration.
-- Preflight supports file-only validation separately from host command validation.
-- Cross-platform service catalog validation and generated status reporting.
-- Source-verified YAS service catalog with 20 services and 2 public entrypoints.
-- Workload-aware catalog split between upstream-style `ui` and `backend` services.
-- Cross-platform GitOps values generation for the full service catalog.
-- Cross-platform Helm baseline values generation from the shared service catalog.
-- Source-alignment validation against the local `yas-source` clone.
-- Source-based build and runtime matrix in `docs/source-build-runtime-matrix.md`.
-- Real local build verification for `storefront`, `backoffice`, `storefront-bff`, `backoffice-bff`, `product`, `payment`, `payment-paypal`, `recommendation`, `inventory`, and `order`.
-- Test-skipped packaging verification for `sampledata` and `search`.
-- Local Java and Maven enablement for upstream-style backend builds.
-- Real local Docker image verification for `backoffice`, `storefront-bff`, `backoffice-bff`, `product`, `payment`, `payment-paypal`, `recommendation`, `sampledata`, `search`, `inventory`, and `order`.
-- Real local Helm lint and template validation for `helm/yas`.
+## Completed in this repository
 
-## Not implementable yet in this workspace
+- Assignment analysis and phased notes exist in `plan/`.
+- Delivery scaffold exists for Jenkins, Helm, ArgoCD, and service-mesh work in `jenkins/`, `helm/`, `argocd/`, and `mesh/`.
+- Cross-platform local helper set exists in `scripts/` for preflight, selftest, dry run, values generation, GitOps values generation, chart-values generation, service-catalog validation, chart validation, source alignment, and status reporting.
+- Shared catalog exists in `jenkins/services.env` with 20 app services, 2 public entrypoints, and explicit `ui` versus `backend` workload typing.
+- Helm chart baseline is generated from the shared catalog and validates locally with `helm lint` and `helm template`.
+- GitOps overlays under `argocd/values/` are generated from the same shared catalog rather than maintained manually.
+- Local clone `yas-source/` is now used as the evidence base for service paths, Dockerfiles, build commands, runtime ports, and upstream image naming.
 
-- Working image list and registry push verification for all runtime services.
-- Real image build and push verification for the required service subset.
-- Functional Kubernetes deployment for YAS.
-- Verified Jenkins webhook, credentials, Docker Hub integration, and kubeconfig access.
-- Evidence screenshots and final `.docx` report.
-- A full upstream-style test pass is still blocked for `sampledata` and `search` in this workspace.
+## Verified locally on this host
 
-## Blocking inputs still required
+- UI builds verified:
+  - `storefront`: `npm ci`, `npm run build`, `npm run lint`
+  - `backoffice`: `npm ci`, `npm run build`, `npm run lint`
+- Backend and BFF builds verified with upstream-style Maven commands:
+  - `storefront-bff`
+  - `backoffice-bff`
+  - `product`
+  - `payment`
+  - `payment-paypal`
+  - `recommendation`
+  - `inventory`
+  - `order`
+- Partial packaging verified with known blockers:
+  - `sampledata`: packaged successfully with `-Dmaven.test.skip=true`
+  - `search`: packaged successfully with `-Dmaven.test.skip=true`
+- Local Docker image builds verified:
+  - `backoffice`
+  - `storefront-bff`
+  - `backoffice-bff`
+  - `product`
+  - `payment`
+  - `payment-paypal`
+  - `recommendation`
+  - `inventory`
+  - `order`
+  - `sampledata`
+  - `search`
+- Local Helm verification completed:
+  - `helm lint helm/yas`
+  - `helm template yas helm/yas`
 
-- Final service subset to deploy from the now source-verified catalog.
-- Docker Hub namespace and Jenkins credential IDs.
-- A reachable Kubernetes cluster and Jenkins host.
+## Known blockers and gaps
+
+- No real registry push has been verified yet for any service image.
+- No Kubernetes cluster deployment has been verified yet for `dev`, `staging`, or developer namespaces.
+- Jenkins webhook, Jenkins credentials, registry credentials, and kubeconfig wiring have not been exercised end to end.
+- `sampledata` does not currently have a clean full upstream-style test pass in this workspace because `common-library` test compilation blocks the reactor build.
+- `search` does not currently have a clean full upstream-style test pass in this workspace because Elasticsearch Testcontainers does not become ready for `ProductCdcConsumerTest`.
+- `storefront` still lacks a completed local Docker image verification because the earlier build attempt timed out before finishing.
+
+## Current recommendation
+
+- Treat the repo as a strong, source-verified delivery scaffold rather than a finished deployment repo.
+- Use the services already verified locally as the first deployment subset.
+- Keep `sampledata` and `search` outside the first end-to-end release until their workspace-specific test blockers are understood or intentionally bypassed.
+
+## Detailed remaining plan
+
+- The detailed execution plan for unfinished work is in [remaining-work-plan.md](</D:/App/project2/docs/remaining-work-plan.md>).
+
+## Inputs still required
+
+- Final decision on the first deployable service subset.
+- Real registry namespace and Jenkins credential IDs.
+- Reachable Jenkins host and Kubernetes cluster with kubeconfig access.
