@@ -45,6 +45,11 @@ if ([string]::IsNullOrWhiteSpace($DockerhubNamespace)) {
 }
 
 $tagMap = @{}
+if ($PSBoundParameters.ContainsKey('TagsFile') -and -not [string]::IsNullOrWhiteSpace($TagsFile) -and -not (Test-Path $TagsFile)) {
+    Write-Error "Tags file not found: $TagsFile"
+    exit 1
+}
+
 if (-not [string]::IsNullOrWhiteSpace($TagsFile) -and (Test-Path $TagsFile)) {
     foreach ($line in Get-Content $TagsFile) {
         if (-not $line) { continue }

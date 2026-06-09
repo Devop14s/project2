@@ -31,6 +31,11 @@ dockerhub_namespace="${DOCKERHUB_NAMESPACE:-}"
   exit 1
 }
 
+if [ "${TAGS_FILE+x}" = "x" ] && [ -n "$tags_file" ] && [ ! -f "$tags_file" ]; then
+  printf 'Tags file not found: %s\n' "$tags_file" >&2
+  exit 1
+fi
+
 if [ -z "$domain_name" ]; then
   if [ "$environment_name" = "developer" ]; then
     domain_name="storefront-${deployer_id}.yas.local"

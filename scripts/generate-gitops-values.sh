@@ -24,6 +24,11 @@ dockerhub_namespace="${DOCKERHUB_NAMESPACE:-docker.io/example}"
   exit 1
 }
 
+if [ "${TAGS_FILE+x}" = "x" ] && [ -n "$tags_file" ] && [ ! -f "$tags_file" ]; then
+  printf 'Tags file not found: %s\n' "$tags_file" >&2
+  exit 1
+fi
+
 mkdir -p "$(dirname "$output_file")"
 
 if [ -n "$tags_file" ] && [ -f "$tags_file" ]; then

@@ -108,6 +108,14 @@ sh scripts/generate-chart-values.sh >/dev/null
 sh scripts/update-manifest-values.sh "$manifest_values_file" test-tag >/dev/null
 powershell -ExecutionPolicy Bypass -File scripts/preflight.ps1 -AsJson -SkipCommandChecks >/dev/null
 sh scripts/report-status.sh "$status_report_file" --skip-command-checks >/dev/null
+if TAGS_FILE="${temp_dir}/missing-tags.env" DOCKERHUB_NAMESPACE="$dockerhub_namespace" OUTPUT_FILE="${temp_dir}/missing-tags-generated-values.yaml" sh scripts/generate-values.sh >/dev/null 2>&1; then
+  printf 'generate-values.sh should fail when an explicit TAGS_FILE path is provided but missing.\n' >&2
+  exit 1
+fi
+if TAGS_FILE="${temp_dir}/missing-gitops-tags.env" OUTPUT_FILE="${temp_dir}/missing-tags-gitops-values.yaml" ENVIRONMENT=dev sh scripts/generate-gitops-values.sh >/dev/null 2>&1; then
+  printf 'generate-gitops-values.sh should fail when an explicit TAGS_FILE path is provided but missing.\n' >&2
+  exit 1
+fi
 if command -v helm >/dev/null 2>&1; then
   helm lint helm/yas >/dev/null
   helm template yas helm/yas > "${temp_dir}/helm-render.yaml"
@@ -177,6 +185,8 @@ if grep -q 'set -- \$selected_entry' scripts/generate-values.sh; then
   exit 1
 fi
 grep -q 'Services file not found: %s' scripts/generate-values.sh
+grep -q 'Tags file not found: %s' scripts/generate-values.sh
+grep -q 'Tags file not found: %s' scripts/generate-gitops-values.sh
 grep -q "if (env.PIPELINE_DISPATCH_MODE != 'true')" jenkins/pipelines/developer_cleanup.groovy
 grep -q "name: 'DELETE_NAMESPACE'" jenkins/pipelines/developer_cleanup.groovy
 grep -q "name: 'ALLOW_SHARED_ENVIRONMENT_CLEANUP'" jenkins/pipelines/developer_cleanup.groovy

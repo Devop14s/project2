@@ -196,6 +196,24 @@ try {
         throw 'Generated values are missing storefront-bff repository.'
     }
 
+    $missingTagsGeneratedValuesFile = Join-Path $tempDir 'missing-tags-generated-values.yaml'
+    powershell -ExecutionPolicy Bypass -File scripts\generate-values.ps1 `
+        -TagsFile (Join-Path $tempDir 'missing-tags.env') `
+        -OutputFile $missingTagsGeneratedValuesFile `
+        -DockerhubNamespace $DockerhubNamespace *> $null
+    if ($LASTEXITCODE -eq 0) {
+        throw 'generate-values.ps1 should fail when an explicit TagsFile path is provided but missing.'
+    }
+
+    $missingTagsGitopsValuesFile = Join-Path $tempDir 'missing-tags-gitops-values.yaml'
+    powershell -ExecutionPolicy Bypass -File scripts\generate-gitops-values.ps1 `
+        -TagsFile (Join-Path $tempDir 'missing-gitops-tags.env') `
+        -OutputFile $missingTagsGitopsValuesFile `
+        -EnvironmentName dev *> $null
+    if ($LASTEXITCODE -eq 0) {
+        throw 'generate-gitops-values.ps1 should fail when an explicit TagsFile path is provided but missing.'
+    }
+
     if ($generatedValues -notmatch 'workloadType: ui') {
         throw 'Generated values are missing ui workload classification.'
     }
@@ -360,6 +378,15 @@ try {
 
     if ($generateValuesShellScript -notmatch 'Services file not found: %s') {
         throw 'generate-values.sh should fail fast when the selected services file is missing.'
+    }
+
+    if ($generateValuesShellScript -notmatch 'Tags file not found: %s') {
+        throw 'generate-values.sh should fail fast when an explicit TAGS_FILE path is provided but missing.'
+    }
+
+    $generateGitopsValuesShellScript = Get-Content 'scripts\generate-gitops-values.sh' -Raw
+    if ($generateGitopsValuesShellScript -notmatch 'Tags file not found: %s') {
+        throw 'generate-gitops-values.sh should fail fast when an explicit TAGS_FILE path is provided but missing.'
     }
 
     $developerCleanupPipeline = Get-Content 'jenkins\pipelines\developer_cleanup.groovy' -Raw
