@@ -34,6 +34,8 @@ $chartValuesFile = Join-Path $tempDir 'chart-values.yaml'
 $manifestValuesFile = Join-Path $tempDir 'dev-values.yaml'
 $helmRenderFile = Join-Path $tempDir 'helm-render.yaml'
 $baselineHelmRenderFile = Join-Path $tempDir 'baseline-helm-render.yaml'
+$gitopsDevHelmRenderFile = Join-Path $tempDir 'gitops-dev-helm-render.yaml'
+$gitopsStagingHelmRenderFile = Join-Path $tempDir 'gitops-staging-helm-render.yaml'
 $statusReportFile = Join-Path $tempDir 'status-report.generated.md'
 $helmExecutable = Get-HelmExecutable
 
@@ -354,6 +356,24 @@ try {
         }
         if ($baselineHelmRender -match 'name: yas-sampledata(\r?\n|$)') {
             throw 'Baseline Helm render should not include the sampledata deployment.'
+        }
+
+        & $helmExecutable template yas-dev 'helm\yas' -f 'helm\yas\values.yaml' -f 'argocd\values\dev-values.yaml' | Out-File -FilePath $gitopsDevHelmRenderFile -Encoding utf8
+        $gitopsDevHelmRender = Get-Content $gitopsDevHelmRenderFile -Raw
+        if ($gitopsDevHelmRender -notmatch 'host: "storefront-dev\.yas\.local"') {
+            throw 'GitOps dev Helm render is missing the storefront dev ingress host override.'
+        }
+        if ($gitopsDevHelmRender -notmatch 'host: "backoffice-dev\.yas\.local"') {
+            throw 'GitOps dev Helm render is missing the backoffice dev ingress host override.'
+        }
+
+        & $helmExecutable template yas-staging 'helm\yas' -f 'helm\yas\values.yaml' -f 'argocd\values\staging-values.yaml' | Out-File -FilePath $gitopsStagingHelmRenderFile -Encoding utf8
+        $gitopsStagingHelmRender = Get-Content $gitopsStagingHelmRenderFile -Raw
+        if ($gitopsStagingHelmRender -notmatch 'host: "storefront-staging\.yas\.local"') {
+            throw 'GitOps staging Helm render is missing the storefront staging ingress host override.'
+        }
+        if ($gitopsStagingHelmRender -notmatch 'host: "backoffice-staging\.yas\.local"') {
+            throw 'GitOps staging Helm render is missing the backoffice staging ingress host override.'
         }
     }
 
