@@ -103,6 +103,8 @@ grep -q 'repository: demo-ns/yas-storefront-bff' "$generated_values_file"
 grep -q 'workloadType: ui' "$generated_values_file"
 grep -q 'host: storefront-dev1.yas.local' "$generated_values_file"
 grep -q 'host: backoffice-dev1.yas.local' "$generated_values_file"
+grep -q "'developer_cleanup'" Jenkinsfile
+grep -q 'pipelineRequiresDockerhubNamespace' Jenkinsfile
 grep -q 'domainName: storefront-dev.yas.local' "$dev_generated_values_file"
 grep -q 'host: backoffice-dev.yas.local' "$dev_generated_values_file"
 grep -q 'namespace: yas-dev' "$dev_generated_values_file"

@@ -112,6 +112,15 @@ try {
         throw 'Generated values are missing the backoffice ingress host.'
     }
 
+    $jenkinsfile = Get-Content 'Jenkinsfile' -Raw
+    if ($jenkinsfile -notmatch "'developer_cleanup'") {
+        throw 'Jenkinsfile is missing the developer_cleanup dispatch target.'
+    }
+
+    if ($jenkinsfile -notmatch 'pipelineRequiresDockerhubNamespace') {
+        throw 'Jenkinsfile no longer guards DOCKERHUB_NAMESPACE by pipeline target.'
+    }
+
     if ($devGeneratedValues -notmatch 'domainName: storefront-dev.yas.local') {
         throw 'Dev generated values are missing the expected storefront dev domain.'
     }
