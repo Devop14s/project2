@@ -1,5 +1,5 @@
 param(
-    [string]$ServicesFile = 'jenkins/services.env',
+    [string]$ServicesFile = '',
     [string]$TagsFile = 'work/branch-tags.env',
     [string]$OutputFile = 'work/generated-values.yaml',
     [string]$EnvironmentName = 'developer',
@@ -12,8 +12,17 @@ param(
     [string]$DockerhubNamespace = ''
 )
 
+. "$PSScriptRoot\catalog.ps1"
+$ServicesFile = Resolve-ServicesCatalogFile -ServicesFile $ServicesFile
+$AllServicesFile = 'jenkins/services.env'
+
 if (-not (Test-Path $ServicesFile)) {
     Write-Error "Services file not found: $ServicesFile"
+    exit 1
+}
+
+if (-not (Test-Path $AllServicesFile)) {
+    Write-Error "Reference services file not found: $AllServicesFile"
     exit 1
 }
 
@@ -27,19 +36,35 @@ if ([string]::IsNullOrWhiteSpace($DockerhubNamespace)) {
 }
 
 if ([string]::IsNullOrWhiteSpace($DomainName)) {
-    $DomainName = "storefront-$DeployerId.yas.local"
+    if ($EnvironmentName -eq 'developer') {
+        $DomainName = "storefront-$DeployerId.yas.local"
+    } else {
+        $DomainName = "storefront-$EnvironmentName.yas.local"
+    }
 }
 
 if ([string]::IsNullOrWhiteSpace($BackofficeDomainName)) {
-    $BackofficeDomainName = "backoffice-$DeployerId.yas.local"
+    if ($EnvironmentName -eq 'developer') {
+        $BackofficeDomainName = "backoffice-$DeployerId.yas.local"
+    } else {
+        $BackofficeDomainName = "backoffice-$EnvironmentName.yas.local"
+    }
 }
 
 if ([string]::IsNullOrWhiteSpace($NamespaceName)) {
-    $NamespaceName = "yas-user-$DeployerId"
+    if ($EnvironmentName -eq 'developer') {
+        $NamespaceName = "yas-user-$DeployerId"
+    } else {
+        $NamespaceName = "yas-$EnvironmentName"
+    }
 }
 
 if ([string]::IsNullOrWhiteSpace($ReleaseName)) {
-    $ReleaseName = "yas-$DeployerId"
+    if ($EnvironmentName -eq 'developer') {
+        $ReleaseName = "yas-$DeployerId"
+    } else {
+        $ReleaseName = "yas-$EnvironmentName"
+    }
 }
 
 $tagMap = @{}
@@ -51,6 +76,16 @@ if (Test-Path $TagsFile) {
             $tagMap[$parts[0]] = $parts[1]
         }
     }
+}
+
+$selectedServices = @{}
+foreach ($line in Get-Content $ServicesFile) {
+    if (-not $line) { continue }
+    if ($line.StartsWith('#')) { continue }
+
+    $parts = $line.Split('|')
+    if ($parts.Count -lt 7) { continue }
+    $selectedServices[$parts[0]] = $parts
 }
 
 function Get-TagEnvName {
@@ -69,7 +104,11 @@ function Get-IngressHost {
         return $BackofficeDomainName
     }
 
-    return "$ServiceName-$DeployerId.yas.local"
+    if ($EnvironmentName -eq 'developer') {
+        return "$ServiceName-$DeployerId.yas.local"
+    }
+
+    return "$ServiceName-$EnvironmentName.yas.local"
 }
 
 $outputDir = Split-Path -Parent $OutputFile
@@ -92,17 +131,70 @@ $out.Add("  releaseName: $ReleaseName")
 $out.Add('')
 $out.Add('services:')
 
-foreach ($line in Get-Content $ServicesFile) {
+$emittedServices = @{}
+foreach ($line in Get-Content $AllServicesFile) {
     if (-not $line) { continue }
     if ($line.StartsWith('#')) { continue }
 
-    $parts = $line.Split('|')
-    $service = $parts[0]
+    $catalogParts = $line.Split('|')
+    if ($catalogParts.Count -lt 7) { continue }
+
+    $service = $catalogParts[0]
+    $emittedServices[$service] = $true
+
+    if (-not $selectedServices.ContainsKey($service)) {
+        $out.Add("  ${service}:")
+        $out.Add('    enabled: false')
+        continue
+    }
+
+    $parts = $selectedServices[$service]
     $port = $parts[3]
     $expose = $parts[4]
     $nodePort = if ($parts.Count -ge 6) { $parts[5] } else { '' }
     $workloadType = if ($parts.Count -ge 7 -and -not [string]::IsNullOrWhiteSpace($parts[6])) { $parts[6] } else { 'backend' }
 
+    $tagVar = Get-TagEnvName -ServiceName $service
+    $tagValue = if ($tagMap.ContainsKey($tagVar)) { $tagMap[$tagVar] } else { $ReleaseVersion }
+    $serviceType = if ($expose -eq 'true') { 'NodePort' } else { 'ClusterIP' }
+
+    $out.Add("  ${service}:")
+    $out.Add('    enabled: true')
+    $out.Add("    workloadType: $workloadType")
+    $out.Add('    image:')
+    $out.Add("      repository: $DockerhubNamespace/yas-$service")
+    $out.Add("      tag: $tagValue")
+    $out.Add('      pullPolicy: IfNotPresent')
+    $out.Add("    containerPort: $port")
+    $out.Add('    service:')
+    $out.Add("      type: $serviceType")
+    $out.Add("      port: $port")
+
+    if ($workloadType -eq 'backend') {
+        $out.Add('    metricPort: 8090')
+    }
+
+    if ($expose -eq 'true') {
+        if ([string]::IsNullOrWhiteSpace($nodePort)) {
+            $nodePort = '32080'
+        }
+        $out.Add("      nodePort: $nodePort")
+        $out.Add('    ingress:')
+        $out.Add('      enabled: true')
+        $out.Add("      host: $(Get-IngressHost -ServiceName $service)")
+    }
+}
+
+foreach ($service in $selectedServices.Keys) {
+    if ($emittedServices.ContainsKey($service)) {
+        continue
+    }
+
+    $parts = $selectedServices[$service]
+    $port = $parts[3]
+    $expose = $parts[4]
+    $nodePort = if ($parts.Count -ge 6) { $parts[5] } else { '' }
+    $workloadType = if ($parts.Count -ge 7 -and -not [string]::IsNullOrWhiteSpace($parts[6])) { $parts[6] } else { 'backend' }
     $tagVar = Get-TagEnvName -ServiceName $service
     $tagValue = if ($tagMap.ContainsKey($tagVar)) { $tagMap[$tagVar] } else { $ReleaseVersion }
     $serviceType = if ($expose -eq 'true') { 'NodePort' } else { 'ClusterIP' }

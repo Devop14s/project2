@@ -44,6 +44,8 @@ Move this repository from a source-verified delivery scaffold to a working YAS d
 
 ## Phase 1: Freeze the first release subset
 
+Current status: the recommended subset is now frozen in [jenkins/services.release-baseline.env](</D:/App/project2/jenkins/services.release-baseline.env>) while [jenkins/services.env](</D:/App/project2/jenkins/services.env>) remains the full source-verified catalog.
+
 ### Prerequisites
 
 - Team agrees on the exact service list for the first deployable baseline.
@@ -51,19 +53,19 @@ Move this repository from a source-verified delivery scaffold to a working YAS d
 
 ### Steps
 
-1. Mark the chosen subset as the release baseline in `jenkins/services.env` and `docs/service-inventory.md`.
-2. Decide which optional services are out of scope for iteration 1.
+1. Confirm the frozen baseline still matches the team demo scope, especially whether `payment` must be pulled into iteration 1.
+2. Keep optional services outside `jenkins/services.release-baseline.env` unless the demo path proves they are required.
 3. Document any intentional exclusions in the final report.
 
 ### Deliverables
 
-- Updated `jenkins/services.env`
+- Updated `jenkins/services.release-baseline.env`
 - Updated `docs/service-inventory.md`
 - Written baseline decision in the final report
 
 ### Exit criteria
 
-- Everyone can state exactly which services must build, push, deploy, and smoke-test in iteration 1.
+- Everyone can state exactly which services in `jenkins/services.release-baseline.env` must build, push, deploy, and smoke-test in iteration 1.
 
 ## Phase 2: Verify image push to the real registry
 

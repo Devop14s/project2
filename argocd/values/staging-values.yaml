@@ -5,56 +5,66 @@ global:
 
 services:
   storefront:
+    enabled: true
     image:
       tag: v1.0.0
   backoffice:
+    enabled: true
     image:
       tag: v1.0.0
   storefront-bff:
+    enabled: true
     image:
       tag: v1.0.0
   backoffice-bff:
+    enabled: true
     image:
       tag: v1.0.0
   product:
+    enabled: true
     image:
       tag: v1.0.0
   media:
-    image:
-      tag: v1.0.0
+    enabled: false
   cart:
+    enabled: true
     image:
       tag: v1.0.0
   customer:
+    enabled: true
     image:
       tag: v1.0.0
   rating:
+    enabled: true
     image:
       tag: v1.0.0
   location:
+    enabled: true
     image:
       tag: v1.0.0
   order:
+    enabled: true
     image:
       tag: v1.0.0
   inventory:
+    enabled: true
     image:
       tag: v1.0.0
   tax:
+    enabled: true
     image:
       tag: v1.0.0
   search:
-    image:
-      tag: v1.0.0
+    enabled: false
   promotion:
-    image:
-      tag: v1.0.0
+    enabled: false
   payment:
-    image:
-      tag: v1.0.0
+    enabled: false
   payment-paypal:
-    image:
-      tag: v1.0.0
+    enabled: false
+  recommendation:
+    enabled: false
+  sampledata:
+    enabled: false
   webhook:
-    image:
-      tag: v1.0.0
+    enabled: false

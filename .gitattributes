@@ -1,0 +1,2 @@
+*.sh text eol=lf
+jenkins/*.env text eol=lf

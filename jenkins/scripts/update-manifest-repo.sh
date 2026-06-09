@@ -15,7 +15,9 @@ MANIFEST_COMMIT_MESSAGE="${MANIFEST_COMMIT_MESSAGE:-Update ${ENVIRONMENT} GitOps
 MANIFEST_BRANCH="${MANIFEST_BRANCH##*/}"
 
 [[ -f "$VALUES_FILE" ]] || fail "Values file not found: ${VALUES_FILE}"
-SERVICES_FILE="${SERVICES_FILE:-jenkins/services.env}" \
+if [[ -n "${SERVICES_FILE:-}" ]]; then
+  export SERVICES_FILE
+fi
 TAGS_FILE="${TAGS_FILE}" \
 OUTPUT_FILE="${VALUES_FILE}" \
 ENVIRONMENT="${ENVIRONMENT}" \

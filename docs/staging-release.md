@@ -14,4 +14,5 @@ Run for an explicit release version such as `v1.2.3`.
 
 - Keep staging immutable per release input.
 - Record image digests in the final report if possible.
+- Save `work/runtime-evidence/yas-staging/yas-staging/` after a successful run for screenshots and rollout evidence.
 

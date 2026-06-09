@@ -1,11 +1,14 @@
 param(
-    [string]$ServicesFile = 'jenkins/services.env',
+    [string]$ServicesFile = '',
     [string]$OutputFile = 'helm/yas/values.yaml',
     [string]$EnvironmentName = 'default',
     [string]$NamespaceName = 'default',
     [string]$DomainName = 'yas.local',
     [string]$ImageRegistryNamespace = 'docker.io/example'
 )
+
+. "$PSScriptRoot\catalog.ps1"
+$ServicesFile = Resolve-ServicesCatalogFile -ServicesFile $ServicesFile
 
 if (-not (Test-Path $ServicesFile)) {
     Write-Error "Services file not found: $ServicesFile"

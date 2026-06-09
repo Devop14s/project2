@@ -27,6 +27,10 @@ Each job can point to the same `Jenkinsfile` and pass a fixed `PIPELINE_TARGET`,
 ## Required environment values
 
 - `DOCKERHUB_NAMESPACE`
+- `SERVICES_FILE` if you want a direct-load Jenkins job to use something other than the default full catalog
+- `SERVICE_CATALOG` as a simpler alternative to `SERVICES_FILE`, using either `release-baseline` or `full`
+- `SOURCE_ROOT` when the service source tree is not checked out at the workspace root; leave it blank to auto-detect `yas-source/` or the workspace root
+- `SOURCE_GIT_ROOT` when branch and commit resolution should use a different Git checkout than `SOURCE_ROOT`
 
 ## Service catalog format
 
@@ -38,6 +42,11 @@ Example:
 
 `storefront|storefront|storefront/Dockerfile|3000|true|32080|ui`
 
+The repository now keeps two catalogs:
+
+- `jenkins/services.env`: full source-verified catalog
+- `jenkins/services.release-baseline.env`: frozen first-release subset used by the top-level `Jenkinsfile` when `SERVICE_CATALOG=release-baseline`
+
 ## Developer build note
 
 `jenkins/pipelines/developer_build.groovy` now exposes branch override parameters for the full service catalog and supports separate `DOMAIN_NAME` and `BACKOFFICE_DOMAIN_NAME` values for the two public UIs.
@@ -45,9 +54,13 @@ Example:
 ## Recommended first validation
 
 1. Provide `DOCKERHUB_NAMESPACE` either as a Jenkins parameter or job environment value.
-2. Update `jenkins/services.env` to match the real repo.
+2. Decide whether the job should use `jenkins/services.release-baseline.env` or `jenkins/services.env`.
 3. Run `jenkins/scripts/build-images.sh` locally in the agent environment.
 4. Run `helm template demo helm/yas -f helm/yas/values.yaml`.
+
+If this delivery repo lives beside a cloned YAS source tree under `yas-source/`, you can usually leave `SOURCE_ROOT` blank and let the scripts auto-detect it. Set `SOURCE_ROOT` explicitly only when the source checkout lives somewhere else. If branch and commit resolution should also come from that clone, leave `SOURCE_GIT_ROOT` unset and it will follow `SOURCE_ROOT` automatically when that directory contains `.git`.
+
+Successful deploy and smoke-test runs now also leave runtime evidence under `work/runtime-evidence/<namespace>/<release>/`, including Helm status, pod/service snapshots, and the discovered public endpoints.
 
 ## GitOps note
 

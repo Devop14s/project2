@@ -1,7 +1,13 @@
 param(
-    [string]$ServicesFile = 'jenkins/services.env',
+    [string]$ServicesFile = '',
+    [string]$SourceGitRoot = '',
     [string]$OutputFile = 'work/branch-tags.env'
 )
+
+. "$PSScriptRoot\catalog.ps1"
+. "$PSScriptRoot\source-root.ps1"
+$ServicesFile = Resolve-ServicesCatalogFile -ServicesFile $ServicesFile
+$SourceGitRoot = Resolve-SourceGitRoot -SourceGitRoot $SourceGitRoot -SourceRoot ''
 
 if (-not (Test-Path $ServicesFile)) {
     Write-Error "Services file not found: $ServicesFile"
@@ -39,17 +45,17 @@ function Resolve-Tag {
         return 'main'
     }
 
-    & git rev-parse --verify "origin/$Branch" *> $null
+    & git -C $SourceGitRoot rev-parse --verify "origin/$Branch" *> $null
     if ($LASTEXITCODE -eq 0) {
-        return (& git rev-parse "origin/$Branch").Trim()
+        return (& git -C $SourceGitRoot rev-parse "origin/$Branch").Trim()
     }
 
-    & git rev-parse --verify $Branch *> $null
+    & git -C $SourceGitRoot rev-parse --verify $Branch *> $null
     if ($LASTEXITCODE -eq 0) {
-        return (& git rev-parse $Branch).Trim()
+        return (& git -C $SourceGitRoot rev-parse $Branch).Trim()
     }
 
-    throw "Unable to resolve branch: $Branch"
+    throw "Unable to resolve branch in ${SourceGitRoot}: $Branch"
 }
 
 foreach ($line in $lines) {

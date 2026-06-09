@@ -1,7 +1,9 @@
 #!/usr/bin/env sh
 set -eu
 
-services_file="${SERVICES_FILE:-jenkins/services.env}"
+. scripts/catalog.sh
+
+services_file="$(resolve_services_file)"
 output_file="${OUTPUT_FILE:-helm/yas/values.yaml}"
 environment_name="${ENVIRONMENT:-default}"
 namespace_name="${NAMESPACE:-default}"
@@ -40,11 +42,12 @@ global:
 services:
 EOF
 
-while IFS='|' read -r service path dockerfile port expose node_port workload_type; do
-  [ -n "$service" ] || continue
-  case "$service" in
-    \#*) continue ;;
-  esac
+first_service=1
+iter_catalog_services "$services_file" | while IFS='|' read -r service path dockerfile port expose node_port workload_type; do
+  if [ "$first_service" -eq 0 ]; then
+    printf '\n' >> "$output_file"
+  fi
+  first_service=0
 
   service_type="ClusterIP"
   if [ "$expose" = "true" ]; then
@@ -82,8 +85,6 @@ EOF
       host: $(ingress_host_for "$service")
 EOF
   fi
-
-  printf '\n' >> "$output_file"
-done < "$services_file"
+done
 
 printf 'Generated %s\n' "$output_file"

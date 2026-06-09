@@ -2,12 +2,13 @@
 set -eu
 
 if [ "$#" -lt 1 ]; then
-  printf 'Usage: %s <dockerhub-namespace> [output-dir]\n' "$0" >&2
+  printf 'Usage: %s <dockerhub-namespace> [output-dir] [service-catalog]\n' "$0" >&2
   exit 1
 fi
 
 dockerhub_namespace="$1"
 output_dir="${2:-work/dry-run}"
+service_catalog="${3:-${SERVICE_CATALOG:-full}}"
 
 deployer_id="${DEPLOYER_ID:-dev1}"
 domain_name="${DOMAIN_NAME:-storefront-${deployer_id}.yas.local}"
@@ -15,7 +16,10 @@ backoffice_domain_name="${BACKOFFICE_DOMAIN_NAME:-backoffice-${deployer_id}.yas.
 
 mkdir -p "$output_dir"
 
-output_file="${output_dir}/branch-tags.env" sh scripts/resolve-branch-tags.sh
+SERVICE_CATALOG="$service_catalog" \
+OUTPUT_FILE="${output_dir}/branch-tags.env" \
+sh scripts/resolve-branch-tags.sh
+SERVICE_CATALOG="$service_catalog" \
 DOCKERHUB_NAMESPACE="$dockerhub_namespace" \
 DEPLOYER_ID="$deployer_id" \
 DOMAIN_NAME="$domain_name" \

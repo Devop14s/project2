@@ -3,11 +3,33 @@ set -euo pipefail
 source jenkins/scripts/common.sh
 
 DEPLOYER_ID="${DEPLOYER_ID:-dev1}"
-DOMAIN_NAME="${DOMAIN_NAME:-storefront-${DEPLOYER_ID}.yas.local}"
-BACKOFFICE_DOMAIN_NAME="${BACKOFFICE_DOMAIN_NAME:-backoffice-${DEPLOYER_ID}.yas.local}"
-NAMESPACE="${NAMESPACE:-$(namespace_for "$DEPLOYER_ID")}"
-RELEASE_NAME="${RELEASE_NAME:-$(release_name_for "$DEPLOYER_ID")}"
+ENVIRONMENT="${ENVIRONMENT:-developer}"
+DOMAIN_NAME="${DOMAIN_NAME:-}"
+BACKOFFICE_DOMAIN_NAME="${BACKOFFICE_DOMAIN_NAME:-}"
+NAMESPACE="${NAMESPACE:-$(default_namespace "$ENVIRONMENT" "$DEPLOYER_ID")}"
+RELEASE_NAME="${RELEASE_NAME:-$(default_release_name "$ENVIRONMENT" "$DEPLOYER_ID")}"
 public_service_count=0
+EVIDENCE_ROOT="${EVIDENCE_ROOT:-work/runtime-evidence}"
+evidence_dir="${EVIDENCE_ROOT}/${NAMESPACE}/${RELEASE_NAME}"
+
+mkdir -p "$evidence_dir"
+: > "${evidence_dir}/public-endpoints.txt"
+
+if [[ -z "$DOMAIN_NAME" ]]; then
+  if [[ "$ENVIRONMENT" == "developer" ]]; then
+    DOMAIN_NAME="storefront-${DEPLOYER_ID}.yas.local"
+  else
+    DOMAIN_NAME="storefront-${ENVIRONMENT}.yas.local"
+  fi
+fi
+
+if [[ -z "$BACKOFFICE_DOMAIN_NAME" ]]; then
+  if [[ "$ENVIRONMENT" == "developer" ]]; then
+    BACKOFFICE_DOMAIN_NAME="backoffice-${DEPLOYER_ID}.yas.local"
+  else
+    BACKOFFICE_DOMAIN_NAME="backoffice-${ENVIRONMENT}.yas.local"
+  fi
+fi
 
 ingress_host_for() {
   local service="$1"
@@ -20,7 +42,11 @@ ingress_host_for() {
       printf '%s' "$BACKOFFICE_DOMAIN_NAME"
       ;;
     *)
-      printf '%s-%s.yas.local' "$service" "$DEPLOYER_ID"
+      if [[ "$ENVIRONMENT" == "developer" ]]; then
+        printf '%s-%s.yas.local' "$service" "$DEPLOYER_ID"
+      else
+        printf '%s-%s.yas.local' "$service" "$ENVIRONMENT"
+      fi
       ;;
   esac
 }
@@ -49,6 +75,7 @@ while IFS='|' read -r service path dockerfile port expose node_port workload_typ
 
   host="$(ingress_host_for "$service")"
   log "Public endpoint for ${service}: http://${host}:${resolved_node_port}"
+  printf 'http://%s:%s\n' "$host" "$resolved_node_port" >> "${evidence_dir}/public-endpoints.txt"
 done < <(iter_services)
 
 if [[ "$public_service_count" -eq 0 ]]; then

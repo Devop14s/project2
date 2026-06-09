@@ -1,5 +1,5 @@
 param(
-    [string]$ServicesFile = 'jenkins/services.env',
+    [string]$ServicesFile = '',
     [string]$TagsFile = '',
     [string]$OutputFile = 'work/gitops-values.yaml',
     [string]$EnvironmentName = 'dev',
@@ -8,8 +8,17 @@ param(
     [string]$ReleaseVersion = 'main'
 )
 
+. "$PSScriptRoot\catalog.ps1"
+$ServicesFile = Resolve-ServicesCatalogFile -ServicesFile $ServicesFile
+$AllServicesFile = 'jenkins/services.env'
+
 if (-not (Test-Path $ServicesFile)) {
     Write-Error "Services file not found: $ServicesFile"
+    exit 1
+}
+
+if (-not (Test-Path $AllServicesFile)) {
+    Write-Error "Reference services file not found: $AllServicesFile"
     exit 1
 }
 
@@ -30,6 +39,16 @@ if (-not [string]::IsNullOrWhiteSpace($TagsFile) -and (Test-Path $TagsFile)) {
             $tagMap[$parts[0]] = $parts[1]
         }
     }
+}
+
+$selectedServices = @{}
+foreach ($line in Get-Content $ServicesFile) {
+    if (-not $line) { continue }
+    if ($line.StartsWith('#')) { continue }
+
+    $parts = $line.Split('|')
+    if ($parts.Count -lt 1) { continue }
+    $selectedServices[$parts[0]] = $true
 }
 
 function Get-TagEnvName {
@@ -56,17 +75,38 @@ $out.Add("  domainName: $DomainName")
 $out.Add('')
 $out.Add('services:')
 
-foreach ($line in Get-Content $ServicesFile) {
+$emittedServices = @{}
+foreach ($line in Get-Content $AllServicesFile) {
     if (-not $line) { continue }
     if ($line.StartsWith('#')) { continue }
 
     $parts = $line.Split('|')
+    if ($parts.Count -lt 1) { continue }
     $service = $parts[0]
+    $emittedServices[$service] = $true
+
+    $out.Add("  ${service}:")
+    if (-not $selectedServices.ContainsKey($service)) {
+        $out.Add('    enabled: false')
+        continue
+    }
 
     $tagVar = Get-TagEnvName -ServiceName $service
     $tagValue = if ($tagMap.ContainsKey($tagVar)) { $tagMap[$tagVar] } else { $ReleaseVersion }
+    $out.Add('    enabled: true')
+    $out.Add('    image:')
+    $out.Add("      tag: $tagValue")
+}
 
+foreach ($service in $selectedServices.Keys) {
+    if ($emittedServices.ContainsKey($service)) {
+        continue
+    }
+
+    $tagVar = Get-TagEnvName -ServiceName $service
+    $tagValue = if ($tagMap.ContainsKey($tagVar)) { $tagMap[$tagVar] } else { $ReleaseVersion }
     $out.Add("  ${service}:")
+    $out.Add('    enabled: true')
     $out.Add('    image:')
     $out.Add("      tag: $tagValue")
 }

@@ -17,4 +17,4 @@ This directory contains GitOps-oriented manifests that can be used if the team c
 ## Current scaffold behavior
 
 - `app-dev.yaml` and `app-staging.yaml` already point to this GitHub repository.
-- `argocd/values/*.yaml` can be regenerated from `jenkins/services.env` with the local `generate-gitops-values` helpers.
+- `argocd/values/*.yaml` can be regenerated from either `jenkins/services.release-baseline.env` or `jenkins/services.env` with the local `generate-gitops-values` helpers, and `SERVICE_CATALOG=release-baseline` now selects the smaller iteration-1 subset automatically.

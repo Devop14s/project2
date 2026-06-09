@@ -2,9 +2,10 @@
 set -euo pipefail
 source jenkins/scripts/common.sh
 
+ENVIRONMENT="${ENVIRONMENT:-developer}"
 DEPLOYER_ID="${DEPLOYER_ID:-dev1}"
-NAMESPACE="${NAMESPACE:-$(namespace_for "$DEPLOYER_ID")}"
-RELEASE_NAME="${RELEASE_NAME:-$(release_name_for "$DEPLOYER_ID")}"
+NAMESPACE="${NAMESPACE:-$(default_namespace "$ENVIRONMENT" "$DEPLOYER_ID")}"
+RELEASE_NAME="${RELEASE_NAME:-$(default_release_name "$ENVIRONMENT" "$DEPLOYER_ID")}"
 VALUES_FILE="${VALUES_FILE:-work/generated-values.yaml}"
 HELM_TIMEOUT="${HELM_TIMEOUT:-10m}"
 
@@ -27,3 +28,8 @@ done
 
 kubectl get pods -n "$NAMESPACE"
 kubectl get svc -n "$NAMESPACE"
+
+NAMESPACE="$NAMESPACE" \
+RELEASE_NAME="$RELEASE_NAME" \
+VALUES_FILE="$VALUES_FILE" \
+jenkins/scripts/capture-runtime-evidence.sh

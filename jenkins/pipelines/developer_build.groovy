@@ -2,6 +2,9 @@ return {
   properties([
     parameters([
       string(name: 'DEPLOYER_ID', defaultValue: 'dev1', description: 'Developer identifier used in namespace and hostname'),
+      choice(name: 'SERVICE_CATALOG', choices: ['release-baseline', 'full'], description: 'Service catalog to build and deploy'),
+      string(name: 'SOURCE_ROOT', defaultValue: '', description: 'Optional relative path to the YAS source tree; leave blank to auto-detect workspace root or yas-source/'),
+      string(name: 'SOURCE_GIT_ROOT', defaultValue: '', description: 'Optional separate Git checkout used for branch resolution'),
       string(name: 'DOMAIN_NAME', defaultValue: 'storefront-dev1.yas.local', description: 'Hostname shown to the developer'),
       string(name: 'BACKOFFICE_DOMAIN_NAME', defaultValue: 'backoffice-dev1.yas.local', description: 'Hostname shown for the backoffice UI'),
       string(name: 'STOREFRONT_BRANCH', defaultValue: 'main', description: 'Branch override for storefront'),
@@ -31,6 +34,9 @@ return {
     stage('Checkout') {
       checkout scm
       sh 'mkdir -p work'
+      env.SERVICE_CATALOG = env.SERVICE_CATALOG?.trim() ?: 'full'
+      env.SOURCE_ROOT = env.SOURCE_ROOT?.trim()
+      env.SOURCE_GIT_ROOT = env.SOURCE_GIT_ROOT?.trim()
     }
 
     stage('Resolve Branch Tags') {

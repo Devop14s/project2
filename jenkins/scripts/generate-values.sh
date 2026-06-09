@@ -4,10 +4,10 @@ source jenkins/scripts/common.sh
 
 ENVIRONMENT="${ENVIRONMENT:-developer}"
 DEPLOYER_ID="${DEPLOYER_ID:-dev1}"
-DOMAIN_NAME="${DOMAIN_NAME:-storefront-${DEPLOYER_ID}.yas.local}"
-BACKOFFICE_DOMAIN_NAME="${BACKOFFICE_DOMAIN_NAME:-backoffice-${DEPLOYER_ID}.yas.local}"
-NAMESPACE="${NAMESPACE:-$(namespace_for "$DEPLOYER_ID")}"
-RELEASE_NAME="${RELEASE_NAME:-$(release_name_for "$DEPLOYER_ID")}"
+DOMAIN_NAME="${DOMAIN_NAME:-}"
+BACKOFFICE_DOMAIN_NAME="${BACKOFFICE_DOMAIN_NAME:-}"
+NAMESPACE="${NAMESPACE:-$(default_namespace "$ENVIRONMENT" "$DEPLOYER_ID")}"
+RELEASE_NAME="${RELEASE_NAME:-$(default_release_name "$ENVIRONMENT" "$DEPLOYER_ID")}"
 OUTPUT_FILE="work/generated-values.yaml"
 require_env DOCKERHUB_NAMESPACE
 

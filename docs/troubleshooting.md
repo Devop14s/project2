@@ -4,7 +4,7 @@
 
 ### Docker build path not found
 
-- Check `jenkins/services.env`.
+- Check the active catalog file, either `jenkins/services.release-baseline.env` or `jenkins/services.env`.
 - Confirm the real YAS repo paths match the configured `path` and `dockerfile`.
 
 ### Docker push authentication failure

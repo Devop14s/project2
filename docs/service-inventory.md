@@ -2,6 +2,8 @@
 
 This inventory was updated from the local clone [yas-source](</D:/App/project2/yas-source/README.md>) of `nashtech-garage/yas` using the source tree, GitHub workflow files, Dockerfiles, Docker Compose files, and Kubernetes chart defaults on June 9, 2026.
 
+The frozen first deployable subset is tracked in [jenkins/services.release-baseline.env](</D:/App/project2/jenkins/services.release-baseline.env>), while [jenkins/services.env](</D:/App/project2/jenkins/services.env>) remains the full source-verified catalog.
+
 | Service | Runtime type | Path in repo | Dockerfile path | Container port | Expose outside cluster | NodePort | Workload type | Recommended first release | Notes |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | storefront | next.js | `storefront` | `storefront/Dockerfile` | `3000` | yes | `32080` | `ui` | yes | Public storefront UI; path and image naming are confirmed by upstream workflow. |
@@ -31,4 +33,5 @@ This inventory was updated from the local clone [yas-source](</D:/App/project2/y
 - The Java services and BFFs use the upstream `backend` chart defaults, which set service HTTP port to `80` and metrics port to `8090`.
 - `recommendation` and `sampledata` are now included because the local source clone confirms they have real Dockerfiles, CI workflows, and Helm charts.
 - `Recommended first release` is a planning column, not a claim that the service is already deployed successfully.
+- The current baseline file intentionally includes the `yes` entries from `Recommended first release`.
 - Supporting infrastructure such as Keycloak, PostgreSQL, Kafka, Elasticsearch, pgAdmin, and observability are not listed in `jenkins/services.env` because they are infrastructure dependencies rather than app images built from the same service catalog.

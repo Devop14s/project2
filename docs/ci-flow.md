@@ -18,11 +18,19 @@ Build and push service images on every branch push. The image tag must equal the
 - `DOCKERHUB_NAMESPACE`
 - `DOCKER_USER`
 - `DOCKER_PASS`
+- `SOURCE_ROOT` when the YAS source checkout is not at the workspace root
+- `SOURCE_GIT_ROOT` when commit and branch resolution should use a different Git checkout
 
 ## Output artifacts
 
 - `work/commit_sha.txt`
 - `work/commit_short_sha.txt`
+- `work/commit-metadata.json`
+- `work/built-image-list.txt`
 - `work/image-list.txt`
 - `work/image-metadata.json`
+
+## Source-of-truth note
+
+When this delivery repo is separate from the YAS source repo, the CI scripts resolve Docker build contexts from `SOURCE_ROOT` and derive default commit-SHA tags from `SOURCE_GIT_ROOT`.
 

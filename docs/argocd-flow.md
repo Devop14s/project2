@@ -7,9 +7,10 @@ Use Jenkins only for build-and-update, then let ArgoCD reconcile the runtime sta
 ## Proposed flow
 
 1. Jenkins builds and pushes images.
-2. Jenkins regenerates the environment values file under `argocd/values/` from `jenkins/services.env`.
-3. Jenkins commits and pushes that manifest change.
-4. ArgoCD watches the repo and syncs the target namespace.
+2. Jenkins regenerates the environment values file under `argocd/values/` from the selected service catalog, usually `jenkins/services.release-baseline.env` for iteration 1 or `jenkins/services.env` for the full catalog.
+3. The generated values file explicitly disables services outside the selected catalog so Helm does not inherit them from the full chart defaults.
+4. Jenkins commits and pushes that manifest change.
+5. ArgoCD watches the repo and syncs the target namespace.
 
 ## Files in this repository
 

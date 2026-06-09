@@ -4,6 +4,8 @@
 
 Simulate the `developer_build` branch override flow locally without Jenkins, Kubernetes, or Helm.
 
+If `yas-source/` exists beside this delivery repo, branch-tag resolution automatically uses that source checkout. Override with `SOURCE_GIT_ROOT` only when needed.
+
 ## Outputs
 
 - `branch-tags.env`
@@ -13,6 +15,12 @@ Simulate the `developer_build` branch override flow locally without Jenkins, Kub
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File scripts\developer-build-dry-run.ps1 -DockerhubNamespace your-dockerhub-namespace
+```
+
+Use the frozen subset instead of the full catalog:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts\developer-build-dry-run.ps1 -DockerhubNamespace your-dockerhub-namespace -ServiceCatalog release-baseline
 ```
 
 Example with a service override:
@@ -29,6 +37,12 @@ powershell -ExecutionPolicy Bypass -File scripts\developer-build-dry-run.ps1 `
 sh scripts/developer-build-dry-run.sh your-dockerhub-namespace
 ```
 
+Use the frozen subset instead of the full catalog:
+
+```bash
+sh scripts/developer-build-dry-run.sh your-dockerhub-namespace work/dry-run release-baseline
+```
+
 Override branches by exporting environment variables first:
 
 ```bash
@@ -43,6 +57,7 @@ TAX_BRANCH=dev_tax_service sh scripts/developer-build-dry-run.sh your-dockerhub-
 - NodePort exposure for public entrypoints
 - workload-aware fields such as `workloadType` and backend `metricPort`
 - distinct ingress hosts for `storefront` and `backoffice`
+- service-catalog selection between `full` and `release-baseline`
 
 ## Extra scaffold validation
 

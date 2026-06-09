@@ -1,6 +1,9 @@
 #!/usr/bin/env sh
 set -eu
 
+. scripts/catalog.sh
+. scripts/source-root.sh
+
 output_file="${1:-work/status-report.generated.md}"
 skip_command_checks=0
 
@@ -18,12 +21,20 @@ README.md
 Jenkinsfile
 jenkins/README.md
 jenkins/services.env
+jenkins/services.release-baseline.env
+jenkins/scripts/capture-runtime-evidence.sh
+jenkins/scripts/write-commit-metadata.sh
 helm/yas/Chart.yaml
 docs/status-report.md
 argocd/app-dev.yaml
 mesh/peer-authentication.yaml
+scripts/catalog.ps1
+scripts/catalog.sh
+scripts/source-root.ps1
+scripts/source-root.sh
 scripts/selftest.sh
 scripts/validate-services-catalog.sh
+scripts/validate-gitops-values.sh
 "
 
 required_commands="
@@ -33,8 +44,9 @@ helm
 docker
 "
 
-source_root="yas-source"
+source_root="$(resolve_source_root)"
 service_count=0
+release_baseline_service_count=0
 public_entry_count=0
 ui_count=0
 backend_count=0
@@ -64,12 +76,14 @@ sampledata_image_verified=0
 search_image_verified=0
 helm_lint_verified=0
 helm_template_verified=0
+gitops_values_verified=0
+normalized_services_file="$(mktemp "${TMPDIR:-/tmp}/yas-report-services.XXXXXX")"
+normalized_release_baseline_file="$(mktemp "${TMPDIR:-/tmp}/yas-report-release-baseline.XXXXXX")"
+trap 'rm -f "$normalized_services_file" "$normalized_release_baseline_file"' EXIT INT TERM
+
 if [ -f "jenkins/services.env" ]; then
+  iter_catalog_services "jenkins/services.env" > "$normalized_services_file"
   while IFS='|' read -r service path dockerfile port expose node_port workload_type; do
-    [ -n "$service" ] || continue
-    case "$service" in
-      \#*) continue ;;
-    esac
     service_count=$((service_count + 1))
     if [ "$expose" = "true" ]; then
       public_entry_count=$((public_entry_count + 1))
@@ -79,7 +93,14 @@ if [ -f "jenkins/services.env" ]; then
     elif [ "$workload_type" = "backend" ]; then
       backend_count=$((backend_count + 1))
     fi
-  done < "jenkins/services.env"
+  done < "$normalized_services_file"
+fi
+
+if [ -f "jenkins/services.release-baseline.env" ]; then
+  iter_catalog_services "jenkins/services.release-baseline.env" > "$normalized_release_baseline_file"
+  while IFS='|' read -r service path dockerfile port expose node_port workload_type; do
+    release_baseline_service_count=$((release_baseline_service_count + 1))
+  done < "$normalized_release_baseline_file"
 fi
 
 if [ -d "$source_root" ] && [ -f "jenkins/services.env" ]; then
@@ -88,40 +109,40 @@ if [ -d "$source_root" ] && [ -f "jenkins/services.env" ]; then
   fi
 fi
 
-if [ -d "yas-source/storefront/.next" ]; then
+if [ -d "${source_root}/storefront/.next" ]; then
   storefront_build_verified=1
 fi
-if [ -d "yas-source/backoffice/.next" ]; then
+if [ -d "${source_root}/backoffice/.next" ]; then
   backoffice_build_verified=1
 fi
-if [ -f "yas-source/storefront-bff/target/storefront-bff-1.0-SNAPSHOT.jar" ]; then
+if [ -f "${source_root}/storefront-bff/target/storefront-bff-1.0-SNAPSHOT.jar" ]; then
   storefront_bff_build_verified=1
 fi
-if [ -f "yas-source/backoffice-bff/target/backoffice-bff-1.0-SNAPSHOT.jar" ]; then
+if [ -f "${source_root}/backoffice-bff/target/backoffice-bff-1.0-SNAPSHOT.jar" ]; then
   backoffice_bff_build_verified=1
 fi
-if [ -f "yas-source/product/target/product-1.0-SNAPSHOT.jar" ]; then
+if [ -f "${source_root}/product/target/product-1.0-SNAPSHOT.jar" ]; then
   product_build_verified=1
 fi
-if [ -f "yas-source/payment/target/payment-1.0-SNAPSHOT.jar" ]; then
+if [ -f "${source_root}/payment/target/payment-1.0-SNAPSHOT.jar" ]; then
   payment_build_verified=1
 fi
-if [ -f "yas-source/payment-paypal/target/payment-paypal-1.0-SNAPSHOT.jar" ]; then
+if [ -f "${source_root}/payment-paypal/target/payment-paypal-1.0-SNAPSHOT.jar" ]; then
   payment_paypal_build_verified=1
 fi
-if [ -f "yas-source/recommendation/target/recommendation-1.0-SNAPSHOT.jar" ]; then
+if [ -f "${source_root}/recommendation/target/recommendation-1.0-SNAPSHOT.jar" ]; then
   recommendation_build_verified=1
 fi
-if [ -f "yas-source/inventory/target/inventory-1.0-SNAPSHOT.jar" ]; then
+if [ -f "${source_root}/inventory/target/inventory-1.0-SNAPSHOT.jar" ]; then
   inventory_build_verified=1
 fi
-if [ -f "yas-source/order/target/order-1.0-SNAPSHOT.jar" ]; then
+if [ -f "${source_root}/order/target/order-1.0-SNAPSHOT.jar" ]; then
   order_build_verified=1
 fi
-if [ -f "yas-source/sampledata/target/sampledata-1.0-SNAPSHOT.jar" ]; then
+if [ -f "${source_root}/sampledata/target/sampledata-1.0-SNAPSHOT.jar" ]; then
   sampledata_package_verified=1
 fi
-if [ -f "yas-source/search/target/search-1.0-SNAPSHOT.jar" ]; then
+if [ -f "${source_root}/search/target/search-1.0-SNAPSHOT.jar" ]; then
   search_package_verified=1
 fi
 if command -v docker >/dev/null 2>&1; then
@@ -167,6 +188,9 @@ if command -v helm >/dev/null 2>&1; then
     helm_template_verified=1
   fi
 fi
+if [ -f "jenkins/services.release-baseline.env" ] && sh scripts/validate-gitops-values.sh jenkins/services.release-baseline.env >/dev/null 2>&1; then
+  gitops_values_verified=1
+fi
 
 {
   printf '# Generated Status Report\n\n'
@@ -197,6 +221,7 @@ fi
 
   printf '## Service Catalog Summary\n'
   printf -- '- Services in catalog: %s\n' "$service_count"
+  printf -- '- Services in release baseline: %s\n' "$release_baseline_service_count"
   printf -- '- Public entrypoints in catalog: %s\n' "$public_entry_count"
   printf -- '- UI workloads in catalog: %s\n' "$ui_count"
   printf -- '- Backend workloads in catalog: %s\n' "$backend_count"
@@ -208,8 +233,11 @@ fi
   printf '%s\n' '- Generated values include workload-aware fields such as `workloadType` and backend `metricPort`.'
   printf '%s\n' '- GitOps values generation is available for the full service catalog.'
   printf '%s\n' '- Helm baseline values generation is available from the shared service catalog.'
+  if [ -f "jenkins/services.release-baseline.env" ]; then
+    printf '%s\n' '- A frozen first-release service catalog exists in `jenkins/services.release-baseline.env`.'
+  fi
   if [ "$source_aligned" -eq 1 ]; then
-    printf '%s\n' '- Service catalog paths and Dockerfiles were verified against the local `yas-source` clone.'
+    printf '%s\n' "- Service catalog paths and Dockerfiles were verified against the configured source root \`${source_root}\`."
   fi
   if [ "$storefront_build_verified" -eq 1 ]; then
     printf '%s\n' '- A real `storefront` Next.js production build completed successfully in the cloned source tree.'
@@ -285,6 +313,9 @@ fi
   fi
   if [ "$helm_template_verified" -eq 1 ]; then
     printf '%s\n' '- A real Helm chart template render completed successfully against `helm/yas`.'
+  fi
+  if [ "$gitops_values_verified" -eq 1 ]; then
+    printf '%s\n' '- The committed GitOps values under `argocd/values/` are in sync with the frozen release baseline generator.'
   fi
   printf '\n'
   printf '## Still Blocked In This Workspace\n'

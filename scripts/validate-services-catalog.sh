@@ -1,7 +1,13 @@
 #!/usr/bin/env sh
 set -eu
 
-services_file="${1:-jenkins/services.env}"
+. scripts/catalog.sh
+
+services_file="${1:-}"
+if [ -z "$services_file" ]; then
+  services_file="$(resolve_services_file)"
+fi
+reference_services_file="${2:-}"
 
 [ -f "$services_file" ] || {
   printf 'Services file not found: %s\n' "$services_file" >&2
@@ -10,9 +16,16 @@ services_file="${1:-jenkins/services.env}"
 
 tmp_names="${TMPDIR:-/tmp}/yas-services-names.$$"
 tmp_node_ports="${TMPDIR:-/tmp}/yas-services-nodeports.$$"
-trap 'rm -f "$tmp_names" "$tmp_node_ports"' EXIT INT TERM
+tmp_service_lines="${TMPDIR:-/tmp}/yas-services-lines.$$"
+tmp_reference_lines="${TMPDIR:-/tmp}/yas-reference-lines.$$"
+tmp_normalized_services="${TMPDIR:-/tmp}/yas-services-normalized.$$"
+tmp_normalized_reference="${TMPDIR:-/tmp}/yas-reference-normalized.$$"
+trap 'rm -f "$tmp_names" "$tmp_node_ports" "$tmp_service_lines" "$tmp_reference_lines" "$tmp_normalized_services" "$tmp_normalized_reference"' EXIT INT TERM
 : > "$tmp_names"
 : > "$tmp_node_ports"
+: > "$tmp_service_lines"
+
+iter_catalog_services "$services_file" > "$tmp_normalized_services"
 
 line_number=0
 errors=0
@@ -20,9 +33,6 @@ errors=0
 while IFS= read -r line; do
   line_number=$((line_number + 1))
   [ -n "$line" ] || continue
-  case "$line" in
-    \#*) continue ;;
-  esac
 
   old_ifs=$IFS
   IFS='|'
@@ -53,6 +63,7 @@ while IFS= read -r line; do
     errors=1
   else
     printf '%s\n' "$service" >> "$tmp_names"
+    printf '%s|%s\n' "$service" "$line" >> "$tmp_service_lines"
   fi
 
   [ -n "$path" ] || {
@@ -104,7 +115,43 @@ while IFS= read -r line; do
       errors=1
       ;;
   esac
-done < "$services_file"
+done < "$tmp_normalized_services"
+
+if [ "$errors" -eq 0 ] && [ -n "$reference_services_file" ]; then
+  [ -f "$reference_services_file" ] || {
+    printf 'Reference services file not found: %s\n' "$reference_services_file" >&2
+    exit 1
+  }
+
+  : > "$tmp_reference_lines"
+  iter_catalog_services "$reference_services_file" > "$tmp_normalized_reference"
+  while IFS= read -r reference_line; do
+    [ -n "$reference_line" ] || continue
+    old_ifs=$IFS
+    IFS='|'
+    set -- $reference_line
+    IFS=$old_ifs
+
+    if [ "$#" -eq 7 ]; then
+      printf '%s|%s\n' "$1" "$reference_line" >> "$tmp_reference_lines"
+    fi
+  done < "$tmp_normalized_reference"
+
+  while IFS='|' read -r service service_line; do
+    reference_entry="$(grep "^${service}|" "$tmp_reference_lines" || true)"
+    if [ -z "$reference_entry" ]; then
+      printf 'Service %s does not exist in reference catalog: %s\n' "$service" "$reference_services_file" >&2
+      errors=1
+      continue
+    fi
+
+    reference_line="${reference_entry#*|}"
+    if [ "$reference_line" != "$service_line" ]; then
+      printf 'Service %s differs from the reference catalog entry\n' "$service" >&2
+      errors=1
+    fi
+  done < "$tmp_service_lines"
+fi
 
 if [ "$errors" -ne 0 ]; then
   exit 1

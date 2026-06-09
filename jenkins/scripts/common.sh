@@ -1,7 +1,12 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-SERVICES_FILE="${SERVICES_FILE:-jenkins/services.env}"
+source scripts/catalog.sh
+source scripts/source-root.sh
+
+SERVICES_FILE="$(resolve_services_file)"
+SOURCE_ROOT="$(resolve_source_root)"
+SOURCE_GIT_ROOT="$(resolve_source_git_root)"
 
 log() {
   printf '[%s] %s\n' "$(date '+%Y-%m-%d %H:%M:%S')" "$*"
@@ -27,6 +32,15 @@ image_repo() {
   printf '%s/yas-%s' "$DOCKERHUB_NAMESPACE" "$service"
 }
 
+service_source_path() {
+  local relative_path="$1"
+  if [[ "$SOURCE_ROOT" == "." ]]; then
+    printf '%s' "$relative_path"
+  else
+    printf '%s/%s' "$SOURCE_ROOT" "$relative_path"
+  fi
+}
+
 release_name_for() {
   local deployer_id="${1:-dev1}"
   printf 'yas-%s' "$(sanitize_name "$deployer_id")"
@@ -35,6 +49,28 @@ release_name_for() {
 namespace_for() {
   local deployer_id="${1:-dev1}"
   printf 'yas-user-%s' "$(sanitize_name "$deployer_id")"
+}
+
+default_release_name() {
+  local environment_name="${1:-developer}"
+  local deployer_id="${2:-dev1}"
+
+  if [[ "$environment_name" == "developer" ]]; then
+    release_name_for "$deployer_id"
+  else
+    printf 'yas-%s' "$(sanitize_name "$environment_name")"
+  fi
+}
+
+default_namespace() {
+  local environment_name="${1:-developer}"
+  local deployer_id="${2:-dev1}"
+
+  if [[ "$environment_name" == "developer" ]]; then
+    namespace_for "$deployer_id"
+  else
+    printf 'yas-%s' "$(sanitize_name "$environment_name")"
+  fi
 }
 
 branch_env_name() {
@@ -48,11 +84,5 @@ tag_env_name() {
 }
 
 iter_services() {
-  [[ -f "$SERVICES_FILE" ]] || fail "Missing services file: $SERVICES_FILE"
-
-  while IFS='|' read -r service path dockerfile port expose node_port workload_type; do
-    [[ -z "${service}" ]] && continue
-    [[ "${service}" == \#* ]] && continue
-    printf '%s|%s|%s|%s|%s|%s|%s\n' "$service" "$path" "$dockerfile" "$port" "$expose" "${node_port:-}" "${workload_type:-backend}"
-  done < "$SERVICES_FILE"
+  iter_catalog_services "$SERVICES_FILE"
 }

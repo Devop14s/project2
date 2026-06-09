@@ -1,7 +1,10 @@
 param(
-    [string]$ServicesFile = 'jenkins/services.env',
+    [string]$ServicesFile = '',
     [string]$ValuesFile = 'helm/yas/values.yaml'
 )
+
+. "$PSScriptRoot\catalog.ps1"
+$ServicesFile = Resolve-ServicesCatalogFile -ServicesFile $ServicesFile
 
 if (-not (Test-Path $ValuesFile)) {
     Write-Error "Values file not found: $ValuesFile"

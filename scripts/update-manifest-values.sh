@@ -18,6 +18,7 @@ tmp_file="${TMPDIR:-/tmp}/manifest-values.$$"
 awk -v tag="$tag" '
   {
     current = $0
+    sub(/\r$/, "", current)
     trimmed = current
     sub(/^[[:space:]]+/, "", trimmed)
 
@@ -45,4 +46,3 @@ awk -v tag="$tag" '
 
 mv "$tmp_file" "$values_file"
 printf 'Updated %s with tag %s\n' "$values_file" "$tag"
-

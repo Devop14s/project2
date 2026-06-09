@@ -1,7 +1,11 @@
 #!/usr/bin/env sh
 set -eu
 
-services_file="${SERVICES_FILE:-jenkins/services.env}"
+. scripts/catalog.sh
+. scripts/source-root.sh
+
+services_file="$(resolve_services_file)"
+source_git_root="$(resolve_source_git_root)"
 output_file="${OUTPUT_FILE:-work/branch-tags.env}"
 
 mkdir -p "$(dirname "$output_file")"
@@ -23,31 +27,27 @@ resolve_tag() {
     return
   fi
 
-  if git rev-parse --verify "origin/$branch" >/dev/null 2>&1; then
-    git rev-parse "origin/$branch"
+  if git -C "$source_git_root" rev-parse --verify "origin/$branch" >/dev/null 2>&1; then
+    git -C "$source_git_root" rev-parse "origin/$branch"
     return
   fi
 
-  if git rev-parse --verify "$branch" >/dev/null 2>&1; then
-    git rev-parse "$branch"
+  if git -C "$source_git_root" rev-parse --verify "$branch" >/dev/null 2>&1; then
+    git -C "$source_git_root" rev-parse "$branch"
     return
   fi
 
-  printf 'Unable to resolve branch: %s\n' "$branch" >&2
+  printf 'Unable to resolve branch in %s: %s\n' "$source_git_root" "$branch" >&2
   exit 1
 }
 
-while IFS='|' read -r service path dockerfile port expose node_port workload_type; do
-  [ -n "$service" ] || continue
-  case "$service" in
-    \#*) continue ;;
-  esac
+iter_catalog_services "$services_file" | while IFS='|' read -r service path dockerfile port expose node_port workload_type; do
 
   branch_var="$(branch_var_name "$service")"
   branch_value="$(printenv "$branch_var" 2>/dev/null || printf 'main')"
   tag_var="$(tag_var_name "$service")"
   tag_value="$(resolve_tag "$branch_value")"
   printf '%s=%s\n' "$tag_var" "$tag_value" >> "$output_file"
-done < "$services_file"
+done
 
 printf 'Resolved branch tags into %s\n' "$output_file"

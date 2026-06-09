@@ -1,7 +1,12 @@
 param(
-    [string]$ServicesFile = 'jenkins/services.env',
-    [string]$SourceRoot = 'yas-source'
+    [string]$ServicesFile = '',
+    [string]$SourceRoot = ''
 )
+
+. "$PSScriptRoot\catalog.ps1"
+. "$PSScriptRoot\source-root.ps1"
+$ServicesFile = Resolve-ServicesCatalogFile -ServicesFile $ServicesFile
+$SourceRoot = Resolve-SourceRoot -SourceRoot $SourceRoot
 
 if (-not (Test-Path $ServicesFile)) {
     Write-Error "Services file not found: $ServicesFile"

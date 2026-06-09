@@ -3,6 +3,8 @@ param(
     [switch]$SkipCommandChecks
 )
 
+. "$PSScriptRoot\source-root.ps1"
+
 function Get-HelmExecutable {
     $helmCommand = Get-Command helm -ErrorAction SilentlyContinue
     if ($helmCommand) {
@@ -36,34 +38,44 @@ $requiredFiles = @(
     'Jenkinsfile',
     'jenkins\README.md',
     'jenkins\services.env',
+    'jenkins\services.release-baseline.env',
+    'jenkins\scripts\capture-runtime-evidence.sh',
+    'jenkins\scripts\write-commit-metadata.sh',
     'helm\yas\Chart.yaml',
     'docs\status-report.md',
     'argocd\app-dev.yaml',
     'mesh\peer-authentication.yaml',
+    'scripts\catalog.ps1',
+    'scripts\catalog.sh',
+    'scripts\source-root.ps1',
+    'scripts\source-root.sh',
     'scripts\selftest.ps1',
-    'scripts\validate-services-catalog.ps1'
+    'scripts\validate-services-catalog.ps1',
+    'scripts\validate-gitops-values.ps1'
 )
 
 $requiredCommands = @('git', 'kubectl', 'helm', 'docker')
 $servicesFile = 'jenkins/services.env'
-$sourceRoot = 'yas-source'
+$releaseBaselineServicesFile = 'jenkins/services.release-baseline.env'
+$sourceRoot = Resolve-SourceRoot -SourceRoot ''
 $serviceCount = 0
+$releaseBaselineServiceCount = 0
 $publicEntryCount = 0
 $uiCount = 0
 $backendCount = 0
 $sourceAligned = $false
-$storefrontBuildVerified = (Test-Path 'yas-source\storefront\.next')
-$backofficeBuildVerified = (Test-Path 'yas-source\backoffice\.next')
-$storefrontBffBuildVerified = (Test-Path 'yas-source\storefront-bff\target\storefront-bff-1.0-SNAPSHOT.jar')
-$backofficeBffBuildVerified = (Test-Path 'yas-source\backoffice-bff\target\backoffice-bff-1.0-SNAPSHOT.jar')
-$productBuildVerified = (Test-Path 'yas-source\product\target\product-1.0-SNAPSHOT.jar')
-$paymentBuildVerified = (Test-Path 'yas-source\payment\target\payment-1.0-SNAPSHOT.jar')
-$paymentPaypalBuildVerified = (Test-Path 'yas-source\payment-paypal\target\payment-paypal-1.0-SNAPSHOT.jar')
-$recommendationBuildVerified = (Test-Path 'yas-source\recommendation\target\recommendation-1.0-SNAPSHOT.jar')
-$inventoryBuildVerified = (Test-Path 'yas-source\inventory\target\inventory-1.0-SNAPSHOT.jar')
-$orderBuildVerified = (Test-Path 'yas-source\order\target\order-1.0-SNAPSHOT.jar')
-$sampledataPackageVerified = (Test-Path 'yas-source\sampledata\target\sampledata-1.0-SNAPSHOT.jar')
-$searchPackageVerified = (Test-Path 'yas-source\search\target\search-1.0-SNAPSHOT.jar')
+$storefrontBuildVerified = (Test-Path (Join-Path $sourceRoot 'storefront\.next'))
+$backofficeBuildVerified = (Test-Path (Join-Path $sourceRoot 'backoffice\.next'))
+$storefrontBffBuildVerified = (Test-Path (Join-Path $sourceRoot 'storefront-bff\target\storefront-bff-1.0-SNAPSHOT.jar'))
+$backofficeBffBuildVerified = (Test-Path (Join-Path $sourceRoot 'backoffice-bff\target\backoffice-bff-1.0-SNAPSHOT.jar'))
+$productBuildVerified = (Test-Path (Join-Path $sourceRoot 'product\target\product-1.0-SNAPSHOT.jar'))
+$paymentBuildVerified = (Test-Path (Join-Path $sourceRoot 'payment\target\payment-1.0-SNAPSHOT.jar'))
+$paymentPaypalBuildVerified = (Test-Path (Join-Path $sourceRoot 'payment-paypal\target\payment-paypal-1.0-SNAPSHOT.jar'))
+$recommendationBuildVerified = (Test-Path (Join-Path $sourceRoot 'recommendation\target\recommendation-1.0-SNAPSHOT.jar'))
+$inventoryBuildVerified = (Test-Path (Join-Path $sourceRoot 'inventory\target\inventory-1.0-SNAPSHOT.jar'))
+$orderBuildVerified = (Test-Path (Join-Path $sourceRoot 'order\target\order-1.0-SNAPSHOT.jar'))
+$sampledataPackageVerified = (Test-Path (Join-Path $sourceRoot 'sampledata\target\sampledata-1.0-SNAPSHOT.jar'))
+$searchPackageVerified = (Test-Path (Join-Path $sourceRoot 'search\target\search-1.0-SNAPSHOT.jar'))
 $productImageVerified = $false
 $backofficeImageVerified = $false
 $storefrontBffImageVerified = $false
@@ -78,6 +90,7 @@ $searchImageVerified = $false
 $helmExecutable = Get-HelmExecutable
 $helmLintVerified = $false
 $helmTemplateVerified = $false
+$gitopsValuesVerified = $false
 
 if (Test-Path $servicesFile) {
     foreach ($line in Get-Content $servicesFile) {
@@ -182,6 +195,17 @@ if ($null -ne (Get-Command docker -ErrorAction SilentlyContinue)) {
     }
 }
 
+if (Test-Path $releaseBaselineServicesFile) {
+    foreach ($line in Get-Content $releaseBaselineServicesFile) {
+        if (-not $line) { continue }
+        if ($line.StartsWith('#')) { continue }
+        $parts = $line.Split('|')
+        if ($parts.Count -ge 7) {
+            $releaseBaselineServiceCount += 1
+        }
+    }
+}
+
 if ($helmExecutable) {
     try {
         & $helmExecutable lint 'helm\yas' *> $null
@@ -195,6 +219,15 @@ if ($helmExecutable) {
         $helmTemplateVerified = ($LASTEXITCODE -eq 0)
     } catch {
         $helmTemplateVerified = $false
+    }
+}
+
+if (Test-Path $releaseBaselineServicesFile) {
+    try {
+        powershell -ExecutionPolicy Bypass -File scripts\validate-gitops-values.ps1 -ServicesFile $releaseBaselineServicesFile *> $null
+        $gitopsValuesVerified = ($LASTEXITCODE -eq 0)
+    } catch {
+        $gitopsValuesVerified = $false
     }
 }
 
@@ -233,6 +266,7 @@ if (-not $SkipCommandChecks) {
 
 $content.Add('## Service Catalog Summary')
 $content.Add("- Services in catalog: $serviceCount")
+$content.Add("- Services in release baseline: $releaseBaselineServiceCount")
 $content.Add("- Public entrypoints in catalog: $publicEntryCount")
 $content.Add("- UI workloads in catalog: $uiCount")
 $content.Add("- Backend workloads in catalog: $backendCount")
@@ -244,8 +278,11 @@ $content.Add('- Cross-platform dry-run helpers exist in both `ps1` and `.sh` for
 $content.Add('- Generated values include workload-aware fields such as `workloadType` and backend `metricPort`.')
 $content.Add('- GitOps values generation is available for the full service catalog.')
 $content.Add('- Helm baseline values generation is available from the shared service catalog.')
+if (Test-Path $releaseBaselineServicesFile) {
+    $content.Add('- A frozen first-release service catalog exists in `jenkins/services.release-baseline.env`.')
+}
 if ($sourceAligned) {
-    $content.Add('- Service catalog paths and Dockerfiles were verified against the local `yas-source` clone.')
+    $content.Add('- Service catalog paths and Dockerfiles were verified against the configured source root `' + $sourceRoot + '`.')
 }
 if ($storefrontBuildVerified) {
     $content.Add('- A real `storefront` Next.js production build completed successfully in the cloned source tree.')
@@ -321,6 +358,9 @@ if ($helmLintVerified) {
 }
 if ($helmTemplateVerified) {
     $content.Add('- A real Helm chart template render completed successfully against `helm/yas`.')
+}
+if ($gitopsValuesVerified) {
+    $content.Add('- The committed GitOps values under `argocd/values/` are in sync with the frozen release baseline generator.')
 }
 $content.Add('')
 $content.Add('## Still Blocked In This Workspace')

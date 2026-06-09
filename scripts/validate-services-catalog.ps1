@@ -1,6 +1,10 @@
 param(
-    [string]$ServicesFile = 'jenkins/services.env'
+    [string]$ServicesFile = '',
+    [string]$ReferenceServicesFile = ''
 )
+
+. "$PSScriptRoot\catalog.ps1"
+$ServicesFile = Resolve-ServicesCatalogFile -ServicesFile $ServicesFile
 
 if (-not (Test-Path $ServicesFile)) {
     Write-Error "Services file not found: $ServicesFile"
@@ -9,6 +13,7 @@ if (-not (Test-Path $ServicesFile)) {
 
 $seen = @{}
 $seenNodePorts = @{}
+$serviceLines = @{}
 $errors = New-Object System.Collections.Generic.List[string]
 $lines = Get-Content $ServicesFile
 $lineNumber = 0
@@ -39,6 +44,7 @@ foreach ($line in $lines) {
         $errors.Add("Duplicate service name: $service")
     } else {
         $seen[$service] = $true
+        $serviceLines[$service] = $line
     }
 
     if ([string]::IsNullOrWhiteSpace($path)) {
@@ -71,6 +77,39 @@ foreach ($line in $lines) {
 
     if ($workloadType -notin @('ui', 'backend')) {
         $errors.Add("Line $lineNumber workloadType must be ui or backend")
+    }
+}
+
+if ($errors.Count -gt 0) {
+    $errors | ForEach-Object { Write-Host $_ -ForegroundColor Red }
+    exit 1
+}
+
+if (-not [string]::IsNullOrWhiteSpace($ReferenceServicesFile)) {
+    if (-not (Test-Path $ReferenceServicesFile)) {
+        Write-Error "Reference services file not found: $ReferenceServicesFile"
+        exit 1
+    }
+
+    $referenceServices = @{}
+    foreach ($referenceLine in Get-Content $ReferenceServicesFile) {
+        if (-not $referenceLine) { continue }
+        if ($referenceLine.StartsWith('#')) { continue }
+
+        $referenceParts = $referenceLine.Split('|')
+        if ($referenceParts.Count -ne 7) { continue }
+        $referenceServices[$referenceParts[0]] = $referenceLine
+    }
+
+    foreach ($service in $serviceLines.Keys) {
+        if (-not $referenceServices.ContainsKey($service)) {
+            $errors.Add("Service $service does not exist in reference catalog: $ReferenceServicesFile")
+            continue
+        }
+
+        if ($referenceServices[$service] -ne $serviceLines[$service]) {
+            $errors.Add("Service $service differs from the reference catalog entry")
+        }
     }
 }
 
