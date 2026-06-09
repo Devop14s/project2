@@ -145,6 +145,16 @@ try {
         throw 'Jenkinsfile is missing the developer_cleanup dispatch target.'
     }
 
+    $trackedShellFiles = & git ls-files --stage -- 'jenkins/scripts/*.sh' 'scripts/*.sh'
+    if (-not $trackedShellFiles) {
+        throw 'Git did not report any tracked shell scripts for execute-bit validation.'
+    }
+    foreach ($trackedShellFile in $trackedShellFiles) {
+        if ($trackedShellFile -notmatch '^100755\s') {
+            throw "Tracked shell script is missing the executable git mode: $trackedShellFile"
+        }
+    }
+
     if ($jenkinsfile -notmatch 'pipelineRequiresDockerhubNamespace') {
         throw 'Jenkinsfile no longer guards DOCKERHUB_NAMESPACE by pipeline target.'
     }

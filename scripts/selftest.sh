@@ -110,6 +110,9 @@ grep -q 'repository: demo-ns/yas-storefront-bff' "$generated_values_file"
 grep -q 'workloadType: ui' "$generated_values_file"
 grep -q 'host: storefront-dev1.yas.local' "$generated_values_file"
 grep -q 'host: backoffice-dev1.yas.local' "$generated_values_file"
+tracked_shell_modes="$(git ls-files --stage -- 'jenkins/scripts/*.sh' 'scripts/*.sh')"
+[ -n "$tracked_shell_modes" ]
+printf '%s\n' "$tracked_shell_modes" | awk '$1 != "100755" { exit 1 }'
 grep -q "'developer_cleanup'" Jenkinsfile
 grep -q 'pipelineRequiresDockerhubNamespace' Jenkinsfile
 grep -q "name: 'RELEASE_VERSION'" Jenkinsfile
