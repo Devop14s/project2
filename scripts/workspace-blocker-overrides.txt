@@ -1,0 +1,10 @@
+sampledata|compile|common-library testCompile|common-library test compilation currently fails in the reactor build.
+search|elasticsearch|ProductCdcConsumerTest|ProductCdcConsumerTest failed because the Elasticsearch Testcontainers dependency did not become ready.
+cart|keycloak|integration-tests|Integration tests failed because Keycloak Testcontainers did not become healthy on /health/started.
+customer|keycloak|com.yas.customer.service.UserAddressServiceIT|com.yas.customer.service.UserAddressServiceIT failed because Keycloak Testcontainers did not become healthy on /health/started.
+location|keycloak|com.yas.location.AddressControllerIT|com.yas.location.AddressControllerIT failed because Keycloak Testcontainers did not become healthy on /health/started.
+media|keycloak|com.yas.media.controller.MediaControllerIT|com.yas.media.controller.MediaControllerIT failed because Keycloak Testcontainers did not become healthy on /health/started.
+promotion|keycloak|com.yas.promotion.service.PromotionServiceIT|com.yas.promotion.service.PromotionServiceIT failed because Keycloak Testcontainers did not become healthy on /health/started.
+rating|keycloak|com.yas.rating.controller.RatingControllerIT|com.yas.rating.controller.RatingControllerIT failed because Keycloak Testcontainers did not become healthy on /health/started.
+tax|keycloak|com.yas.tax.controller.TaxClassControllerIT|com.yas.tax.controller.TaxClassControllerIT failed because Keycloak Testcontainers did not become healthy on /health/started.
+webhook|keycloak|com.yas.webhook.controller.WebhookControllerIT|com.yas.webhook.controller.WebhookControllerIT failed because Keycloak Testcontainers did not become healthy on /health/started.

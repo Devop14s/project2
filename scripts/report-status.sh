@@ -76,6 +76,8 @@ scripts/validate-gitops-values.ps1
 scripts/validate-gitops-values.sh
 scripts/validate-source-alignment.ps1
 scripts/validate-source-alignment.sh
+scripts/summarize-failsafe-blockers.ps1
+scripts/summarize-failsafe-blockers.sh
 scripts/report-status.ps1
 scripts/report-status.sh
 scripts/resolve-branch-tags.ps1
@@ -157,9 +159,14 @@ partial_image_metadata_verified=0
 failure_safe_runtime_evidence_verified=0
 cleanup_guard_verified=0
 shared_promotion_commit_metadata_verified=0
+compile_blocked_services=""
+keycloak_blocked_services=""
+elasticsearch_blocked_services=""
+other_failsafe_blockers=""
 normalized_services_file="$(mktemp "${TMPDIR:-/tmp}/yas-report-services.XXXXXX")"
 normalized_release_baseline_file="$(mktemp "${TMPDIR:-/tmp}/yas-report-release-baseline.XXXXXX")"
-trap 'rm -f "$normalized_services_file" "$normalized_release_baseline_file"' EXIT INT TERM
+normalized_failsafe_blockers_file="$(mktemp "${TMPDIR:-/tmp}/yas-report-failsafe.XXXXXX")"
+trap 'rm -f "$normalized_services_file" "$normalized_release_baseline_file" "$normalized_failsafe_blockers_file"' EXIT INT TERM
 
 if [ -f "jenkins/services.env" ]; then
   iter_catalog_services "jenkins/services.env" > "$normalized_services_file"
@@ -186,6 +193,39 @@ fi
 if [ -d "$source_root" ] && [ -f "jenkins/services.env" ]; then
   if SERVICES_FILE="jenkins/services.env" SOURCE_ROOT="$source_root" sh scripts/validate-source-alignment.sh >/dev/null 2>&1; then
     source_aligned=1
+  fi
+  if [ -f "scripts/summarize-failsafe-blockers.sh" ]; then
+    SERVICE_CATALOG=full SOURCE_ROOT="$source_root" sh scripts/summarize-failsafe-blockers.sh "$normalized_failsafe_blockers_file" >/dev/null 2>&1 || true
+    while IFS='|' read -r service category suite_name message || [ -n "${service}${category}${suite_name}${message}" ]; do
+      [ -n "${service:-}" ] || continue
+      case "$category" in
+        compile)
+          if [ -n "$compile_blocked_services" ]; then
+            compile_blocked_services="${compile_blocked_services}, \`${service}\`"
+          else
+            compile_blocked_services="\`${service}\`"
+          fi
+          ;;
+        keycloak)
+          if [ -n "$keycloak_blocked_services" ]; then
+            keycloak_blocked_services="${keycloak_blocked_services}, \`${service}\`"
+          else
+            keycloak_blocked_services="\`${service}\`"
+          fi
+          ;;
+        elasticsearch)
+          if [ -n "$elasticsearch_blocked_services" ]; then
+            elasticsearch_blocked_services="${elasticsearch_blocked_services}, \`${service}\`"
+          else
+            elasticsearch_blocked_services="\`${service}\`"
+          fi
+          ;;
+        *)
+          other_failsafe_blockers="${other_failsafe_blockers}- \`${service}\`: ${message}
+"
+          ;;
+      esac
+    done < "$normalized_failsafe_blockers_file"
   fi
 fi
 
@@ -598,8 +638,18 @@ fi
   printf '\n'
   printf '## Still Blocked In This Workspace\n'
   printf '%s\n' '- The full runtime image set has not been built and pushed from this workspace.'
-  printf '%s\n' '- A full upstream-style test pass is still blocked for `sampledata` and `search` in this workspace.'
-  printf '%s\n' '- The full upstream-style integration path is still blocked for `cart`, `customer`, `location`, `media`, `promotion`, `rating`, `tax`, and `webhook` because Keycloak Testcontainers does not become healthy reliably on this host.'
+  if [ -n "$compile_blocked_services" ]; then
+    printf '%s%s%s\n' '- The full upstream-style test path is still blocked for ' "$compile_blocked_services" ' because the reactor currently fails in `common-library` test compilation.'
+  fi
+  if [ -n "$elasticsearch_blocked_services" ]; then
+    printf '%s%s%s\n' '- The full upstream-style integration path is still blocked for ' "$elasticsearch_blocked_services" ' because the Elasticsearch Testcontainers dependency does not become ready on this host.'
+  fi
+  if [ -n "$keycloak_blocked_services" ]; then
+    printf '%s%s%s\n' '- The full upstream-style integration path is still blocked for ' "$keycloak_blocked_services" ' because Keycloak Testcontainers does not become healthy reliably on this host.'
+  fi
+  if [ -n "$other_failsafe_blockers" ]; then
+    printf '%s' "$other_failsafe_blockers"
+  fi
   printf '%s\n' '- Real Kubernetes deployment cannot be executed.'
   printf '%s\n' '- Jenkins credentials and webhook integration cannot be verified locally.'
 } > "$output_file"

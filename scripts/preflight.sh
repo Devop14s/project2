@@ -66,6 +66,9 @@ scripts/validate-gitops-values.ps1
 scripts/validate-gitops-values.sh
 scripts/validate-source-alignment.ps1
 scripts/validate-source-alignment.sh
+scripts/summarize-failsafe-blockers.ps1
+scripts/summarize-failsafe-blockers.sh
+scripts/workspace-blocker-overrides.txt
 scripts/report-status.ps1
 scripts/report-status.sh
 scripts/resolve-branch-tags.ps1

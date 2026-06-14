@@ -43,6 +43,7 @@ $sampleDevHelmRenderFile = Join-Path $tempDir 'sample-dev-helm-render.yaml'
 $sampleStagingHelmRenderFile = Join-Path $tempDir 'sample-staging-helm-render.yaml'
 $sampleDeveloperHelmRenderFile = Join-Path $tempDir 'sample-developer-helm-render.yaml'
 $statusReportFile = Join-Path $tempDir 'status-report.generated.md'
+$failsafeBlockersFile = Join-Path $tempDir 'failsafe-blockers.txt'
 $preflightJsonFile = Join-Path $tempDir 'preflight.json'
 $helmExecutable = Get-HelmExecutable
 
@@ -57,6 +58,7 @@ try {
     powershell -ExecutionPolicy Bypass -File scripts\validate-chart-values.ps1 | Out-Null
     powershell -ExecutionPolicy Bypass -File scripts\validate-gitops-values.ps1 | Out-Null
     powershell -ExecutionPolicy Bypass -File scripts\validate-source-alignment.ps1 | Out-Null
+    powershell -ExecutionPolicy Bypass -File scripts\summarize-failsafe-blockers.ps1 -OutputFile $failsafeBlockersFile | Out-Null
     powershell -ExecutionPolicy Bypass -File scripts\resolve-branch-tags.ps1 -OutputFile $branchTagsFile -MetadataFile $branchTagMetadataNestedFile | Out-Null
 
     $previousProductBranch = [Environment]::GetEnvironmentVariable('PRODUCT_BRANCH')
@@ -124,6 +126,7 @@ try {
     $chartValues = Get-Content $chartValuesFile -Raw
     $manifestValues = Get-Content $manifestValuesFile -Raw
     $statusReport = Get-Content $statusReportFile -Raw
+    $failsafeBlockers = Get-Content $failsafeBlockersFile -Raw
     $preflightJson = Get-Content $preflightJsonFile -Raw
     $helmRender = if (Test-Path $helmRenderFile) { Get-Content $helmRenderFile -Raw } else { '' }
 
@@ -137,6 +140,14 @@ try {
 
     if ($branchTagMetadata -notmatch '"service":\s*"storefront"') {
         throw 'Branch-tag metadata is missing the storefront entry.'
+    }
+
+    if ($failsafeBlockers -notmatch '(?m)^media\|keycloak\|') {
+        throw 'summarize-failsafe-blockers.ps1 should detect the media Keycloak blocker.'
+    }
+
+    if ($failsafeBlockers -notmatch '(?m)^rating\|keycloak\|') {
+        throw 'summarize-failsafe-blockers.ps1 should detect the rating Keycloak blocker.'
     }
 
     if ($branchTagMetadata -notmatch '"branch":\s*"main"') {

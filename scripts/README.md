@@ -35,6 +35,9 @@ On Windows, `preflight.ps1`, `selftest.ps1`, and `report-status.ps1` can also pi
 - `validate-gitops-values.sh`
 - `validate-source-alignment.ps1`
 - `validate-source-alignment.sh`
+- `summarize-failsafe-blockers.ps1`
+- `summarize-failsafe-blockers.sh`
+- `workspace-blocker-overrides.txt`
 - `report-status.ps1`
 - `report-status.sh`
 - `resolve-branch-tags.ps1`
@@ -64,6 +67,7 @@ powershell -ExecutionPolicy Bypass -File scripts\validate-services-catalog.ps1 -
 powershell -ExecutionPolicy Bypass -File scripts\validate-chart-values.ps1
 powershell -ExecutionPolicy Bypass -File scripts\validate-gitops-values.ps1
 powershell -ExecutionPolicy Bypass -File scripts\validate-source-alignment.ps1
+powershell -ExecutionPolicy Bypass -File scripts\summarize-failsafe-blockers.ps1
 powershell -ExecutionPolicy Bypass -File scripts\report-status.ps1 -SkipCommandChecks
 powershell -ExecutionPolicy Bypass -File scripts\resolve-branch-tags.ps1
 powershell -ExecutionPolicy Bypass -File scripts\generate-values.ps1 -DockerhubNamespace your-dockerhub-namespace
@@ -87,6 +91,7 @@ sh scripts/validate-services-catalog.sh jenkins/services.release-baseline.env je
 sh scripts/validate-chart-values.sh
 sh scripts/validate-gitops-values.sh
 sh scripts/validate-source-alignment.sh
+sh scripts/summarize-failsafe-blockers.sh
 sh scripts/report-status.sh --skip-command-checks
 sh scripts/resolve-branch-tags.sh
 DOCKERHUB_NAMESPACE=your-dockerhub-namespace sh scripts/generate-values.sh

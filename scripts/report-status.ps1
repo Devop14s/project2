@@ -93,6 +93,8 @@ $requiredFiles = @(
     'scripts\validate-gitops-values.sh',
     'scripts\validate-source-alignment.ps1',
     'scripts\validate-source-alignment.sh',
+    'scripts\summarize-failsafe-blockers.ps1',
+    'scripts\summarize-failsafe-blockers.sh',
     'scripts\report-status.ps1',
     'scripts\report-status.sh',
     'scripts\resolve-branch-tags.ps1',
@@ -171,6 +173,11 @@ $failureSafeRuntimeEvidenceVerified = $false
 $cleanupGuardVerified = $false
 $sharedPromotionCommitMetadataVerified = $false
 $branchTagMetadataVerified = $false
+$failsafeBlockerLines = @()
+$compileBlockedServices = New-Object System.Collections.Generic.List[string]
+$keycloakBlockedServices = New-Object System.Collections.Generic.List[string]
+$elasticsearchBlockedServices = New-Object System.Collections.Generic.List[string]
+$otherFailsafeBlockers = New-Object System.Collections.Generic.List[string]
 
 if (Test-Path $servicesFile) {
     foreach ($line in Get-Content $servicesFile) {
@@ -194,6 +201,30 @@ if (Test-Path $servicesFile) {
 if ((Test-Path $sourceRoot) -and (Test-Path $servicesFile)) {
     powershell -ExecutionPolicy Bypass -File scripts\validate-source-alignment.ps1 -ServicesFile $servicesFile -SourceRoot $sourceRoot *> $null
     $sourceAligned = ($LASTEXITCODE -eq 0)
+
+    if (Test-Path 'scripts\summarize-failsafe-blockers.ps1') {
+        $failsafeBlockerLines = @(powershell -ExecutionPolicy Bypass -File scripts\summarize-failsafe-blockers.ps1)
+        foreach ($blockerLine in $failsafeBlockerLines) {
+            $parts = $blockerLine -split '\|', 4
+            if ($parts.Count -lt 4) {
+                continue
+            }
+
+            $service = $parts[0]
+            $category = $parts[1]
+            $message = $parts[3]
+
+            if ($category -eq 'compile') {
+                $compileBlockedServices.Add($service)
+            } elseif ($category -eq 'keycloak') {
+                $keycloakBlockedServices.Add($service)
+            } elseif ($category -eq 'elasticsearch') {
+                $elasticsearchBlockedServices.Add($service)
+            } else {
+                $otherFailsafeBlockers.Add("- `$service`: $message")
+            }
+        }
+    }
 }
 
 if ($dockerCommandAvailable) {
@@ -679,8 +710,21 @@ if ($dockerCommandAvailable -and -not $dockerDaemonReachable) {
 $content.Add('')
 $content.Add('## Still Blocked In This Workspace')
 $content.Add('- The full runtime image set has not been built and pushed from this workspace.')
-$content.Add('- A full upstream-style test pass is still blocked for `sampledata` and `search` in this workspace.')
-$content.Add('- The full upstream-style integration path is still blocked for `cart`, `customer`, `location`, `media`, `promotion`, `rating`, `tax`, and `webhook` because Keycloak Testcontainers does not become healthy reliably on this host.')
+if ($compileBlockedServices.Count -gt 0) {
+    $compileServices = ($compileBlockedServices | Sort-Object -Unique | ForEach-Object { '`' + $_ + '`' }) -join ', '
+    $content.Add("- The full upstream-style test path is still blocked for $compileServices because the reactor currently fails in `common-library` test compilation.")
+}
+if ($elasticsearchBlockedServices.Count -gt 0) {
+    $elasticsearchServices = ($elasticsearchBlockedServices | Sort-Object -Unique | ForEach-Object { '`' + $_ + '`' }) -join ', '
+    $content.Add("- The full upstream-style integration path is still blocked for $elasticsearchServices because the Elasticsearch Testcontainers dependency does not become ready on this host.")
+}
+if ($keycloakBlockedServices.Count -gt 0) {
+    $keycloakServices = ($keycloakBlockedServices | Sort-Object -Unique | ForEach-Object { '`' + $_ + '`' }) -join ', '
+    $content.Add("- The full upstream-style integration path is still blocked for $keycloakServices because Keycloak Testcontainers does not become healthy reliably on this host.")
+}
+foreach ($otherBlocker in ($otherFailsafeBlockers | Sort-Object -Unique)) {
+    $content.Add($otherBlocker)
+}
 $content.Add('- Real Kubernetes deployment cannot be executed.')
 $content.Add('- Jenkins credentials and webhook integration cannot be verified locally.')
 
