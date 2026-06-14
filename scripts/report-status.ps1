@@ -680,6 +680,7 @@ $content.Add('')
 $content.Add('## Still Blocked In This Workspace')
 $content.Add('- The full runtime image set has not been built and pushed from this workspace.')
 $content.Add('- A full upstream-style test pass is still blocked for `sampledata` and `search` in this workspace.')
+$content.Add('- The full upstream-style integration path is still blocked for `cart`, `customer`, `location`, and `tax` because Keycloak Testcontainers does not become healthy reliably on this host.')
 $content.Add('- Real Kubernetes deployment cannot be executed.')
 $content.Add('- Jenkins credentials and webhook integration cannot be verified locally.')
 

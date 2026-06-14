@@ -71,6 +71,8 @@ Last updated: June 14, 2026
 - `sampledata` does not currently have a clean full upstream-style test pass in this workspace because `common-library` test compilation blocks the reactor build.
 - `search` does not currently have a clean full upstream-style test pass in this workspace because Elasticsearch Testcontainers does not become ready for `ProductCdcConsumerTest`.
 - `cart` does not currently have a clean full upstream-style test pass in this workspace because the integration path fails while waiting for the Keycloak Testcontainers health endpoint.
+- `customer` does not currently have a clean full upstream-style test pass in this workspace because `UserAddressServiceIT` fails while Keycloak Testcontainers waits for the `/health/started` endpoint.
+- `location` does not currently have a clean full upstream-style test pass in this workspace because controller integration tests fail while Keycloak Testcontainers waits for the `/health/started` endpoint.
 - `tax` does not currently have a clean full upstream-style test pass in this workspace because the integration path fails while waiting for the Keycloak Testcontainers health endpoint.
 
 ## Current recommendation
@@ -78,7 +80,7 @@ Last updated: June 14, 2026
 - Treat the repo as a strong, source-verified delivery scaffold rather than a finished deployment repo.
 - Use the services already verified locally as the first deployment subset.
 - Keep `sampledata` and `search` outside the first end-to-end release until their workspace-specific test blockers are understood or intentionally bypassed.
-- Treat `cart` and `tax` as deployable from a package-and-image perspective, but still not fully upstream-style verified on this host because their integration paths currently depend on unstable Keycloak Testcontainers startup.
+- Treat `cart`, `customer`, `location`, and `tax` as deployable from a package-and-image perspective, but still not fully upstream-style verified on this host because their integration paths currently depend on unstable Keycloak Testcontainers startup.
 
 ## Detailed remaining plan
 
