@@ -1,6 +1,6 @@
 # Status Report
 
-Last updated: June 9, 2026
+Last updated: June 14, 2026
 
 ## Completed in this repository
 
@@ -27,7 +27,15 @@ Last updated: June 9, 2026
   - `recommendation`
   - `inventory`
   - `order`
-- Partial packaging verified with known blockers:
+- Partial packaging verified:
+  - `cart`: packaged successfully with `-Dmaven.test.skip=true`
+  - `customer`: packaged successfully with `-Dmaven.test.skip=true`
+  - `location`: packaged successfully with `-Dmaven.test.skip=true`
+  - `media`: packaged successfully with `-Dmaven.test.skip=true`
+  - `promotion`: packaged successfully with `-Dmaven.test.skip=true`
+  - `rating`: packaged successfully with `-Dmaven.test.skip=true`
+  - `tax`: packaged successfully with `-Dmaven.test.skip=true`
+  - `webhook`: packaged successfully with `-Dmaven.test.skip=true`
   - `sampledata`: packaged successfully with `-Dmaven.test.skip=true`
   - `search`: packaged successfully with `-Dmaven.test.skip=true`
 - Local Docker image builds verified:
@@ -36,6 +44,14 @@ Last updated: June 9, 2026
   - `storefront-bff`
   - `backoffice-bff`
   - `product`
+  - `cart`
+  - `customer`
+  - `location`
+  - `media`
+  - `promotion`
+  - `rating`
+  - `tax`
+  - `webhook`
   - `payment`
   - `payment-paypal`
   - `recommendation`
@@ -54,12 +70,15 @@ Last updated: June 9, 2026
 - Jenkins webhook, Jenkins credentials, registry credentials, and kubeconfig wiring have not been exercised end to end.
 - `sampledata` does not currently have a clean full upstream-style test pass in this workspace because `common-library` test compilation blocks the reactor build.
 - `search` does not currently have a clean full upstream-style test pass in this workspace because Elasticsearch Testcontainers does not become ready for `ProductCdcConsumerTest`.
+- `cart` does not currently have a clean full upstream-style test pass in this workspace because the integration path fails while waiting for the Keycloak Testcontainers health endpoint.
+- `tax` does not currently have a clean full upstream-style test pass in this workspace because the integration path fails while waiting for the Keycloak Testcontainers health endpoint.
 
 ## Current recommendation
 
 - Treat the repo as a strong, source-verified delivery scaffold rather than a finished deployment repo.
 - Use the services already verified locally as the first deployment subset.
 - Keep `sampledata` and `search` outside the first end-to-end release until their workspace-specific test blockers are understood or intentionally bypassed.
+- Treat `cart` and `tax` as deployable from a package-and-image perspective, but still not fully upstream-style verified on this host because their integration paths currently depend on unstable Keycloak Testcontainers startup.
 
 ## Detailed remaining plan
 

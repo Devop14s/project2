@@ -45,6 +45,12 @@
 - If the assignment does not require `sampledata` in the first release, keep it out of the deployable subset and document that decision explicitly.
 - If it is required, isolate whether the failure is caused by Java version, dependency state, or local workspace contamination.
 
+### `cart` or `tax` integration tests fail while waiting for Keycloak
+
+- The concrete failure seen on this host is Keycloak Testcontainers startup timing out on `/health/started`.
+- Check Docker Desktop resource limits, container startup logs, and whether the Keycloak image is already cached.
+- If the immediate goal is delivery-repo coverage rather than integration-test repair, keep the package-and-image evidence and document the full-test blocker explicitly.
+
 ### `search` full upstream-style build fails in `ProductCdcConsumerTest`
 
 - Check whether Elasticsearch Testcontainers can pull and start the expected image on the host.

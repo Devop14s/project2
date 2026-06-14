@@ -26,6 +26,14 @@ Checked directly in the cloned source:
 - `payment`: upstream-style `mvn clean install -pl payment -am` passed using local Temurin 25 and Maven 3.9.11, including tests and Testcontainers-backed integration flow, and produced `payment/target/payment-1.0-SNAPSHOT.jar`.
 - `payment-paypal`: upstream-style `mvn clean install -pl payment-paypal -am` passed using local Temurin 25 and Maven 3.9.11, including unit-test coverage for the PayPal adapter, and produced `payment-paypal/target/payment-paypal-1.0-SNAPSHOT.jar`.
 - `recommendation`: upstream-style `mvn clean install -pl recommendation -am` passed using local Temurin 25 and Maven 3.9.11 after rerunning sequentially; the earlier parallel attempt only failed because a shared `common-library/target` clean collided with another reactor build.
+- `cart`: packaging with `mvn clean package -pl cart -am -Dmaven.test.skip=true` passed using local Temurin 25 and Maven 3.9.11 and produced `cart/target/cart-1.0-SNAPSHOT.jar`; an earlier full upstream-style build reached integration tests but failed while Keycloak Testcontainers waited for `/health/started`.
+- `customer`: packaging with `mvn clean package -pl customer -am -Dmaven.test.skip=true` passed using local Temurin 25 and Maven 3.9.11 and produced `customer/target/customer-1.0-SNAPSHOT.jar`.
+- `location`: packaging with `mvn clean package -pl location -am -Dmaven.test.skip=true` passed using local Temurin 25 and Maven 3.9.11 and produced `location/target/location-1.0-SNAPSHOT.jar`.
+- `media`: packaging with `mvn clean package -pl media -am -Dmaven.test.skip=true` passed using local Temurin 25 and Maven 3.9.11 and produced `media/target/media-1.0-SNAPSHOT.jar`.
+- `promotion`: packaging with `mvn clean package -pl promotion -am -Dmaven.test.skip=true` passed using local Temurin 25 and Maven 3.9.11 and produced `promotion/target/promotion-1.0-SNAPSHOT.jar`.
+- `rating`: packaging with `mvn clean package -pl rating -am -Dmaven.test.skip=true` passed using local Temurin 25 and Maven 3.9.11 and produced `rating/target/rating-1.0-SNAPSHOT.jar`.
+- `tax`: packaging with `mvn clean package -pl tax -am -Dmaven.test.skip=true` passed using local Temurin 25 and Maven 3.9.11 and produced `tax/target/tax-1.0-SNAPSHOT.jar`; a later full upstream-style build reached unit tests but the integration path failed while Keycloak Testcontainers waited for `/health/started`.
+- `webhook`: packaging with `mvn clean package -pl webhook -am -Dmaven.test.skip=true` passed using local Temurin 25 and Maven 3.9.11 and produced `webhook/target/webhook-1.0-SNAPSHOT.jar`.
 - `inventory`: upstream-style `mvn clean install -pl inventory -am` passed using local Temurin 25 and Maven 3.9.11, including test coverage, and produced `inventory/target/inventory-1.0-SNAPSHOT.jar`.
 - `order`: upstream-style `mvn clean install -pl order -am` passed using local Temurin 25 and Maven 3.9.11, including test coverage, and produced `order/target/order-1.0-SNAPSHOT.jar`.
 - `sampledata`: upstream-style `mvn clean install -pl sampledata -am` is currently blocked by `common-library` test compilation in this workspace, but packaging with `-Dmaven.test.skip=true` passed and produced `sampledata/target/sampledata-1.0-SNAPSHOT.jar`.
@@ -39,6 +47,14 @@ Checked directly in the cloned source:
 - `docker build` for `payment` passed and produced local image `yas-payment:codex-verified`.
 - `docker build` for `payment-paypal` passed and produced local image `yas-payment-paypal:codex-verified`.
 - `docker build` for `recommendation` passed and produced local image `yas-recommendation:codex-verified`.
+- `docker build` for `cart` passed and produced local image `yas-cart:codex-verified`.
+- `docker build` for `customer` passed and produced local image `yas-customer:codex-verified`.
+- `docker build` for `location` passed and produced local image `yas-location:codex-verified`.
+- `docker build` for `media` passed and produced local image `yas-media:codex-verified`.
+- `docker build` for `promotion` passed and produced local image `yas-promotion:codex-verified`.
+- `docker build` for `rating` passed and produced local image `yas-rating:codex-verified`.
+- `docker build` for `tax` passed and produced local image `yas-tax:codex-verified`.
+- `docker build` for `webhook` passed and produced local image `yas-webhook:codex-verified`.
 - `docker build` for `inventory` passed and produced local image `yas-inventory:codex-verified`.
 - `docker build` for `order` passed and produced local image `yas-order:codex-verified`.
 - `docker build` for `sampledata` passed and produced local image `yas-sampledata:codex-verified`.
@@ -65,17 +81,17 @@ Checked directly in the cloned source:
 | Service | Source path | CI build command | Docker context | Upstream image | App port | Context path | Runtime command | Notes |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | product | `yas-source/product` | `mvn clean install -pl product -am` | `./product` | `ghcr.io/nashtech-garage/yas-product:latest` | `8080` | `/product` | `java -jar /app.jar` | Real Maven build was verified locally, produced `target/product-1.0-SNAPSHOT.jar`, and the Docker image build also passed. |
-| media | `yas-source/media` | `mvn clean install -pl media -am` | `./media` | `ghcr.io/nashtech-garage/yas-media:latest` | `8083` | none declared | `java -jar /app.jar` | No `server.servlet.context-path` in main properties. |
-| cart | `yas-source/cart` | `mvn clean install -pl cart -am` | `./cart` | `ghcr.io/nashtech-garage/yas-cart:latest` | `8084` | `/cart` | `java -jar /app.jar` | Standard Spring Boot JAR packaging. |
+| media | `yas-source/media` | `mvn clean install -pl media -am` | `./media` | `ghcr.io/nashtech-garage/yas-media:latest` | `8083` | none declared | `java -jar /app.jar` | Package and Docker image build were verified locally with a test-skipped Maven path. |
+| cart | `yas-source/cart` | `mvn clean install -pl cart -am` | `./cart` | `ghcr.io/nashtech-garage/yas-cart:latest` | `8084` | `/cart` | `java -jar /app.jar` | Package and Docker image build were verified locally; the full upstream-style integration path is currently blocked by Keycloak Testcontainers startup on this host. |
 | order | `yas-source/order` | `mvn clean install -pl order -am` | `./order` | `ghcr.io/nashtech-garage/yas-order:latest` | `8085` | `/order` | `java -jar /app.jar` | Real Maven build and Docker image build were both verified locally, including passing test coverage during the upstream-style reactor build. |
-| location | `yas-source/location` | `mvn clean install -pl location -am` | `./location` | `ghcr.io/nashtech-garage/yas-location:latest` | `8086` | `/location` | `java -jar /app.jar` | Standard Spring Boot JAR packaging. |
-| customer | `yas-source/customer` | `mvn clean install -pl customer -am` | `./customer` | `ghcr.io/nashtech-garage/yas-customer:latest` | `8088` | `/customer` | `java -jar /app.jar` | Standard Spring Boot JAR packaging. |
-| rating | `yas-source/rating` | `mvn clean install -pl rating -am` | `./rating` | `ghcr.io/nashtech-garage/yas-rating:latest` | `8089` | `/rating` | `java -jar /app.jar` | Standard Spring Boot JAR packaging. |
+| location | `yas-source/location` | `mvn clean install -pl location -am` | `./location` | `ghcr.io/nashtech-garage/yas-location:latest` | `8086` | `/location` | `java -jar /app.jar` | Package and Docker image build were verified locally with a test-skipped Maven path. |
+| customer | `yas-source/customer` | `mvn clean install -pl customer -am` | `./customer` | `ghcr.io/nashtech-garage/yas-customer:latest` | `8088` | `/customer` | `java -jar /app.jar` | Package and Docker image build were verified locally with a test-skipped Maven path. |
+| rating | `yas-source/rating` | `mvn clean install -pl rating -am` | `./rating` | `ghcr.io/nashtech-garage/yas-rating:latest` | `8089` | `/rating` | `java -jar /app.jar` | Package and Docker image build were verified locally with a test-skipped Maven path. |
 | inventory | `yas-source/inventory` | `mvn clean install -pl inventory -am` | `./inventory` | `ghcr.io/nashtech-garage/yas-inventory:latest` | `8090` | `/inventory` | `java -jar /app.jar` | Real Maven build and Docker image build were both verified locally, including passing test coverage during the upstream-style reactor build. |
-| tax | `yas-source/tax` | `mvn clean install -pl tax -am` | `./tax` | `ghcr.io/nashtech-garage/yas-tax:latest` | `8091` | `/tax` | `java -jar /app.jar` | Standard Spring Boot JAR packaging. |
+| tax | `yas-source/tax` | `mvn clean install -pl tax -am` | `./tax` | `ghcr.io/nashtech-garage/yas-tax:latest` | `8091` | `/tax` | `java -jar /app.jar` | Package and Docker image build were verified locally; the full upstream-style integration path is currently blocked by Keycloak Testcontainers startup on this host. |
 | search | `yas-source/search` | `mvn clean install -pl search -am` | `./search` | `ghcr.io/nashtech-garage/yas-search:latest` | `8092` | `/search` | `java -jar /app.jar` | Search also appears in a separate compose profile upstream. |
-| promotion | `yas-source/promotion` | `mvn clean install -pl promotion -am` | `./promotion` | `ghcr.io/nashtech-garage/yas-promotion:latest` | `8092` | `/promotion` | `java -jar /app.jar` | Standard Spring Boot JAR packaging. |
-| webhook | `yas-source/webhook` | `mvn clean install -pl webhook -am` | `./webhook` | `ghcr.io/nashtech-garage/yas-webhook:latest` | `8092` | `/webhook` | `java -jar /app.jar` | Integration-style backend service. |
+| promotion | `yas-source/promotion` | `mvn clean install -pl promotion -am` | `./promotion` | `ghcr.io/nashtech-garage/yas-promotion:latest` | `8092` | `/promotion` | `java -jar /app.jar` | Package and Docker image build were verified locally with a test-skipped Maven path. |
+| webhook | `yas-source/webhook` | `mvn clean install -pl webhook -am` | `./webhook` | `ghcr.io/nashtech-garage/yas-webhook:latest` | `8092` | `/webhook` | `java -jar /app.jar` | Package and Docker image build were verified locally with a test-skipped Maven path. |
 | recommendation | `yas-source/recommendation` | `mvn clean install -pl recommendation -am` | `./recommendation` | `ghcr.io/nashtech-garage/yas-recommendation:latest` | `8095` | `/recommendation` | `java -jar /app.jar` | Real Maven build and Docker image build were verified locally. First parallel build attempt only hit a shared-target cleanup conflict in `common-library`. |
 | payment | `yas-source/payment` | `mvn clean install -pl payment -am` | `./payment` | `ghcr.io/nashtech-garage/yas-payment:latest` | `8081` | `/payment` | `java -jar /app.jar` | Real Maven build and Docker image build were both verified locally; tests exercised container-backed integration flow. |
 | payment-paypal | `yas-source/payment-paypal` | `mvn clean install -pl payment-paypal -am` | `./payment-paypal` | `ghcr.io/nashtech-garage/yas-payment-paypal:latest` | `8093` | `/payment-paypal` | `java -jar /app.jar` | Real Maven build and Docker image build were both verified locally; test suite exercised the PayPal integration adapter. |

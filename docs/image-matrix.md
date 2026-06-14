@@ -9,21 +9,21 @@ This matrix keeps the intended naming convention and also records the current lo
 | storefront-bff | `docker.io/<namespace>/yas-storefront-bff` | `main` | latest commit SHA of selected branch | semantic version tag | verified |
 | backoffice-bff | `docker.io/<namespace>/yas-backoffice-bff` | `main` | latest commit SHA of selected branch | semantic version tag | verified |
 | product | `docker.io/<namespace>/yas-product` | `main` | latest commit SHA of selected branch | semantic version tag | verified |
-| media | `docker.io/<namespace>/yas-media` | `main` | latest commit SHA of selected branch | semantic version tag | not yet verified |
-| cart | `docker.io/<namespace>/yas-cart` | `main` | latest commit SHA of selected branch | semantic version tag | not yet verified |
-| customer | `docker.io/<namespace>/yas-customer` | `main` | latest commit SHA of selected branch | semantic version tag | not yet verified |
-| rating | `docker.io/<namespace>/yas-rating` | `main` | latest commit SHA of selected branch | semantic version tag | not yet verified |
-| location | `docker.io/<namespace>/yas-location` | `main` | latest commit SHA of selected branch | semantic version tag | not yet verified |
+| media | `docker.io/<namespace>/yas-media` | `main` | latest commit SHA of selected branch | semantic version tag | verified |
+| cart | `docker.io/<namespace>/yas-cart` | `main` | latest commit SHA of selected branch | semantic version tag | verified |
+| customer | `docker.io/<namespace>/yas-customer` | `main` | latest commit SHA of selected branch | semantic version tag | verified |
+| rating | `docker.io/<namespace>/yas-rating` | `main` | latest commit SHA of selected branch | semantic version tag | verified |
+| location | `docker.io/<namespace>/yas-location` | `main` | latest commit SHA of selected branch | semantic version tag | verified |
 | order | `docker.io/<namespace>/yas-order` | `main` | latest commit SHA of selected branch | semantic version tag | verified |
 | inventory | `docker.io/<namespace>/yas-inventory` | `main` | latest commit SHA of selected branch | semantic version tag | verified |
-| tax | `docker.io/<namespace>/yas-tax` | `main` | latest commit SHA of selected branch | semantic version tag | not yet verified |
+| tax | `docker.io/<namespace>/yas-tax` | `main` | latest commit SHA of selected branch | semantic version tag | verified |
 | search | `docker.io/<namespace>/yas-search` | `main` | latest commit SHA of selected branch | semantic version tag | verified, but full test path still blocked |
-| promotion | `docker.io/<namespace>/yas-promotion` | `main` | latest commit SHA of selected branch | semantic version tag | not yet verified |
+| promotion | `docker.io/<namespace>/yas-promotion` | `main` | latest commit SHA of selected branch | semantic version tag | verified |
 | payment | `docker.io/<namespace>/yas-payment` | `main` | latest commit SHA of selected branch | semantic version tag | verified |
 | payment-paypal | `docker.io/<namespace>/yas-payment-paypal` | `main` | latest commit SHA of selected branch | semantic version tag | verified |
 | recommendation | `docker.io/<namespace>/yas-recommendation` | `main` | latest commit SHA of selected branch | semantic version tag | verified |
 | sampledata | `docker.io/<namespace>/yas-sampledata` | `main` | latest commit SHA of selected branch | semantic version tag | verified, but full test path still blocked |
-| webhook | `docker.io/<namespace>/yas-webhook` | `main` | latest commit SHA of selected branch | semantic version tag | not yet verified |
+| webhook | `docker.io/<namespace>/yas-webhook` | `main` | latest commit SHA of selected branch | semantic version tag | verified |
 
 ## Conventions
 
