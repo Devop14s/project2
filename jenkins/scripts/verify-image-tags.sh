@@ -11,6 +11,7 @@ verify_completed=false
 last_service=""
 last_image=""
 
+mkdir -p "$(dirname "$VERIFIED_IMAGE_LIST_FILE")"
 mkdir -p "$(dirname "$VERIFY_METADATA_FILE")"
 : > "$VERIFIED_IMAGE_LIST_FILE"
 

@@ -4,13 +4,16 @@ source jenkins/scripts/common.sh
 
 mkdir -p work
 TAG="${RELEASE_VERSION:-$(git -C "$SOURCE_GIT_ROOT" rev-parse HEAD)}"
-IMAGE_LIST_FILE="work/image-list.txt"
-IMAGE_DIGESTS_FILE="work/image-digests.txt"
-METADATA_FILE="work/image-metadata.json"
+IMAGE_LIST_FILE="${IMAGE_LIST_FILE:-work/image-list.txt}"
+IMAGE_DIGESTS_FILE="${IMAGE_DIGESTS_FILE:-work/image-digests.txt}"
+METADATA_FILE="${METADATA_FILE:-work/image-metadata.json}"
 push_completed=false
 last_service=""
 last_image=""
 
+mkdir -p "$(dirname "$IMAGE_LIST_FILE")"
+mkdir -p "$(dirname "$IMAGE_DIGESTS_FILE")"
+mkdir -p "$(dirname "$METADATA_FILE")"
 : > "$IMAGE_LIST_FILE"
 : > "$IMAGE_DIGESTS_FILE"
 

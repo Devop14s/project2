@@ -112,6 +112,14 @@ product_build_verified=0
 payment_build_verified=0
 payment_paypal_build_verified=0
 recommendation_build_verified=0
+cart_package_verified=0
+customer_package_verified=0
+location_package_verified=0
+media_package_verified=0
+promotion_package_verified=0
+rating_package_verified=0
+tax_package_verified=0
+webhook_package_verified=0
 inventory_build_verified=0
 order_build_verified=0
 sampledata_package_verified=0
@@ -124,6 +132,14 @@ backoffice_bff_image_verified=0
 payment_image_verified=0
 payment_paypal_image_verified=0
 recommendation_image_verified=0
+cart_image_verified=0
+customer_image_verified=0
+location_image_verified=0
+media_image_verified=0
+promotion_image_verified=0
+rating_image_verified=0
+tax_image_verified=0
+webhook_image_verified=0
 inventory_image_verified=0
 order_image_verified=0
 sampledata_image_verified=0
@@ -197,6 +213,30 @@ fi
 if [ -f "${source_root}/recommendation/target/recommendation-1.0-SNAPSHOT.jar" ]; then
   recommendation_build_verified=1
 fi
+if [ -f "${source_root}/cart/target/cart-1.0-SNAPSHOT.jar" ]; then
+  cart_package_verified=1
+fi
+if [ -f "${source_root}/customer/target/customer-1.0-SNAPSHOT.jar" ]; then
+  customer_package_verified=1
+fi
+if [ -f "${source_root}/location/target/location-1.0-SNAPSHOT.jar" ]; then
+  location_package_verified=1
+fi
+if [ -f "${source_root}/media/target/media-1.0-SNAPSHOT.jar" ]; then
+  media_package_verified=1
+fi
+if [ -f "${source_root}/promotion/target/promotion-1.0-SNAPSHOT.jar" ]; then
+  promotion_package_verified=1
+fi
+if [ -f "${source_root}/rating/target/rating-1.0-SNAPSHOT.jar" ]; then
+  rating_package_verified=1
+fi
+if [ -f "${source_root}/tax/target/tax-1.0-SNAPSHOT.jar" ]; then
+  tax_package_verified=1
+fi
+if [ -f "${source_root}/webhook/target/webhook-1.0-SNAPSHOT.jar" ]; then
+  webhook_package_verified=1
+fi
 if [ -f "${source_root}/inventory/target/inventory-1.0-SNAPSHOT.jar" ]; then
   inventory_build_verified=1
 fi
@@ -240,6 +280,30 @@ if [ "$docker_daemon_reachable" -eq 1 ]; then
   if docker image inspect yas-recommendation:codex-verified >/dev/null 2>&1; then
     recommendation_image_verified=1
   fi
+  if docker image inspect yas-cart:codex-verified >/dev/null 2>&1; then
+    cart_image_verified=1
+  fi
+  if docker image inspect yas-customer:codex-verified >/dev/null 2>&1; then
+    customer_image_verified=1
+  fi
+  if docker image inspect yas-location:codex-verified >/dev/null 2>&1; then
+    location_image_verified=1
+  fi
+  if docker image inspect yas-media:codex-verified >/dev/null 2>&1; then
+    media_image_verified=1
+  fi
+  if docker image inspect yas-promotion:codex-verified >/dev/null 2>&1; then
+    promotion_image_verified=1
+  fi
+  if docker image inspect yas-rating:codex-verified >/dev/null 2>&1; then
+    rating_image_verified=1
+  fi
+  if docker image inspect yas-tax:codex-verified >/dev/null 2>&1; then
+    tax_image_verified=1
+  fi
+  if docker image inspect yas-webhook:codex-verified >/dev/null 2>&1; then
+    webhook_image_verified=1
+  fi
   if docker image inspect yas-inventory:codex-verified >/dev/null 2>&1; then
     inventory_image_verified=1
   fi
@@ -265,9 +329,11 @@ if [ -f "jenkins/services.release-baseline.env" ] && sh scripts/validate-gitops-
   gitops_values_verified=1
 fi
 if grep -q 'copied-artifacts.txt' jenkins/scripts/capture-runtime-evidence.sh 2>/dev/null && \
-   grep -q 'work/branch-tag-metadata.json' jenkins/scripts/capture-runtime-evidence.sh 2>/dev/null && \
-   grep -q 'work/image-digests.txt' jenkins/scripts/capture-runtime-evidence.sh 2>/dev/null && \
-   grep -q 'work/commit-metadata.json' jenkins/scripts/capture-runtime-evidence.sh 2>/dev/null; then
+   grep -q 'branch_tag_metadata_file="${BRANCH_TAG_METADATA_FILE:-work/branch-tag-metadata.json}"' jenkins/scripts/capture-runtime-evidence.sh 2>/dev/null && \
+   grep -q 'image_digests_file="${IMAGE_DIGESTS_FILE:-work/image-digests.txt}"' jenkins/scripts/capture-runtime-evidence.sh 2>/dev/null && \
+   grep -q 'commit_metadata_file="${COMMIT_METADATA_FILE:-work/commit-metadata.json}"' jenkins/scripts/capture-runtime-evidence.sh 2>/dev/null && \
+   grep -q 'manifest_metadata_file="${MANIFEST_METADATA_FILE:-work/manifest-update-metadata.json}"' jenkins/scripts/capture-runtime-evidence.sh 2>/dev/null && \
+   grep -q 'copy_optional_artifact "\$manifest_metadata_file" "manifest-update-metadata.json"' jenkins/scripts/capture-runtime-evidence.sh 2>/dev/null; then
   runtime_evidence_provenance_verified=1
 fi
 if grep -q '"commit_sha": "${commit_sha}"' jenkins/scripts/write-commit-metadata.sh 2>/dev/null && \
@@ -393,6 +459,30 @@ fi
   if [ "$recommendation_build_verified" -eq 1 ]; then
     printf '%s\n' '- A real `recommendation` Maven backend build completed successfully and produced a runnable JAR artifact.'
   fi
+  if [ "$cart_package_verified" -eq 1 ]; then
+    printf '%s\n' '- A packaged `cart` JAR was produced successfully in this workspace using a test-skipped Maven build.'
+  fi
+  if [ "$customer_package_verified" -eq 1 ]; then
+    printf '%s\n' '- A packaged `customer` JAR was produced successfully in this workspace using a test-skipped Maven build.'
+  fi
+  if [ "$location_package_verified" -eq 1 ]; then
+    printf '%s\n' '- A packaged `location` JAR was produced successfully in this workspace using a test-skipped Maven build.'
+  fi
+  if [ "$media_package_verified" -eq 1 ]; then
+    printf '%s\n' '- A packaged `media` JAR was produced successfully in this workspace using a test-skipped Maven build.'
+  fi
+  if [ "$promotion_package_verified" -eq 1 ]; then
+    printf '%s\n' '- A packaged `promotion` JAR was produced successfully in this workspace using a test-skipped Maven build.'
+  fi
+  if [ "$rating_package_verified" -eq 1 ]; then
+    printf '%s\n' '- A packaged `rating` JAR was produced successfully in this workspace using a test-skipped Maven build.'
+  fi
+  if [ "$tax_package_verified" -eq 1 ]; then
+    printf '%s\n' '- A packaged `tax` JAR was produced successfully in this workspace using a test-skipped Maven build.'
+  fi
+  if [ "$webhook_package_verified" -eq 1 ]; then
+    printf '%s\n' '- A packaged `webhook` JAR was produced successfully in this workspace using a test-skipped Maven build.'
+  fi
   if [ "$inventory_build_verified" -eq 1 ]; then
     printf '%s\n' '- A real `inventory` Maven backend build completed successfully and produced a runnable JAR artifact.'
   fi
@@ -429,6 +519,30 @@ fi
   if [ "$recommendation_image_verified" -eq 1 ]; then
     printf '%s\n' '- A real `recommendation` Docker image build completed successfully in this workspace.'
   fi
+  if [ "$cart_image_verified" -eq 1 ]; then
+    printf '%s\n' '- A real `cart` Docker image build completed successfully in this workspace.'
+  fi
+  if [ "$customer_image_verified" -eq 1 ]; then
+    printf '%s\n' '- A real `customer` Docker image build completed successfully in this workspace.'
+  fi
+  if [ "$location_image_verified" -eq 1 ]; then
+    printf '%s\n' '- A real `location` Docker image build completed successfully in this workspace.'
+  fi
+  if [ "$media_image_verified" -eq 1 ]; then
+    printf '%s\n' '- A real `media` Docker image build completed successfully in this workspace.'
+  fi
+  if [ "$promotion_image_verified" -eq 1 ]; then
+    printf '%s\n' '- A real `promotion` Docker image build completed successfully in this workspace.'
+  fi
+  if [ "$rating_image_verified" -eq 1 ]; then
+    printf '%s\n' '- A real `rating` Docker image build completed successfully in this workspace.'
+  fi
+  if [ "$tax_image_verified" -eq 1 ]; then
+    printf '%s\n' '- A real `tax` Docker image build completed successfully in this workspace.'
+  fi
+  if [ "$webhook_image_verified" -eq 1 ]; then
+    printf '%s\n' '- A real `webhook` Docker image build completed successfully in this workspace.'
+  fi
   if [ "$inventory_image_verified" -eq 1 ]; then
     printf '%s\n' '- A real `inventory` Docker image build completed successfully in this workspace.'
   fi
@@ -454,7 +568,7 @@ fi
     printf '%s\n' '- Shared `dev` and `staging` promotion flows now record commit metadata so mutable and release-tagged deployments can be traced back to an exact source commit.'
   fi
   if [ "$runtime_evidence_provenance_verified" -eq 1 ]; then
-    printf '%s\n' '- Runtime evidence directories now snapshot commit, build, push, and verification artifacts such as `commit-metadata.json` and `image-digests.txt` per run.'
+    printf '%s\n' '- Runtime evidence directories now snapshot commit, manifest, build, push, and verification artifacts such as `commit-metadata.json`, `manifest-update-metadata.json`, and `image-digests.txt` per run.'
   fi
   if [ "$self_contained_commit_metadata_verified" -eq 1 ]; then
     printf '%s\n' '- Commit metadata artifacts now embed the exact commit SHA and short SHA directly in `commit-metadata.json`, not only in sidecar text files.'

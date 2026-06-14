@@ -209,21 +209,36 @@ grep -q "stage('Resolve Commit Metadata')" jenkins/pipelines/staging_release.gro
 grep -q 'jenkins/scripts/write-commit-metadata.sh' jenkins/pipelines/staging_release.groovy
 grep -q '"commit_sha": "${commit_sha}"' jenkins/scripts/write-commit-metadata.sh
 grep -q '"commit_short_sha": "${commit_short_sha}"' jenkins/scripts/write-commit-metadata.sh
+grep -q 'COMMIT_SHA_FILE="${COMMIT_SHA_FILE:-work/commit_sha.txt}"' jenkins/scripts/write-commit-metadata.sh
+grep -q 'COMMIT_SHORT_SHA_FILE="${COMMIT_SHORT_SHA_FILE:-work/commit_short_sha.txt}"' jenkins/scripts/write-commit-metadata.sh
+grep -q 'COMMIT_METADATA_FILE="${COMMIT_METADATA_FILE:-work/commit-metadata.json}"' jenkins/scripts/write-commit-metadata.sh
+grep -q 'mkdir -p "$(dirname "$COMMIT_METADATA_FILE")"' jenkins/scripts/write-commit-metadata.sh
 grep -q '"generated_at":' jenkins/scripts/write-commit-metadata.sh
 grep -q "trap 'write_build_metadata \$?' EXIT" jenkins/scripts/build-images.sh
 grep -q 'done < <(iter_services)' jenkins/scripts/build-images.sh
 grep -q '"completed": ${build_completed}' jenkins/scripts/build-images.sh
 grep -q '"last_image": "${last_image}"' jenkins/scripts/build-images.sh
-grep -q 'IMAGE_DIGESTS_FILE="work/image-digests.txt"' jenkins/scripts/push-images.sh
+grep -q 'BUILT_IMAGE_LIST_FILE="${BUILT_IMAGE_LIST_FILE:-work/built-image-list.txt}"' jenkins/scripts/build-images.sh
+grep -q 'BUILD_METADATA_FILE="${BUILD_METADATA_FILE:-work/build-metadata.json}"' jenkins/scripts/build-images.sh
+grep -q 'mkdir -p "$(dirname "$BUILT_IMAGE_LIST_FILE")"' jenkins/scripts/build-images.sh
+grep -q 'mkdir -p "$(dirname "$BUILD_METADATA_FILE")"' jenkins/scripts/build-images.sh
+grep -q 'IMAGE_LIST_FILE="${IMAGE_LIST_FILE:-work/image-list.txt}"' jenkins/scripts/push-images.sh
+grep -q 'IMAGE_DIGESTS_FILE="${IMAGE_DIGESTS_FILE:-work/image-digests.txt}"' jenkins/scripts/push-images.sh
+grep -q 'METADATA_FILE="${METADATA_FILE:-work/image-metadata.json}"' jenkins/scripts/push-images.sh
+grep -q 'mkdir -p "$(dirname "$IMAGE_LIST_FILE")"' jenkins/scripts/push-images.sh
+grep -q 'mkdir -p "$(dirname "$IMAGE_DIGESTS_FILE")"' jenkins/scripts/push-images.sh
+grep -q 'mkdir -p "$(dirname "$METADATA_FILE")"' jenkins/scripts/push-images.sh
 grep -q 'record_repo_digest' jenkins/scripts/push-images.sh
 grep -q "trap 'write_push_metadata \$?' EXIT" jenkins/scripts/push-images.sh
 grep -q 'done < <(iter_services)' jenkins/scripts/push-images.sh
 grep -q '"completed": ${push_completed}' jenkins/scripts/push-images.sh
 grep -q '"last_image": "${last_image}"' jenkins/scripts/push-images.sh
+grep -q '\[\[ -f "\$SERVICES_FILE" \]\] || fail "Services file not found: \${SERVICES_FILE}"' jenkins/scripts/common.sh
 grep -q 'docker manifest inspect' jenkins/scripts/verify-image-tags.sh
 grep -q 'source "$TAGS_FILE"' jenkins/scripts/verify-image-tags.sh
 grep -q 'VERIFY_IMAGE_TAGS_DRY_RUN' jenkins/scripts/verify-image-tags.sh
 grep -q 'VERIFIED_IMAGE_LIST_FILE="${VERIFIED_IMAGE_LIST_FILE:-work/verified-image-list.txt}"' jenkins/scripts/verify-image-tags.sh
+grep -q 'mkdir -p "$(dirname "$VERIFIED_IMAGE_LIST_FILE")"' jenkins/scripts/verify-image-tags.sh
 grep -q 'mkdir -p "$(dirname "$VERIFY_METADATA_FILE")"' jenkins/scripts/verify-image-tags.sh
 grep -q 'Tags file not found: ${TAGS_FILE}' jenkins/scripts/verify-image-tags.sh
 grep -q "trap 'write_verify_metadata \$?' EXIT" jenkins/scripts/verify-image-tags.sh
@@ -231,11 +246,13 @@ grep -q 'done < <(iter_services)' jenkins/scripts/verify-image-tags.sh
 grep -q '"completed": ${verify_completed}' jenkins/scripts/verify-image-tags.sh
 grep -q '"last_image": "${last_image}"' jenkins/scripts/verify-image-tags.sh
 grep -q 'copied-artifacts.txt' jenkins/scripts/capture-runtime-evidence.sh
-grep -q 'work/branch-tag-metadata.json' jenkins/scripts/capture-runtime-evidence.sh
-grep -q 'work/branch-tag-metadata.json' scripts/report-status.sh
+grep -q 'branch_tag_metadata_file="${BRANCH_TAG_METADATA_FILE:-work/branch-tag-metadata.json}"' jenkins/scripts/capture-runtime-evidence.sh
+grep -q 'branch_tag_metadata_file="${BRANCH_TAG_METADATA_FILE:-work/branch-tag-metadata.json}"' scripts/report-status.sh
 grep -q "printf '%s%s%s\\\\n' '- Service catalog paths and Dockerfiles were verified against the configured source root \`' \"\\\$source_root\" '\`.'" scripts/report-status.sh
-grep -q 'work/image-digests.txt' jenkins/scripts/capture-runtime-evidence.sh
-grep -q 'work/commit-metadata.json' jenkins/scripts/capture-runtime-evidence.sh
+grep -q 'image_digests_file="${IMAGE_DIGESTS_FILE:-work/image-digests.txt}"' jenkins/scripts/capture-runtime-evidence.sh
+grep -q 'commit_metadata_file="${COMMIT_METADATA_FILE:-work/commit-metadata.json}"' jenkins/scripts/capture-runtime-evidence.sh
+grep -q 'manifest_metadata_file="${MANIFEST_METADATA_FILE:-work/manifest-update-metadata.json}"' jenkins/scripts/capture-runtime-evidence.sh
+grep -q 'copy_optional_artifact "$manifest_metadata_file" "manifest-update-metadata.json"' jenkins/scripts/capture-runtime-evidence.sh
 grep -q 'CAPTURE_RUNTIME_EXIT_CODE' jenkins/scripts/capture-runtime-evidence.sh
 grep -q 'write_namespace_missing_note' jenkins/scripts/capture-runtime-evidence.sh
 grep -q 'capture_runtime_evidence_on_exit' jenkins/scripts/deploy-helm.sh
@@ -255,6 +272,7 @@ grep -q 'ALLOW_SHARED_NAMESPACE_DELETE="${ALLOW_SHARED_NAMESPACE_DELETE:-0}"' je
 grep -q 'Refusing namespace deletion for shared target' jenkins/scripts/cleanup-release.sh
 grep -q 'BACKOFFICE_DOMAIN_NAME="${BACKOFFICE_DOMAIN_NAME:-backoffice-${ENVIRONMENT}.yas.local}"' jenkins/scripts/update-manifest-repo.sh
 grep -q 'MANIFEST_METADATA_FILE="${MANIFEST_METADATA_FILE:-work/manifest-update-metadata.json}"' jenkins/scripts/update-manifest-repo.sh
+grep -q 'mkdir -p "$(dirname "$MANIFEST_METADATA_FILE")"' jenkins/scripts/update-manifest-repo.sh
 grep -q "trap 'write_manifest_metadata \$?' EXIT" jenkins/scripts/update-manifest-repo.sh
 grep -q '"manifest_commit_sha": "${manifest_commit_sha}"' jenkins/scripts/update-manifest-repo.sh
 grep -q '"last_action": "${last_action}"' jenkins/scripts/update-manifest-repo.sh
@@ -279,13 +297,16 @@ VERIFY_METADATA_FILE="$verify_image_metadata_file" \
 bash jenkins/scripts/verify-image-tags.sh >/dev/null
 grep -q 'demo-ns/yas-product:test-product-tag' "$verified_image_list_file"
 mkdir -p "${temp_dir}/verify-metadata"
+mkdir -p "${temp_dir}/verify-lists"
 VERIFY_IMAGE_TAGS_DRY_RUN=1 \
 DOCKERHUB_NAMESPACE="$dockerhub_namespace" \
 SERVICE_CATALOG="release-baseline" \
 TAGS_FILE="$verify_image_tags_file" \
-VERIFIED_IMAGE_LIST_FILE="$verified_image_list_file" \
+VERIFIED_IMAGE_LIST_FILE="${temp_dir}/verify-lists/verified-image-list.txt" \
 VERIFY_METADATA_FILE="${temp_dir}/verify-metadata/verify-image-metadata.json" \
 bash jenkins/scripts/verify-image-tags.sh >/dev/null
+[ -f "${temp_dir}/verify-lists/verified-image-list.txt" ]
+[ -s "${temp_dir}/verify-lists/verified-image-list.txt" ]
 [ -f "${temp_dir}/verify-metadata/verify-image-metadata.json" ]
 if VERIFY_IMAGE_TAGS_DRY_RUN=1 DOCKERHUB_NAMESPACE="$dockerhub_namespace" SERVICE_CATALOG="release-baseline" TAGS_FILE="${temp_dir}/missing-verify-tags.env" VERIFIED_IMAGE_LIST_FILE="$verified_image_list_file" VERIFY_METADATA_FILE="$verify_image_metadata_file" bash jenkins/scripts/verify-image-tags.sh >/dev/null 2>&1; then
   printf 'verify-image-tags.sh should fail when an explicit TAGS_FILE path is provided but missing.\n' >&2
@@ -304,7 +325,7 @@ grep -q 'repository: docker.io/example/yas-storefront' "$chart_values_file"
 grep -q 'host: backoffice.yas.local' "$chart_values_file"
 grep -q 'tag: test-tag' "$manifest_values_file"
 grep -q '## Runtime Access Notes' "$status_report_file"
-grep -q 'Runtime evidence directories now snapshot commit, build, push, and verification artifacts' "$status_report_file"
+grep -q 'Runtime evidence directories now snapshot commit, manifest, build, push, and verification artifacts' "$status_report_file"
 grep -q 'Commit metadata artifacts now embed the exact commit SHA and short SHA directly in `commit-metadata.json`' "$status_report_file"
 grep -q 'GitOps manifest-update helpers now preserve a dedicated metadata artifact' "$status_report_file"
 grep -q 'Build, push, and remote-tag verification helpers now preserve partial metadata artifacts' "$status_report_file"
@@ -412,6 +433,17 @@ if command -v bash >/dev/null 2>&1; then
   grep -q "\"commit_short_sha\": \"${expected_commit_short_sha}\"" "$commit_metadata_file"
   grep -q '"source_git_root": "yas-source"' "$commit_metadata_file"
   grep -q '"services_file": "jenkins/services.release-baseline.env"' "$commit_metadata_file"
+  COMMIT_SHA_FILE="${temp_dir}/commit-artifacts/commit-sha/custom-commit-sha.txt" \
+  COMMIT_SHORT_SHA_FILE="${temp_dir}/commit-artifacts/commit-sha/custom-commit-short-sha.txt" \
+  COMMIT_METADATA_FILE="${temp_dir}/commit-artifacts/metadata/custom-commit-metadata.json" \
+  SERVICE_CATALOG="release-baseline" \
+  SOURCE_ROOT="yas-source" \
+  SOURCE_GIT_ROOT="yas-source" \
+  bash jenkins/scripts/write-commit-metadata.sh >/dev/null
+  [ "$(cat "${temp_dir}/commit-artifacts/commit-sha/custom-commit-sha.txt")" = "$expected_commit_sha" ]
+  [ "$(cat "${temp_dir}/commit-artifacts/commit-sha/custom-commit-short-sha.txt")" = "$expected_commit_short_sha" ]
+  grep -q "\"commit_sha_file\": \"${temp_dir}/commit-artifacts/commit-sha/custom-commit-sha.txt\"" "${temp_dir}/commit-artifacts/metadata/custom-commit-metadata.json"
+  grep -q "\"commit_short_sha_file\": \"${temp_dir}/commit-artifacts/commit-sha/custom-commit-short-sha.txt\"" "${temp_dir}/commit-artifacts/metadata/custom-commit-metadata.json"
   bash -lc '
     source jenkins/scripts/common.sh
     [ "$(resolve_manifest_branch_ref "" "" "origin/main" "HEAD")" = "main" ]
@@ -419,6 +451,54 @@ if command -v bash >/dev/null 2>&1; then
     [ "$(resolve_manifest_branch_ref "" "feature/demo" "" "HEAD")" = "feature/demo" ]
     [ "$(resolve_manifest_branch_ref "refs/heads/release/v1.2.3" "" "" "HEAD")" = "release/v1.2.3" ]
   '
+  cp argocd/values/dev-values.yaml "${temp_dir}/manifest-dev-values.yaml"
+  MANIFEST_METADATA_FILE="${temp_dir}/manifest-metadata/manifest-update-metadata.json" \
+  VALUES_FILE="${temp_dir}/manifest-dev-values.yaml" \
+  ENVIRONMENT=dev \
+  SERVICES_FILE="jenkins/services.release-baseline.env" \
+  MANIFEST_BRANCH=main \
+  bash jenkins/scripts/update-manifest-repo.sh >/dev/null
+  [ -f "${temp_dir}/manifest-metadata/manifest-update-metadata.json" ]
+  grep -q '"completed": true' "${temp_dir}/manifest-metadata/manifest-update-metadata.json"
+  mkdir -p "${temp_dir}/runtime-bin" "${temp_dir}/runtime-artifacts" "${temp_dir}/runtime-manifest"
+  cat > "${temp_dir}/runtime-bin/helm" <<'EOF'
+#!/usr/bin/env sh
+printf 'mock helm %s\n' "$*"
+EOF
+  cat > "${temp_dir}/runtime-bin/kubectl" <<'EOF'
+#!/usr/bin/env sh
+if [ "$1" = "get" ] && [ "$2" = "namespace" ]; then
+  exit 1
+fi
+printf 'mock kubectl %s\n' "$*"
+EOF
+  chmod +x "${temp_dir}/runtime-bin/helm" "${temp_dir}/runtime-bin/kubectl"
+  printf 'PRODUCT_TAG=runtime-test\n' > "${temp_dir}/runtime-artifacts/custom-branch-tags.env"
+  printf '{"entries":[]}\n' > "${temp_dir}/runtime-artifacts/custom-branch-tag-metadata.json"
+  printf 'demo-ns/yas-product:runtime-test\n' > "${temp_dir}/runtime-artifacts/custom-verified-image-list.txt"
+  printf '{"completed":true}\n' > "${temp_dir}/runtime-artifacts/custom-verify-image-metadata.json"
+  printf '{"completed":true}\n' > "${temp_dir}/runtime-manifest/custom-manifest-metadata.json"
+  PATH="${temp_dir}/runtime-bin:$PATH" \
+  NAMESPACE="yas-runtime" \
+  RELEASE_NAME="yas-runtime" \
+  SERVICES_FILE="jenkins/services.release-baseline.env" \
+  TAGS_FILE="${temp_dir}/runtime-artifacts/custom-branch-tags.env" \
+  BRANCH_TAG_METADATA_FILE="${temp_dir}/runtime-artifacts/custom-branch-tag-metadata.json" \
+  VERIFIED_IMAGE_LIST_FILE="${temp_dir}/runtime-artifacts/custom-verified-image-list.txt" \
+  VERIFY_METADATA_FILE="${temp_dir}/runtime-artifacts/custom-verify-image-metadata.json" \
+  MANIFEST_METADATA_FILE="${temp_dir}/runtime-manifest/custom-manifest-metadata.json" \
+  EVIDENCE_ROOT="${temp_dir}/runtime-evidence" \
+  bash jenkins/scripts/capture-runtime-evidence.sh >/dev/null
+  [ -f "${temp_dir}/runtime-evidence/yas-runtime/yas-runtime/branch-tags.env" ]
+  [ -f "${temp_dir}/runtime-evidence/yas-runtime/yas-runtime/branch-tag-metadata.json" ]
+  [ -f "${temp_dir}/runtime-evidence/yas-runtime/yas-runtime/verified-image-list.txt" ]
+  [ -f "${temp_dir}/runtime-evidence/yas-runtime/yas-runtime/verify-image-metadata.json" ]
+  [ -f "${temp_dir}/runtime-evidence/yas-runtime/yas-runtime/manifest-update-metadata.json" ]
+  grep -q 'manifest_metadata_file='"${temp_dir}/runtime-manifest/custom-manifest-metadata.json" "${temp_dir}/runtime-evidence/yas-runtime/yas-runtime/runtime-context.env"
+  if VERIFY_IMAGE_TAGS_DRY_RUN=1 DOCKERHUB_NAMESPACE="$dockerhub_namespace" SERVICE_CATALOG="release-baseline" SERVICES_FILE="${temp_dir}/missing-services.env" TAGS_FILE="$verify_image_tags_file" VERIFIED_IMAGE_LIST_FILE="${temp_dir}/missing-services-verified-image-list.txt" VERIFY_METADATA_FILE="${temp_dir}/missing-services-verify-image-metadata.json" bash jenkins/scripts/verify-image-tags.sh >/dev/null 2>&1; then
+    printf 'verify-image-tags.sh should fail when SERVICES_FILE does not exist.\n' >&2
+    exit 1
+  fi
 fi
 
 printf 'Selftest passed.\n'

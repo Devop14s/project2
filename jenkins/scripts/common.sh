@@ -17,6 +17,8 @@ fail() {
   exit 1
 }
 
+[[ -f "$SERVICES_FILE" ]] || fail "Services file not found: ${SERVICES_FILE}"
+
 require_env() {
   local name="$1"
   [[ -n "${!name:-}" ]] || fail "Missing env: ${name}"

@@ -4,12 +4,14 @@ source jenkins/scripts/common.sh
 
 mkdir -p work
 TAG="${RELEASE_VERSION:-$(git -C "$SOURCE_GIT_ROOT" rev-parse HEAD)}"
-BUILT_IMAGE_LIST_FILE="work/built-image-list.txt"
-BUILD_METADATA_FILE="work/build-metadata.json"
+BUILT_IMAGE_LIST_FILE="${BUILT_IMAGE_LIST_FILE:-work/built-image-list.txt}"
+BUILD_METADATA_FILE="${BUILD_METADATA_FILE:-work/build-metadata.json}"
 build_completed=false
 last_service=""
 last_image=""
 
+mkdir -p "$(dirname "$BUILT_IMAGE_LIST_FILE")"
+mkdir -p "$(dirname "$BUILD_METADATA_FILE")"
 : > "$BUILT_IMAGE_LIST_FILE"
 
 write_build_metadata() {

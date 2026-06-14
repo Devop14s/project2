@@ -125,6 +125,14 @@ $productBuildVerified = (Test-Path (Join-Path $sourceRoot 'product\target\produc
 $paymentBuildVerified = (Test-Path (Join-Path $sourceRoot 'payment\target\payment-1.0-SNAPSHOT.jar'))
 $paymentPaypalBuildVerified = (Test-Path (Join-Path $sourceRoot 'payment-paypal\target\payment-paypal-1.0-SNAPSHOT.jar'))
 $recommendationBuildVerified = (Test-Path (Join-Path $sourceRoot 'recommendation\target\recommendation-1.0-SNAPSHOT.jar'))
+$cartPackageVerified = (Test-Path (Join-Path $sourceRoot 'cart\target\cart-1.0-SNAPSHOT.jar'))
+$customerPackageVerified = (Test-Path (Join-Path $sourceRoot 'customer\target\customer-1.0-SNAPSHOT.jar'))
+$locationPackageVerified = (Test-Path (Join-Path $sourceRoot 'location\target\location-1.0-SNAPSHOT.jar'))
+$mediaPackageVerified = (Test-Path (Join-Path $sourceRoot 'media\target\media-1.0-SNAPSHOT.jar'))
+$promotionPackageVerified = (Test-Path (Join-Path $sourceRoot 'promotion\target\promotion-1.0-SNAPSHOT.jar'))
+$ratingPackageVerified = (Test-Path (Join-Path $sourceRoot 'rating\target\rating-1.0-SNAPSHOT.jar'))
+$taxPackageVerified = (Test-Path (Join-Path $sourceRoot 'tax\target\tax-1.0-SNAPSHOT.jar'))
+$webhookPackageVerified = (Test-Path (Join-Path $sourceRoot 'webhook\target\webhook-1.0-SNAPSHOT.jar'))
 $inventoryBuildVerified = (Test-Path (Join-Path $sourceRoot 'inventory\target\inventory-1.0-SNAPSHOT.jar'))
 $orderBuildVerified = (Test-Path (Join-Path $sourceRoot 'order\target\order-1.0-SNAPSHOT.jar'))
 $sampledataPackageVerified = (Test-Path (Join-Path $sourceRoot 'sampledata\target\sampledata-1.0-SNAPSHOT.jar'))
@@ -137,6 +145,14 @@ $backofficeBffImageVerified = $false
 $paymentImageVerified = $false
 $paymentPaypalImageVerified = $false
 $recommendationImageVerified = $false
+$cartImageVerified = $false
+$customerImageVerified = $false
+$locationImageVerified = $false
+$mediaImageVerified = $false
+$promotionImageVerified = $false
+$ratingImageVerified = $false
+$taxImageVerified = $false
+$webhookImageVerified = $false
 $inventoryImageVerified = $false
 $orderImageVerified = $false
 $sampledataImageVerified = $false
@@ -247,6 +263,62 @@ if ($dockerDaemonReachable) {
     }
 
     try {
+        docker image inspect 'yas-cart:codex-verified' *> $null
+        $cartImageVerified = ($LASTEXITCODE -eq 0)
+    } catch {
+        $cartImageVerified = $false
+    }
+
+    try {
+        docker image inspect 'yas-customer:codex-verified' *> $null
+        $customerImageVerified = ($LASTEXITCODE -eq 0)
+    } catch {
+        $customerImageVerified = $false
+    }
+
+    try {
+        docker image inspect 'yas-location:codex-verified' *> $null
+        $locationImageVerified = ($LASTEXITCODE -eq 0)
+    } catch {
+        $locationImageVerified = $false
+    }
+
+    try {
+        docker image inspect 'yas-media:codex-verified' *> $null
+        $mediaImageVerified = ($LASTEXITCODE -eq 0)
+    } catch {
+        $mediaImageVerified = $false
+    }
+
+    try {
+        docker image inspect 'yas-promotion:codex-verified' *> $null
+        $promotionImageVerified = ($LASTEXITCODE -eq 0)
+    } catch {
+        $promotionImageVerified = $false
+    }
+
+    try {
+        docker image inspect 'yas-rating:codex-verified' *> $null
+        $ratingImageVerified = ($LASTEXITCODE -eq 0)
+    } catch {
+        $ratingImageVerified = $false
+    }
+
+    try {
+        docker image inspect 'yas-tax:codex-verified' *> $null
+        $taxImageVerified = ($LASTEXITCODE -eq 0)
+    } catch {
+        $taxImageVerified = $false
+    }
+
+    try {
+        docker image inspect 'yas-webhook:codex-verified' *> $null
+        $webhookImageVerified = ($LASTEXITCODE -eq 0)
+    } catch {
+        $webhookImageVerified = $false
+    }
+
+    try {
         docker image inspect 'yas-inventory:codex-verified' *> $null
         $inventoryImageVerified = ($LASTEXITCODE -eq 0)
     } catch {
@@ -328,9 +400,11 @@ $stagingGitopsPipeline = if (Test-Path 'jenkins\pipelines\staging_gitops.groovy'
 
 $runtimeEvidenceProvenanceVerified = (
     $captureRuntimeEvidenceScript -match 'copied-artifacts\.txt' -and
-    $captureRuntimeEvidenceScript -match 'work/branch-tag-metadata\.json' -and
-    $captureRuntimeEvidenceScript -match 'work/image-digests\.txt' -and
-    $captureRuntimeEvidenceScript -match 'work/commit-metadata\.json'
+    $captureRuntimeEvidenceScript -match 'branch_tag_metadata_file="\$\{BRANCH_TAG_METADATA_FILE:-work/branch-tag-metadata\.json\}"' -and
+    $captureRuntimeEvidenceScript -match 'image_digests_file="\$\{IMAGE_DIGESTS_FILE:-work/image-digests\.txt\}"' -and
+    $captureRuntimeEvidenceScript -match 'commit_metadata_file="\$\{COMMIT_METADATA_FILE:-work/commit-metadata\.json\}"' -and
+    $captureRuntimeEvidenceScript -match 'manifest_metadata_file="\$\{MANIFEST_METADATA_FILE:-work/manifest-update-metadata\.json\}"' -and
+    $captureRuntimeEvidenceScript -match 'copy_optional_artifact "\$manifest_metadata_file" "manifest-update-metadata\.json"'
 )
 
 $selfContainedCommitMetadataVerified = (
@@ -466,6 +540,30 @@ if ($paymentPaypalBuildVerified) {
 if ($recommendationBuildVerified) {
     $content.Add('- A real `recommendation` Maven backend build completed successfully and produced a runnable JAR artifact.')
 }
+if ($cartPackageVerified) {
+    $content.Add('- A packaged `cart` JAR was produced successfully in this workspace using a test-skipped Maven build.')
+}
+if ($customerPackageVerified) {
+    $content.Add('- A packaged `customer` JAR was produced successfully in this workspace using a test-skipped Maven build.')
+}
+if ($locationPackageVerified) {
+    $content.Add('- A packaged `location` JAR was produced successfully in this workspace using a test-skipped Maven build.')
+}
+if ($mediaPackageVerified) {
+    $content.Add('- A packaged `media` JAR was produced successfully in this workspace using a test-skipped Maven build.')
+}
+if ($promotionPackageVerified) {
+    $content.Add('- A packaged `promotion` JAR was produced successfully in this workspace using a test-skipped Maven build.')
+}
+if ($ratingPackageVerified) {
+    $content.Add('- A packaged `rating` JAR was produced successfully in this workspace using a test-skipped Maven build.')
+}
+if ($taxPackageVerified) {
+    $content.Add('- A packaged `tax` JAR was produced successfully in this workspace using a test-skipped Maven build.')
+}
+if ($webhookPackageVerified) {
+    $content.Add('- A packaged `webhook` JAR was produced successfully in this workspace using a test-skipped Maven build.')
+}
 if ($inventoryBuildVerified) {
     $content.Add('- A real `inventory` Maven backend build completed successfully and produced a runnable JAR artifact.')
 }
@@ -502,6 +600,30 @@ if ($paymentPaypalImageVerified) {
 if ($recommendationImageVerified) {
     $content.Add('- A real `recommendation` Docker image build completed successfully in this workspace.')
 }
+if ($cartImageVerified) {
+    $content.Add('- A real `cart` Docker image build completed successfully in this workspace.')
+}
+if ($customerImageVerified) {
+    $content.Add('- A real `customer` Docker image build completed successfully in this workspace.')
+}
+if ($locationImageVerified) {
+    $content.Add('- A real `location` Docker image build completed successfully in this workspace.')
+}
+if ($mediaImageVerified) {
+    $content.Add('- A real `media` Docker image build completed successfully in this workspace.')
+}
+if ($promotionImageVerified) {
+    $content.Add('- A real `promotion` Docker image build completed successfully in this workspace.')
+}
+if ($ratingImageVerified) {
+    $content.Add('- A real `rating` Docker image build completed successfully in this workspace.')
+}
+if ($taxImageVerified) {
+    $content.Add('- A real `tax` Docker image build completed successfully in this workspace.')
+}
+if ($webhookImageVerified) {
+    $content.Add('- A real `webhook` Docker image build completed successfully in this workspace.')
+}
 if ($inventoryImageVerified) {
     $content.Add('- A real `inventory` Docker image build completed successfully in this workspace.')
 }
@@ -527,7 +649,7 @@ if ($sharedPromotionCommitMetadataVerified) {
     $content.Add('- Shared `dev` and `staging` promotion flows now record commit metadata so mutable and release-tagged deployments can be traced back to an exact source commit.')
 }
 if ($runtimeEvidenceProvenanceVerified) {
-    $content.Add('- Runtime evidence directories now snapshot commit, build, push, and verification artifacts such as `commit-metadata.json` and `image-digests.txt` per run.')
+    $content.Add('- Runtime evidence directories now snapshot commit, manifest, build, push, and verification artifacts such as `commit-metadata.json`, `manifest-update-metadata.json`, and `image-digests.txt` per run.')
 }
 if ($selfContainedCommitMetadataVerified) {
     $content.Add('- Commit metadata artifacts now embed the exact commit SHA and short SHA directly in `commit-metadata.json`, not only in sidecar text files.')

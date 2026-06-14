@@ -474,6 +474,11 @@ try {
         throw 'staging_release.groovy no longer records commit metadata before promoting a release.'
     }
 
+    $jenkinsCommonScript = Get-Content 'jenkins\scripts\common.sh' -Raw
+    if ($jenkinsCommonScript -notmatch '\[\[ -f "\$SERVICES_FILE" \]\] \|\| fail "Services file not found: \$\{SERVICES_FILE\}"') {
+        throw 'jenkins/scripts/common.sh should fail fast when SERVICES_FILE does not exist before bash helpers iterate services.'
+    }
+
     $writeCommitMetadataScript = Get-Content 'jenkins\scripts\write-commit-metadata.sh' -Raw
     if ($writeCommitMetadataScript -notmatch '"commit_sha": "\$\{commit_sha\}"') {
         throw 'write-commit-metadata.sh is missing the exact commit SHA in commit-metadata.json.'
@@ -481,6 +486,22 @@ try {
 
     if ($writeCommitMetadataScript -notmatch '"commit_short_sha": "\$\{commit_short_sha\}"') {
         throw 'write-commit-metadata.sh is missing the short commit SHA in commit-metadata.json.'
+    }
+
+    if ($writeCommitMetadataScript -notmatch 'COMMIT_SHA_FILE="\$\{COMMIT_SHA_FILE:-work/commit_sha\.txt\}"') {
+        throw 'write-commit-metadata.sh should allow COMMIT_SHA_FILE to be overridden.'
+    }
+
+    if ($writeCommitMetadataScript -notmatch 'COMMIT_SHORT_SHA_FILE="\$\{COMMIT_SHORT_SHA_FILE:-work/commit_short_sha\.txt\}"') {
+        throw 'write-commit-metadata.sh should allow COMMIT_SHORT_SHA_FILE to be overridden.'
+    }
+
+    if ($writeCommitMetadataScript -notmatch 'COMMIT_METADATA_FILE="\$\{COMMIT_METADATA_FILE:-work/commit-metadata\.json\}"') {
+        throw 'write-commit-metadata.sh should allow COMMIT_METADATA_FILE to be overridden.'
+    }
+
+    if ($writeCommitMetadataScript -notmatch 'mkdir -p "\$\(dirname "\$COMMIT_METADATA_FILE"\)"') {
+        throw 'write-commit-metadata.sh should create the metadata directory when COMMIT_METADATA_FILE is overridden.'
     }
 
     if ($writeCommitMetadataScript -notmatch '"generated_at":') {
@@ -505,8 +526,40 @@ try {
         throw 'build-images.sh is missing the last attempted image marker in metadata.'
     }
 
-    if ($pushImagesScript -notmatch 'IMAGE_DIGESTS_FILE="work/image-digests.txt"') {
-        throw 'push-images.sh is missing the image-digests artifact output.'
+    if ($buildImagesScript -notmatch 'BUILT_IMAGE_LIST_FILE="\$\{BUILT_IMAGE_LIST_FILE:-work/built-image-list\.txt\}"') {
+        throw 'build-images.sh should allow BUILT_IMAGE_LIST_FILE to be overridden.'
+    }
+
+    if ($buildImagesScript -notmatch 'BUILD_METADATA_FILE="\$\{BUILD_METADATA_FILE:-work/build-metadata\.json\}"') {
+        throw 'build-images.sh should allow BUILD_METADATA_FILE to be overridden.'
+    }
+
+    if ($buildImagesScript -notmatch 'mkdir -p "\$\(dirname "\$BUILT_IMAGE_LIST_FILE"\)"') {
+        throw 'build-images.sh should create the built-image-list directory when BUILT_IMAGE_LIST_FILE is overridden.'
+    }
+
+    if ($buildImagesScript -notmatch 'mkdir -p "\$\(dirname "\$BUILD_METADATA_FILE"\)"') {
+        throw 'build-images.sh should create the metadata directory when BUILD_METADATA_FILE is overridden.'
+    }
+
+    if ($pushImagesScript -notmatch 'IMAGE_DIGESTS_FILE="\$\{IMAGE_DIGESTS_FILE:-work/image-digests\.txt\}"') {
+        throw 'push-images.sh should allow IMAGE_DIGESTS_FILE to be overridden.'
+    }
+
+    if ($pushImagesScript -notmatch 'IMAGE_LIST_FILE="\$\{IMAGE_LIST_FILE:-work/image-list\.txt\}"') {
+        throw 'push-images.sh should allow IMAGE_LIST_FILE to be overridden.'
+    }
+
+    if ($pushImagesScript -notmatch 'METADATA_FILE="\$\{METADATA_FILE:-work/image-metadata\.json\}"') {
+        throw 'push-images.sh should allow METADATA_FILE to be overridden.'
+    }
+
+    if ($pushImagesScript -notmatch 'mkdir -p "\$\(dirname "\$IMAGE_DIGESTS_FILE"\)"') {
+        throw 'push-images.sh should create the digest directory when IMAGE_DIGESTS_FILE is overridden.'
+    }
+
+    if ($pushImagesScript -notmatch 'mkdir -p "\$\(dirname "\$METADATA_FILE"\)"') {
+        throw 'push-images.sh should create the metadata directory when METADATA_FILE is overridden.'
     }
 
     if ($pushImagesScript -notmatch 'record_repo_digest') {
@@ -546,6 +599,10 @@ try {
         throw 'verify-image-tags.sh is missing the verified image list artifact.'
     }
 
+    if ($verifyImageTagsScript -notmatch 'mkdir -p "\$\(dirname "\$VERIFIED_IMAGE_LIST_FILE"\)"') {
+        throw 'verify-image-tags.sh should create the verified-image-list directory when VERIFIED_IMAGE_LIST_FILE is overridden.'
+    }
+
     if ($verifyImageTagsScript -notmatch 'mkdir -p "\$\(dirname "\$VERIFY_METADATA_FILE"\)"') {
         throw 'verify-image-tags.sh should create the metadata directory when VERIFY_METADATA_FILE is overridden.'
     }
@@ -575,13 +632,13 @@ try {
         throw 'capture-runtime-evidence.sh is missing the copied-artifacts evidence index.'
     }
 
-    if ($captureRuntimeEvidenceScript -notmatch 'work/branch-tag-metadata\.json') {
-        throw 'capture-runtime-evidence.sh no longer snapshots branch-tag metadata into the per-run evidence directory.'
+    if ($captureRuntimeEvidenceScript -notmatch 'branch_tag_metadata_file="\$\{BRANCH_TAG_METADATA_FILE:-work/branch-tag-metadata\.json\}"') {
+        throw 'capture-runtime-evidence.sh should resolve branch-tag metadata from the overrideable path contract before snapshotting it.'
     }
 
     $reportStatusShellScript = Get-Content 'scripts\report-status.sh' -Raw
-    if ($reportStatusShellScript -notmatch 'work/branch-tag-metadata\.json') {
-        throw 'report-status.sh no longer treats branch-tag metadata as part of the runtime evidence provenance contract.'
+    if ($reportStatusShellScript -notmatch 'branch_tag_metadata_file="\$\{BRANCH_TAG_METADATA_FILE:-work/branch-tag-metadata\.json\}"') {
+        throw 'report-status.sh no longer treats branch-tag metadata as part of the override-aware runtime evidence provenance contract.'
     }
 
     $expectedSourceRootReportLine = 'printf ''%s%s%s\n'' ''- Service catalog paths and Dockerfiles were verified against the configured source root `'' "$source_root" ''`.'''
@@ -589,12 +646,20 @@ try {
         throw 'report-status.sh should render the source-root markdown line without relying on escaped backticks inside a double-quoted shell string.'
     }
 
-    if ($captureRuntimeEvidenceScript -notmatch 'work/image-digests\.txt') {
-        throw 'capture-runtime-evidence.sh no longer snapshots pushed image digests into the per-run evidence directory.'
+    if ($captureRuntimeEvidenceScript -notmatch 'image_digests_file="\$\{IMAGE_DIGESTS_FILE:-work/image-digests\.txt\}"') {
+        throw 'capture-runtime-evidence.sh no longer snapshots pushed image digests from the expected override-aware path.'
     }
 
-    if ($captureRuntimeEvidenceScript -notmatch 'work/commit-metadata\.json') {
-        throw 'capture-runtime-evidence.sh no longer snapshots commit metadata into the per-run evidence directory.'
+    if ($captureRuntimeEvidenceScript -notmatch 'commit_metadata_file="\$\{COMMIT_METADATA_FILE:-work/commit-metadata\.json\}"') {
+        throw 'capture-runtime-evidence.sh no longer snapshots commit metadata from the expected override-aware path.'
+    }
+
+    if ($captureRuntimeEvidenceScript -notmatch 'manifest_metadata_file="\$\{MANIFEST_METADATA_FILE:-work/manifest-update-metadata\.json\}"') {
+        throw 'capture-runtime-evidence.sh should resolve manifest metadata from the overrideable path contract before snapshotting it.'
+    }
+
+    if ($captureRuntimeEvidenceScript -notmatch 'copy_optional_artifact "\$manifest_metadata_file" "manifest-update-metadata\.json"') {
+        throw 'capture-runtime-evidence.sh should snapshot manifest metadata into the per-run evidence directory.'
     }
 
     if ($captureRuntimeEvidenceScript -notmatch 'CAPTURE_RUNTIME_EXIT_CODE') {
@@ -671,6 +736,10 @@ try {
 
     if ($updateManifestRepoScript -notmatch 'MANIFEST_METADATA_FILE="\$\{MANIFEST_METADATA_FILE:-work/manifest-update-metadata\.json\}"') {
         throw 'update-manifest-repo.sh is missing the manifest-update metadata artifact.'
+    }
+
+    if ($updateManifestRepoScript -notmatch 'mkdir -p "\$\(dirname "\$MANIFEST_METADATA_FILE"\)"') {
+        throw 'update-manifest-repo.sh should create the metadata directory when MANIFEST_METADATA_FILE is overridden.'
     }
 
     if ($updateManifestRepoScript -notmatch 'trap ''write_manifest_metadata \$\?'' EXIT') {
@@ -764,7 +833,7 @@ try {
         throw 'Generated status report is missing the runtime access notes section.'
     }
 
-    if ($statusReport -notmatch 'Runtime evidence directories now snapshot commit, build, push, and verification artifacts') {
+    if ($statusReport -notmatch 'Runtime evidence directories now snapshot commit, manifest, build, push, and verification artifacts') {
         throw 'Generated status report is missing the per-run provenance snapshot note.'
     }
 

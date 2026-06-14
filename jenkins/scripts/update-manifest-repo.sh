@@ -23,6 +23,7 @@ last_action="generate-values"
 workspace_commit_before="$(git rev-parse HEAD)"
 
 mkdir -p work
+mkdir -p "$(dirname "$MANIFEST_METADATA_FILE")"
 
 write_manifest_metadata() {
   local exit_code="$1"
