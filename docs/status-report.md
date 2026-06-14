@@ -73,7 +73,9 @@ Last updated: June 14, 2026
 - `cart` does not currently have a clean full upstream-style test pass in this workspace because the integration path fails while waiting for the Keycloak Testcontainers health endpoint.
 - `customer` does not currently have a clean full upstream-style test pass in this workspace because `UserAddressServiceIT` fails while Keycloak Testcontainers waits for the `/health/started` endpoint.
 - `location` does not currently have a clean full upstream-style test pass in this workspace because controller integration tests fail while Keycloak Testcontainers waits for the `/health/started` endpoint.
+- `media` does not currently have a clean full upstream-style test pass in this workspace because `MediaControllerIT` fails while Keycloak Testcontainers waits for the `/health/started` endpoint.
 - `promotion` does not currently have a clean full upstream-style test pass in this workspace because `PromotionServiceIT` fails while Keycloak Testcontainers waits for the `/health/started` endpoint.
+- `rating` does not currently have a clean full upstream-style test pass in this workspace because `RatingControllerIT` fails while Keycloak Testcontainers waits for the `/health/started` endpoint.
 - `tax` does not currently have a clean full upstream-style test pass in this workspace because the integration path fails while waiting for the Keycloak Testcontainers health endpoint.
 - `webhook` does not currently have a clean full upstream-style test pass in this workspace because `WebhookControllerIT` fails while Keycloak Testcontainers waits for the `/health/started` endpoint.
 
@@ -82,7 +84,7 @@ Last updated: June 14, 2026
 - Treat the repo as a strong, source-verified delivery scaffold rather than a finished deployment repo.
 - Use the services already verified locally as the first deployment subset.
 - Keep `sampledata` and `search` outside the first end-to-end release until their workspace-specific test blockers are understood or intentionally bypassed.
-- Treat `cart`, `customer`, `location`, `promotion`, `tax`, and `webhook` as deployable from a package-and-image perspective, but still not fully upstream-style verified on this host because their integration paths currently depend on unstable Keycloak Testcontainers startup.
+- Treat `cart`, `customer`, `location`, `media`, `promotion`, `rating`, `tax`, and `webhook` as deployable from a package-and-image perspective, but still not fully upstream-style verified on this host because their integration paths currently depend on unstable Keycloak Testcontainers startup.
 
 ## Detailed remaining plan
 

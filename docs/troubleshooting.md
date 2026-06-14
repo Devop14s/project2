@@ -45,7 +45,7 @@
 - If the assignment does not require `sampledata` in the first release, keep it out of the deployable subset and document that decision explicitly.
 - If it is required, isolate whether the failure is caused by Java version, dependency state, or local workspace contamination.
 
-### `cart`, `customer`, `location`, `promotion`, `tax`, or `webhook` integration tests fail while waiting for Keycloak
+### `cart`, `customer`, `location`, `media`, `promotion`, `rating`, `tax`, or `webhook` integration tests fail while waiting for Keycloak
 
 - The concrete failure seen on this host is Keycloak Testcontainers startup timing out on `/health/started`.
 - Check Docker Desktop resource limits, container startup logs, and whether the Keycloak image is already cached.
