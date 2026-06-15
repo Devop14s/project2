@@ -16,6 +16,7 @@ chart_values_file="${temp_dir}/chart-values.yaml"
 manifest_values_file="${temp_dir}/dev-values.yaml"
 status_report_file="${temp_dir}/status-report.generated.md"
 failsafe_blockers_file="${temp_dir}/failsafe-blockers.txt"
+service_verification_matrix_file="${temp_dir}/service-verification.generated.md"
 commit_sha_file="work/commit_sha.txt"
 commit_short_sha_file="work/commit_short_sha.txt"
 commit_metadata_file="work/commit-metadata.json"
@@ -87,6 +88,7 @@ sh scripts/validate-chart-values.sh >/dev/null
 sh scripts/validate-gitops-values.sh >/dev/null
 sh scripts/validate-source-alignment.sh >/dev/null
 sh scripts/summarize-failsafe-blockers.sh "$failsafe_blockers_file" >/dev/null
+powershell -ExecutionPolicy Bypass -File scripts/generate-service-verification-matrix.ps1 -OutputFile "$service_verification_matrix_file" >/dev/null
 OUTPUT_FILE="$branch_tags_file" BRANCH_TAG_METADATA_FILE="$branch_tag_metadata_file" sh scripts/resolve-branch-tags.sh >/dev/null
 DOCKERHUB_NAMESPACE="$dockerhub_namespace" \
 TAGS_FILE="$branch_tags_file" \
@@ -129,6 +131,8 @@ grep -q '"branch":"main"' "$branch_tag_metadata_file"
 grep -q '"tag":"main"' "$branch_tag_metadata_file"
 grep -q '^media|keycloak|' "$failsafe_blockers_file"
 grep -q '^rating|keycloak|' "$failsafe_blockers_file"
+grep -E -q '\| product \| backend \| yes \(`jar`\) \| (yes|no) \| none \| full build verified( \+ image verified)? \|' "$service_verification_matrix_file"
+grep -E -q '\| search \| backend \| yes \(`jar`\) \| (yes|no) \| elasticsearch: ProductCdcConsumerTest \| (package\+image verified|build artifact verified), full test path blocked \|' "$service_verification_matrix_file"
 if grep -q 'done < <(' scripts/resolve-branch-tags.sh; then
   printf 'resolve-branch-tags.sh should remain POSIX-safe and must not use process substitution.\n' >&2
   exit 1

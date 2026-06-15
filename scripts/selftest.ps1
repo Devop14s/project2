@@ -44,6 +44,7 @@ $sampleStagingHelmRenderFile = Join-Path $tempDir 'sample-staging-helm-render.ya
 $sampleDeveloperHelmRenderFile = Join-Path $tempDir 'sample-developer-helm-render.yaml'
 $statusReportFile = Join-Path $tempDir 'status-report.generated.md'
 $failsafeBlockersFile = Join-Path $tempDir 'failsafe-blockers.txt'
+$serviceVerificationMatrixFile = Join-Path $tempDir 'service-verification.generated.md'
 $preflightJsonFile = Join-Path $tempDir 'preflight.json'
 $helmExecutable = Get-HelmExecutable
 
@@ -59,6 +60,7 @@ try {
     powershell -ExecutionPolicy Bypass -File scripts\validate-gitops-values.ps1 | Out-Null
     powershell -ExecutionPolicy Bypass -File scripts\validate-source-alignment.ps1 | Out-Null
     powershell -ExecutionPolicy Bypass -File scripts\summarize-failsafe-blockers.ps1 -OutputFile $failsafeBlockersFile | Out-Null
+    powershell -ExecutionPolicy Bypass -File scripts\generate-service-verification-matrix.ps1 -OutputFile $serviceVerificationMatrixFile | Out-Null
     powershell -ExecutionPolicy Bypass -File scripts\resolve-branch-tags.ps1 -OutputFile $branchTagsFile -MetadataFile $branchTagMetadataNestedFile | Out-Null
 
     $previousProductBranch = [Environment]::GetEnvironmentVariable('PRODUCT_BRANCH')
@@ -127,6 +129,7 @@ try {
     $manifestValues = Get-Content $manifestValuesFile -Raw
     $statusReport = Get-Content $statusReportFile -Raw
     $failsafeBlockers = Get-Content $failsafeBlockersFile -Raw
+    $serviceVerificationMatrix = Get-Content $serviceVerificationMatrixFile -Raw
     $preflightJson = Get-Content $preflightJsonFile -Raw
     $helmRender = if (Test-Path $helmRenderFile) { Get-Content $helmRenderFile -Raw } else { '' }
 
@@ -148,6 +151,14 @@ try {
 
     if ($failsafeBlockers -notmatch '(?m)^rating\|keycloak\|') {
         throw 'summarize-failsafe-blockers.ps1 should detect the rating Keycloak blocker.'
+    }
+
+    if ($serviceVerificationMatrix -notmatch '\| product \| backend \| yes \(`jar`\) \| (yes|no) \| none \| full build verified( \+ image verified)? \|') {
+        throw 'generate-service-verification-matrix.ps1 should report product as fully build-verified.'
+    }
+
+    if ($serviceVerificationMatrix -notmatch '\| search \| backend \| yes \(`jar`\) \| (yes|no) \| elasticsearch: ProductCdcConsumerTest \| (package\+image verified|build artifact verified), full test path blocked \|') {
+        throw 'generate-service-verification-matrix.ps1 should report the search Elasticsearch blocker.'
     }
 
     if ($branchTagMetadata -notmatch '"branch":\s*"main"') {

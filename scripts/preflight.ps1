@@ -109,6 +109,8 @@ $requiredFiles = @(
     'scripts\validate-source-alignment.sh',
     'scripts\summarize-failsafe-blockers.ps1',
     'scripts\summarize-failsafe-blockers.sh',
+    'scripts\generate-service-verification-matrix.ps1',
+    'scripts\generate-service-verification-matrix.sh',
     'scripts\workspace-blocker-overrides.txt',
     'scripts\report-status.ps1',
     'scripts\report-status.sh',

@@ -37,6 +37,8 @@ On Windows, `preflight.ps1`, `selftest.ps1`, and `report-status.ps1` can also pi
 - `validate-source-alignment.sh`
 - `summarize-failsafe-blockers.ps1`
 - `summarize-failsafe-blockers.sh`
+- `generate-service-verification-matrix.ps1`
+- `generate-service-verification-matrix.sh`
 - `workspace-blocker-overrides.txt`
 - `report-status.ps1`
 - `report-status.sh`
@@ -68,6 +70,7 @@ powershell -ExecutionPolicy Bypass -File scripts\validate-chart-values.ps1
 powershell -ExecutionPolicy Bypass -File scripts\validate-gitops-values.ps1
 powershell -ExecutionPolicy Bypass -File scripts\validate-source-alignment.ps1
 powershell -ExecutionPolicy Bypass -File scripts\summarize-failsafe-blockers.ps1
+powershell -ExecutionPolicy Bypass -File scripts\generate-service-verification-matrix.ps1
 powershell -ExecutionPolicy Bypass -File scripts\report-status.ps1 -SkipCommandChecks
 powershell -ExecutionPolicy Bypass -File scripts\resolve-branch-tags.ps1
 powershell -ExecutionPolicy Bypass -File scripts\generate-values.ps1 -DockerhubNamespace your-dockerhub-namespace
@@ -92,6 +95,7 @@ sh scripts/validate-chart-values.sh
 sh scripts/validate-gitops-values.sh
 sh scripts/validate-source-alignment.sh
 sh scripts/summarize-failsafe-blockers.sh
+sh scripts/generate-service-verification-matrix.sh
 sh scripts/report-status.sh --skip-command-checks
 sh scripts/resolve-branch-tags.sh
 DOCKERHUB_NAMESPACE=your-dockerhub-namespace sh scripts/generate-values.sh
