@@ -55,7 +55,9 @@ try {
     powershell -ExecutionPolicy Bypass -File scripts\validate-services-catalog.ps1 `
         -ServicesFile 'jenkins\services.release-baseline.env' `
         -ReferenceServicesFile 'jenkins\services.env' | Out-Null
+    powershell -ExecutionPolicy Bypass -File scripts\validate-argocd-readme.ps1 | Out-Null
     powershell -ExecutionPolicy Bypass -File scripts\validate-argocd-apps.ps1 | Out-Null
+    powershell -ExecutionPolicy Bypass -File scripts\validate-handover-checklist.ps1 | Out-Null
     powershell -ExecutionPolicy Bypass -File scripts\validate-chart-values.ps1 | Out-Null
     powershell -ExecutionPolicy Bypass -File scripts\validate-jenkins-readme.ps1 | Out-Null
     powershell -ExecutionPolicy Bypass -File scripts\validate-image-matrix.ps1 | Out-Null
@@ -182,6 +184,16 @@ try {
     $jenkinsReadme = Get-Content 'jenkins\README.md' -Raw
     if ($jenkinsReadme -notmatch 'work/runtime-evidence/<namespace>/<release>/') {
         throw 'jenkins/README.md should reference the runtime evidence directory contract.'
+    }
+
+    $argocdReadme = Get-Content 'argocd\README.md' -Raw
+    if ($argocdReadme -notmatch 'work/manifest-update-metadata.json') {
+        throw 'argocd/README.md should reference the manifest-update metadata artifact.'
+    }
+
+    $handoverChecklist = Get-Content 'docs\handover-checklist.md' -Raw
+    if ($handoverChecklist -notmatch 'work/runtime-evidence/<namespace>/<release>/') {
+        throw 'docs/handover-checklist.md should reference the runtime evidence directory contract.'
     }
 
     $serviceInventory = Get-Content 'docs\service-inventory.md' -Raw

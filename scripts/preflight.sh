@@ -56,8 +56,12 @@ scripts/source-root.ps1
 scripts/source-root.sh
 scripts/selftest.ps1
 scripts/selftest.sh
+scripts/validate-argocd-readme.ps1
+scripts/validate-argocd-readme.sh
 scripts/validate-argocd-apps.ps1
 scripts/validate-argocd-apps.sh
+scripts/validate-handover-checklist.ps1
+scripts/validate-handover-checklist.sh
 scripts/validate-services-catalog.ps1
 scripts/validate-services-catalog.sh
 scripts/validate-chart-values.ps1
@@ -169,7 +173,9 @@ while IFS='|' read -r validator_name validator_command; do
 done <<'EOF'
 validate-services-catalog/full|sh scripts/validate-services-catalog.sh
 validate-services-catalog/release-baseline|sh scripts/validate-services-catalog.sh jenkins/services.release-baseline.env jenkins/services.env
+validate-argocd-readme|sh scripts/validate-argocd-readme.sh
 validate-argocd-apps|sh scripts/validate-argocd-apps.sh
+validate-handover-checklist|sh scripts/validate-handover-checklist.sh
 validate-chart-values|sh scripts/validate-chart-values.sh
 validate-jenkins-readme|sh scripts/validate-jenkins-readme.sh
 validate-image-matrix|sh scripts/validate-image-matrix.sh

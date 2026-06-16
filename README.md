@@ -14,6 +14,7 @@ This repository currently contains the assignment brief and an executable scaffo
 - [docs/source-build-runtime-matrix.md](</D:/App/project2/docs/source-build-runtime-matrix.md>) records source-verified build commands and runtime ports from the local `yas-source` clone.
 - [docs/status-report.md](</D:/App/project2/docs/status-report.md>) summarizes what is already implemented in this repository and what still depends on external runtime access.
 - [docs/remaining-work-plan.md](</D:/App/project2/docs/remaining-work-plan.md>) keeps the detailed next-phase execution plan for unfinished work.
+- [docs/handover-checklist.md](</D:/App/project2/docs/handover-checklist.md>) is the short operator checklist for moving this repo into a real registry, Jenkins, and cluster environment.
 - [work/service-verification.generated.md](</D:/App/project2/work/service-verification.generated.md>) is the current generated per-service verification snapshot.
 - `jenkins/services.release-baseline.env` freezes the first deployable subset while `jenkins/services.env` keeps the full source-verified catalog.
 

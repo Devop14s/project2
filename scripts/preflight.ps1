@@ -99,8 +99,12 @@ $requiredFiles = @(
     'scripts\selftest.sh',
     'scripts\validate-services-catalog.ps1',
     'scripts\validate-services-catalog.sh',
+    'scripts\validate-argocd-readme.ps1',
+    'scripts\validate-argocd-readme.sh',
     'scripts\validate-argocd-apps.ps1',
     'scripts\validate-argocd-apps.sh',
+    'scripts\validate-handover-checklist.ps1',
+    'scripts\validate-handover-checklist.sh',
     'scripts\validate-chart-values.ps1',
     'scripts\validate-chart-values.sh',
     'scripts\validate-jenkins-readme.ps1',
@@ -161,8 +165,18 @@ $validatorDefinitions = @(
         arguments = @('-ServicesFile', 'jenkins\services.release-baseline.env', '-ReferenceServicesFile', 'jenkins\services.env')
     },
     @{
+        name = 'validate-argocd-readme'
+        script = 'scripts\validate-argocd-readme.ps1'
+        arguments = @()
+    },
+    @{
         name = 'validate-argocd-apps'
         script = 'scripts\validate-argocd-apps.ps1'
+        arguments = @()
+    },
+    @{
+        name = 'validate-handover-checklist'
+        script = 'scripts\validate-handover-checklist.ps1'
         arguments = @()
     },
     @{
