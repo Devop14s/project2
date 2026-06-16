@@ -5,7 +5,7 @@ param(
 $templateText = Get-Content $TemplateFile -Raw
 
 foreach ($requiredToken in @(
-    'scripts\report-status.ps1 -SkipCommandChecks',
+    'scripts\refresh-evidence.ps1 -SkipCommandChecks',
     'work/final-report-notes.generated.md',
     'work/image-digests.txt',
     'work/cleanup-evidence/<namespace>/<release>/',

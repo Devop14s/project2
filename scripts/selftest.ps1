@@ -122,7 +122,7 @@ try {
     if ($LASTEXITCODE -ne 0) {
         throw 'preflight.ps1 -AsJson -SkipCommandChecks should succeed in the repo root.'
     }
-    powershell -ExecutionPolicy Bypass -File scripts\report-status.ps1 `
+    powershell -ExecutionPolicy Bypass -File scripts\refresh-evidence.ps1 `
         -OutputFile $statusReportFile `
         -ServiceVerificationFile $serviceVerificationMatrixFile `
         -FinalReportNotesFile $finalReportNotesFile `
@@ -939,7 +939,7 @@ try {
         throw 'Generated final report notes are missing the expected title.'
     }
 
-    if ($finalReportNotes -notmatch 'scripts\\report-status\.ps1 -SkipCommandChecks') {
+    if ($finalReportNotes -notmatch 'scripts\\refresh-evidence\.ps1 -SkipCommandChecks') {
         throw 'Generated final report notes should reference the unified evidence refresh entrypoint.'
     }
 

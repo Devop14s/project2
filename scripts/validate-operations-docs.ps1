@@ -65,6 +65,7 @@ Assert-ContainsAll -FilePath (Join-Path $DocsRoot 'local-dry-run.md') -Tokens @(
     'scripts/selftest.sh',
     'scripts\preflight.ps1 -SkipCommandChecks',
     'scripts/preflight.sh --skip-command-checks',
+    'scripts\refresh-evidence.ps1 -SkipCommandChecks',
     'work/final-report-notes.generated.md'
 )
 

@@ -76,7 +76,7 @@ $content.Add('- Local build evidence exists for the UI services `storefront` and
 $content.Add('- Full upstream-style Maven build evidence exists for `storefront-bff`, `backoffice-bff`, `product`, `payment`, `payment-paypal`, `recommendation`, `inventory`, and `order`.')
 $content.Add('- Package or build-artifact evidence exists for `cart`, `customer`, `location`, `media`, `promotion`, `rating`, `tax`, `webhook`, `sampledata`, and `search`.')
 $content.Add('- Helm chart lint and template rendering were verified locally.')
-$content.Add('- Generated evidence files are refreshed together by `powershell -ExecutionPolicy Bypass -File scripts\report-status.ps1 -SkipCommandChecks`.')
+$content.Add('- Generated evidence files are refreshed together by `powershell -ExecutionPolicy Bypass -File scripts\refresh-evidence.ps1 -SkipCommandChecks`.')
 $content.Add('')
 $content.Add('## Known Gaps To State Explicitly')
 $content.Add('- No real registry push has been verified yet.')

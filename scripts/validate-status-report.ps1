@@ -50,8 +50,8 @@ if ($statusText -notmatch [regex]::Escape('work/final-report-notes.generated.md'
     throw 'docs/status-report.md should reference work/final-report-notes.generated.md.'
 }
 
-if ($statusText -notmatch [regex]::Escape('scripts\report-status.ps1 -SkipCommandChecks')) {
-    throw 'docs/status-report.md should point to scripts\report-status.ps1 -SkipCommandChecks as the evidence refresh entrypoint.'
+if ($statusText -notmatch [regex]::Escape('scripts\refresh-evidence.ps1 -SkipCommandChecks')) {
+    throw 'docs/status-report.md should point to scripts\refresh-evidence.ps1 -SkipCommandChecks as the evidence refresh entrypoint.'
 }
 
 Write-Host 'docs/status-report.md is aligned with the current blocker and verification summary.'

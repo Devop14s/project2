@@ -17,6 +17,8 @@ On Windows, `preflight.ps1`, `selftest.ps1`, and `report-status.ps1` can also pi
 
 `preflight` and `report-status` now distinguish between the Docker CLI being installed and the Docker daemon actually being reachable. `preflight` also runs the catalog, ArgoCD, chart, GitOps, and source-alignment validators so it catches semantic drift instead of only checking file presence. If you only want to skip host-tool probing, use `-SkipCommandChecks` or `--skip-command-checks`; the repo validators still run.
 
+Use `refresh-evidence.ps1` or `refresh-evidence.sh` as the canonical user-facing entrypoint when you want to refresh the generated evidence bundle under `work/`; those wrappers call the underlying `report-status` flow and keep all generated evidence files in sync.
+
 ## Available pairs
 
 - `preflight.ps1`
@@ -25,6 +27,8 @@ On Windows, `preflight.ps1`, `selftest.ps1`, and `report-status.ps1` can also pi
 - `developer-build-dry-run.sh`
 - `selftest.ps1`
 - `selftest.sh`
+- `refresh-evidence.ps1`
+- `refresh-evidence.sh`
 - `validate-argocd-readme.ps1`
 - `validate-argocd-readme.sh`
 - `validate-argocd-apps.ps1`
@@ -118,8 +122,8 @@ powershell -ExecutionPolicy Bypass -File scripts\validate-source-build-runtime-m
 powershell -ExecutionPolicy Bypass -File scripts\validate-status-report.ps1
 powershell -ExecutionPolicy Bypass -File scripts\summarize-failsafe-blockers.ps1
 powershell -ExecutionPolicy Bypass -File scripts\generate-service-verification-matrix.ps1
-powershell -ExecutionPolicy Bypass -File scripts\report-status.ps1 -SkipCommandChecks
-powershell -ExecutionPolicy Bypass -File scripts\report-status.ps1 -OutputFile work\status-report.generated.md -ServiceVerificationFile work\service-verification.generated.md -FinalReportNotesFile work\final-report-notes.generated.md -SkipCommandChecks
+powershell -ExecutionPolicy Bypass -File scripts\refresh-evidence.ps1 -SkipCommandChecks
+powershell -ExecutionPolicy Bypass -File scripts\refresh-evidence.ps1 -OutputFile work\status-report.generated.md -ServiceVerificationFile work\service-verification.generated.md -FinalReportNotesFile work\final-report-notes.generated.md -SkipCommandChecks
 powershell -ExecutionPolicy Bypass -File scripts\resolve-branch-tags.ps1
 powershell -ExecutionPolicy Bypass -File scripts\generate-values.ps1 -DockerhubNamespace your-dockerhub-namespace
 $env:SERVICE_CATALOG='release-baseline'; powershell -ExecutionPolicy Bypass -File scripts\generate-values.ps1 -DockerhubNamespace your-dockerhub-namespace
@@ -159,8 +163,8 @@ sh scripts/validate-source-build-runtime-matrix.sh
 sh scripts/validate-status-report.sh
 sh scripts/summarize-failsafe-blockers.sh
 sh scripts/generate-service-verification-matrix.sh
-sh scripts/report-status.sh --skip-command-checks
-SERVICE_VERIFICATION_FILE=work/service-verification.generated.md FINAL_REPORT_NOTES_FILE=work/final-report-notes.generated.md sh scripts/report-status.sh work/status-report.generated.md --skip-command-checks
+sh scripts/refresh-evidence.sh --skip-command-checks
+SERVICE_VERIFICATION_FILE=work/service-verification.generated.md FINAL_REPORT_NOTES_FILE=work/final-report-notes.generated.md sh scripts/refresh-evidence.sh work/status-report.generated.md --skip-command-checks
 sh scripts/resolve-branch-tags.sh
 DOCKERHUB_NAMESPACE=your-dockerhub-namespace sh scripts/generate-values.sh
 SERVICE_CATALOG=release-baseline DOCKERHUB_NAMESPACE=your-dockerhub-namespace sh scripts/generate-values.sh

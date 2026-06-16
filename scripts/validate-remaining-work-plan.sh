@@ -32,7 +32,7 @@ for required_reference in \
   'jenkins/services.release-baseline.env' \
   'status-report.md' \
   'work/service-verification.generated.md' \
-  'scripts\report-status.ps1 -SkipCommandChecks'
+  'scripts\refresh-evidence.ps1 -SkipCommandChecks'
 do
   printf '%s' "$plan_text" | grep -F -q "$required_reference" || {
     printf 'docs/remaining-work-plan.md should reference %s.\n' "$required_reference" >&2

@@ -58,7 +58,7 @@ for required_reference in \
   'jenkins/services.release-baseline.env' \
   'jenkins/services.env' \
   'work/service-verification.generated.md' \
-  'scripts\report-status.ps1 -SkipCommandChecks'
+  'scripts\refresh-evidence.ps1 -SkipCommandChecks'
 do
   printf '%s' "$inventory_text" | grep -F -q "$required_reference" || {
     printf 'docs/service-inventory.md should reference %s.\n' "$required_reference" >&2

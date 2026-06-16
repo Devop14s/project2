@@ -15,7 +15,7 @@ for token in \
   'work/runtime-evidence/<namespace>/<release>/' \
   'work/cleanup-evidence/<namespace>/<release>/' \
   'work/manifest-update-metadata.json' \
-  'scripts\report-status.ps1 -SkipCommandChecks' \
+  'scripts\refresh-evidence.ps1 -SkipCommandChecks' \
   'Verified locally only:' \
   'Verified end to end on real infrastructure:'
 do

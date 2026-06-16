@@ -97,6 +97,8 @@ $requiredFiles = @(
     'scripts\source-root.sh',
     'scripts\selftest.ps1',
     'scripts\selftest.sh',
+    'scripts\refresh-evidence.ps1',
+    'scripts\refresh-evidence.sh',
     'scripts\validate-services-catalog.ps1',
     'scripts\validate-services-catalog.sh',
     'scripts\validate-argocd-readme.ps1',

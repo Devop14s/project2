@@ -30,8 +30,8 @@ if (-not $matrixText.Contains('work/service-verification.generated.md')) {
     throw 'docs/image-matrix.md should reference the generated service verification matrix.'
 }
 
-if (-not $matrixText.Contains('scripts\report-status.ps1 -SkipCommandChecks')) {
-    throw 'docs/image-matrix.md should point to scripts\report-status.ps1 -SkipCommandChecks as the evidence refresh entrypoint.'
+if (-not $matrixText.Contains('scripts\refresh-evidence.ps1 -SkipCommandChecks')) {
+    throw 'docs/image-matrix.md should point to scripts\refresh-evidence.ps1 -SkipCommandChecks as the evidence refresh entrypoint.'
 }
 
 Write-Host 'docs/image-matrix.md covers the current catalog and blocked-image notes.'

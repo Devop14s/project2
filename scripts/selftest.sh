@@ -126,7 +126,7 @@ OUTPUT_FILE="$chart_values_file" \
 sh scripts/generate-chart-values.sh >/dev/null
 sh scripts/update-manifest-values.sh "$manifest_values_file" test-tag >/dev/null
 powershell -ExecutionPolicy Bypass -File scripts/preflight.ps1 -AsJson -SkipCommandChecks >/dev/null
-SERVICE_VERIFICATION_FILE="$service_verification_matrix_file" FINAL_REPORT_NOTES_FILE="$final_report_notes_file" sh scripts/report-status.sh "$status_report_file" --skip-command-checks >/dev/null
+SERVICE_VERIFICATION_FILE="$service_verification_matrix_file" FINAL_REPORT_NOTES_FILE="$final_report_notes_file" sh scripts/refresh-evidence.sh "$status_report_file" --skip-command-checks >/dev/null
 sh scripts/validate-generated-reports.sh "$status_report_file" "$service_verification_matrix_file" >/dev/null
 sh scripts/validate-final-report-notes.sh "$final_report_notes_file" >/dev/null
 if TAGS_FILE="${temp_dir}/missing-tags.env" DOCKERHUB_NAMESPACE="$dockerhub_namespace" OUTPUT_FILE="${temp_dir}/missing-tags-generated-values.yaml" sh scripts/generate-values.sh >/dev/null 2>&1; then
@@ -364,7 +364,7 @@ grep -q 'host: backoffice.yas.local' "$chart_values_file"
 grep -q 'tag: test-tag' "$manifest_values_file"
 grep -q '## Runtime Access Notes' "$status_report_file"
 grep -q '# Final Report Notes' "$final_report_notes_file"
-grep -q 'scripts\\report-status.ps1 -SkipCommandChecks' "$final_report_notes_file"
+grep -q 'scripts\\refresh-evidence.ps1 -SkipCommandChecks' "$final_report_notes_file"
 grep -q 'Runtime evidence directories now snapshot commit, manifest, build, push, and verification artifacts' "$status_report_file"
 grep -q 'Commit metadata artifacts now embed the exact commit SHA and short SHA directly in `commit-metadata.json`' "$status_report_file"
 grep -q 'GitOps manifest-update helpers now preserve a dedicated metadata artifact' "$status_report_file"

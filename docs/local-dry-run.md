@@ -88,11 +88,11 @@ sh scripts/validate-services-catalog.sh
 Generate the current-state markdown evidence set for the scaffold:
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File scripts\report-status.ps1 -SkipCommandChecks
+powershell -ExecutionPolicy Bypass -File scripts\refresh-evidence.ps1 -SkipCommandChecks
 ```
 
 ```bash
-sh scripts/report-status.sh --skip-command-checks
+sh scripts/refresh-evidence.sh --skip-command-checks
 ```
 
 This refreshes `work/status-report.generated.md`, `work/service-verification.generated.md`, and `work/final-report-notes.generated.md` together so the high-level summary, per-service matrix, and report-drafting notes stay in sync.

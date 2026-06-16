@@ -35,7 +35,7 @@ foreach ($requiredReference in @(
     'jenkins/services.release-baseline.env',
     'status-report.md',
     'work/service-verification.generated.md',
-    'scripts\report-status.ps1 -SkipCommandChecks'
+    'scripts\refresh-evidence.ps1 -SkipCommandChecks'
 )) {
     if ($planText -notmatch [regex]::Escape($requiredReference)) {
         throw "docs/remaining-work-plan.md should reference $requiredReference."

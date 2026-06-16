@@ -22,7 +22,7 @@ Move this repository from a source-verified delivery scaffold to a working YAS d
   - `cart`, `customer`, `location`, `media`, `promotion`, `rating`, `tax`, `webhook`
   - `sampledata`, `search`
 - The current per-service verification snapshot is generated in [service-verification.generated.md](</D:/App/project2/work/service-verification.generated.md>), and the high-level summary lives in [status-report.md](</D:/App/project2/docs/status-report.md>).
-- Run `powershell -ExecutionPolicy Bypass -File scripts\report-status.ps1 -SkipCommandChecks` before a handover or report-writing session so both generated evidence files stay in sync.
+- Run `powershell -ExecutionPolicy Bypass -File scripts\refresh-evidence.ps1 -SkipCommandChecks` before a handover or report-writing session so the generated evidence bundle stays in sync.
 
 ## Recommended first deployment subset
 

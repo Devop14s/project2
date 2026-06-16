@@ -7,7 +7,7 @@ Use this checklist when moving from the current scaffold-and-local-evidence stat
 - Confirm whether the first real rollout should use `release-baseline` or `full`.
 - If the first rollout is still limited, keep `SERVICE_CATALOG=release-baseline`.
 - Re-check [service-inventory.md](</D:/App/project2/docs/service-inventory.md>) and [service-verification.generated.md](</D:/App/project2/work/service-verification.generated.md>) before changing the subset.
-- Refresh [status-report.generated.md](</D:/App/project2/work/status-report.generated.md>) and [service-verification.generated.md](</D:/App/project2/work/service-verification.generated.md>) together with `powershell -ExecutionPolicy Bypass -File scripts\report-status.ps1 -SkipCommandChecks` before handing the repo to the infrastructure owner.
+- Refresh [status-report.generated.md](</D:/App/project2/work/status-report.generated.md>) and [service-verification.generated.md](</D:/App/project2/work/service-verification.generated.md>) together with `powershell -ExecutionPolicy Bypass -File scripts\refresh-evidence.ps1 -SkipCommandChecks` before handing the repo to the infrastructure owner.
 
 ## 2. Prepare the registry
 

@@ -25,7 +25,7 @@ foreach ($requiredToken in @(
     'Keycloak',
     'Elasticsearch',
     'work/service-verification.generated.md',
-    'scripts\report-status.ps1 -SkipCommandChecks'
+    'scripts\refresh-evidence.ps1 -SkipCommandChecks'
 )) {
     if (-not $troubleshootingText.Contains($requiredToken)) {
         throw "docs/troubleshooting.md is missing required troubleshooting topic $requiredToken."

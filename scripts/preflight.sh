@@ -56,6 +56,8 @@ scripts/source-root.ps1
 scripts/source-root.sh
 scripts/selftest.ps1
 scripts/selftest.sh
+scripts/refresh-evidence.ps1
+scripts/refresh-evidence.sh
 scripts/validate-argocd-readme.ps1
 scripts/validate-argocd-readme.sh
 scripts/validate-argocd-apps.ps1

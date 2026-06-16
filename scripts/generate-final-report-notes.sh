@@ -58,7 +58,7 @@ done < "$blockers_file"
   printf '%s\n' '- Full upstream-style Maven build evidence exists for `storefront-bff`, `backoffice-bff`, `product`, `payment`, `payment-paypal`, `recommendation`, `inventory`, and `order`.'
   printf '%s\n' '- Package or build-artifact evidence exists for `cart`, `customer`, `location`, `media`, `promotion`, `rating`, `tax`, `webhook`, `sampledata`, and `search`.'
   printf '%s\n' '- Helm chart lint and template rendering were verified locally.'
-  printf '%s\n' '- Generated evidence files are refreshed together by `powershell -ExecutionPolicy Bypass -File scripts\report-status.ps1 -SkipCommandChecks`.'
+  printf '%s\n' '- Generated evidence files are refreshed together by `powershell -ExecutionPolicy Bypass -File scripts\refresh-evidence.ps1 -SkipCommandChecks`.'
   printf '\n'
   printf '## Known Gaps To State Explicitly\n'
   printf '%s\n' '- No real registry push has been verified yet.'
