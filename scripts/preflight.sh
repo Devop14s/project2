@@ -86,6 +86,8 @@ scripts/validate-remaining-work-plan.ps1
 scripts/validate-remaining-work-plan.sh
 scripts/validate-gitops-values.ps1
 scripts/validate-gitops-values.sh
+scripts/validate-generated-reports.ps1
+scripts/validate-generated-reports.sh
 scripts/validate-source-alignment.ps1
 scripts/validate-source-alignment.sh
 scripts/validate-source-build-runtime-matrix.ps1
@@ -109,6 +111,8 @@ scripts/generate-chart-values.ps1
 scripts/generate-chart-values.sh
 scripts/update-manifest-values.ps1
 scripts/update-manifest-values.sh
+work/status-report.generated.md
+work/service-verification.generated.md
 "
 
 required_commands="
@@ -193,6 +197,7 @@ validate-service-inventory|sh scripts/validate-service-inventory.sh
 validate-troubleshooting|sh scripts/validate-troubleshooting.sh
 validate-remaining-work-plan|sh scripts/validate-remaining-work-plan.sh
 validate-gitops-values|sh scripts/validate-gitops-values.sh
+validate-generated-reports|sh scripts/validate-generated-reports.sh
 validate-source-alignment|sh scripts/validate-source-alignment.sh
 validate-source-build-runtime-matrix|sh scripts/validate-source-build-runtime-matrix.sh
 validate-status-report|sh scripts/validate-status-report.sh

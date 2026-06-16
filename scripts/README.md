@@ -55,6 +55,8 @@ On Windows, `preflight.ps1`, `selftest.ps1`, and `report-status.ps1` can also pi
 - `validate-remaining-work-plan.sh`
 - `validate-gitops-values.ps1`
 - `validate-gitops-values.sh`
+- `validate-generated-reports.ps1`
+- `validate-generated-reports.sh`
 - `validate-source-alignment.ps1`
 - `validate-source-alignment.sh`
 - `validate-source-build-runtime-matrix.ps1`
@@ -105,6 +107,7 @@ powershell -ExecutionPolicy Bypass -File scripts\validate-service-inventory.ps1
 powershell -ExecutionPolicy Bypass -File scripts\validate-troubleshooting.ps1
 powershell -ExecutionPolicy Bypass -File scripts\validate-remaining-work-plan.ps1
 powershell -ExecutionPolicy Bypass -File scripts\validate-gitops-values.ps1
+powershell -ExecutionPolicy Bypass -File scripts\validate-generated-reports.ps1
 powershell -ExecutionPolicy Bypass -File scripts\validate-source-alignment.ps1
 powershell -ExecutionPolicy Bypass -File scripts\validate-source-build-runtime-matrix.ps1
 powershell -ExecutionPolicy Bypass -File scripts\validate-status-report.ps1
@@ -143,6 +146,7 @@ sh scripts/validate-service-inventory.sh
 sh scripts/validate-troubleshooting.sh
 sh scripts/validate-remaining-work-plan.sh
 sh scripts/validate-gitops-values.sh
+sh scripts/validate-generated-reports.sh
 sh scripts/validate-source-alignment.sh
 sh scripts/validate-source-build-runtime-matrix.sh
 sh scripts/validate-status-report.sh

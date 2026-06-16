@@ -127,6 +127,8 @@ $requiredFiles = @(
     'scripts\validate-remaining-work-plan.sh',
     'scripts\validate-gitops-values.ps1',
     'scripts\validate-gitops-values.sh',
+    'scripts\validate-generated-reports.ps1',
+    'scripts\validate-generated-reports.sh',
     'scripts\validate-source-alignment.ps1',
     'scripts\validate-source-alignment.sh',
     'scripts\validate-source-build-runtime-matrix.ps1',
@@ -149,7 +151,9 @@ $requiredFiles = @(
     'scripts\generate-chart-values.ps1',
     'scripts\generate-chart-values.sh',
     'scripts\update-manifest-values.ps1',
-    'scripts\update-manifest-values.sh'
+    'scripts\update-manifest-values.sh',
+    'work\status-report.generated.md',
+    'work\service-verification.generated.md'
 )
 
 $requiredCommands = @(
@@ -238,6 +242,11 @@ $validatorDefinitions = @(
     @{
         name = 'validate-gitops-values'
         script = 'scripts\validate-gitops-values.ps1'
+        arguments = @()
+    },
+    @{
+        name = 'validate-generated-reports'
+        script = 'scripts\validate-generated-reports.ps1'
         arguments = @()
     },
     @{

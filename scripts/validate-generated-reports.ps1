@@ -1,0 +1,122 @@
+param(
+    [string]$StatusReportFile = 'work/status-report.generated.md',
+    [string]$ServiceVerificationFile = 'work/service-verification.generated.md',
+    [string]$ServicesFile = 'jenkins/services.env',
+    [string]$ReleaseBaselineServicesFile = 'jenkins/services.release-baseline.env'
+)
+
+foreach ($requiredFile in @($StatusReportFile, $ServiceVerificationFile, $ServicesFile, $ReleaseBaselineServicesFile)) {
+    if (-not (Test-Path $requiredFile)) {
+        throw "Required file not found: $requiredFile"
+    }
+}
+
+$statusText = Get-Content $StatusReportFile -Raw -ErrorAction Stop
+$serviceVerificationText = Get-Content $ServiceVerificationFile -Raw -ErrorAction Stop
+
+$serviceCount = 0
+$releaseBaselineServiceCount = 0
+$publicEntryCount = 0
+$uiCount = 0
+$backendCount = 0
+$services = New-Object System.Collections.Generic.List[string]
+
+foreach ($line in Get-Content $ServicesFile) {
+    if ([string]::IsNullOrWhiteSpace($line) -or $line.StartsWith('#')) {
+        continue
+    }
+
+    $parts = $line.Split('|')
+    if ($parts.Count -lt 7) {
+        continue
+    }
+
+    $service = $parts[0].Trim()
+    $expose = $parts[4].Trim()
+    $workloadType = $parts[6].Trim()
+
+    $services.Add($service)
+    $serviceCount += 1
+    if ($expose -eq 'true') {
+        $publicEntryCount += 1
+    }
+    if ($workloadType -eq 'ui') {
+        $uiCount += 1
+    } elseif ($workloadType -eq 'backend') {
+        $backendCount += 1
+    }
+}
+
+foreach ($line in Get-Content $ReleaseBaselineServicesFile) {
+    if ([string]::IsNullOrWhiteSpace($line) -or $line.StartsWith('#')) {
+        continue
+    }
+
+    $parts = $line.Split('|')
+    if ($parts.Count -ge 7) {
+        $releaseBaselineServiceCount += 1
+    }
+}
+
+foreach ($requiredStatusToken in @(
+    '# Generated Status Report',
+    "- Services in catalog: $serviceCount",
+    "- Services in release baseline: $releaseBaselineServiceCount",
+    "- Public entrypoints in catalog: $publicEntryCount",
+    "- UI workloads in catalog: $uiCount",
+    "- Backend workloads in catalog: $backendCount",
+    'Drift validators now lock the main hand-written docs and runbooks',
+    'Real Kubernetes deployment cannot be executed.',
+    'Jenkins credentials and webhook integration cannot be verified locally.'
+)) {
+    if (-not $statusText.Contains($requiredStatusToken)) {
+        throw "Generated status report is missing required token $requiredStatusToken."
+    }
+}
+
+foreach ($service in $services) {
+    $rowToken = "| $service |"
+    if (-not $serviceVerificationText.Contains($rowToken)) {
+        throw "Generated service verification matrix is missing row for service $service."
+    }
+}
+
+foreach ($requiredServiceMatrixToken in @(
+    '# Service Verification Matrix',
+    '| Service | Workload | Build evidence | Local image | Blocker | Overall status |',
+    '| storefront | ui |',
+    '| backoffice | ui |',
+    '| product | backend |',
+    '| sampledata | backend |',
+    '| search | backend |',
+    'keycloak:',
+    'elasticsearch:',
+    'compile:',
+    'full build verified',
+    'full test path blocked'
+)) {
+    if (-not $serviceVerificationText.Contains($requiredServiceMatrixToken)) {
+        throw "Generated service verification matrix is missing required token $requiredServiceMatrixToken."
+    }
+}
+
+$blockerLines = @(powershell -ExecutionPolicy Bypass -File scripts\summarize-failsafe-blockers.ps1)
+foreach ($blockerLine in $blockerLines) {
+    $parts = $blockerLine -split '\|', 4
+    if ($parts.Count -lt 3) {
+        continue
+    }
+
+    $service = $parts[0]
+    $category = $parts[1]
+    $suite = $parts[2]
+    $expectedBlockerToken = "${category}: $suite"
+    if (-not $serviceVerificationText.Contains("| $service |")) {
+        throw "Generated service verification matrix is missing blocker row for service $service."
+    }
+    if (-not $serviceVerificationText.Contains($expectedBlockerToken)) {
+        throw "Generated service verification matrix is missing blocker token $expectedBlockerToken for service $service."
+    }
+}
+
+Write-Host 'Generated status and service-verification reports are aligned with the current catalog, validator coverage, and blocker summary.'

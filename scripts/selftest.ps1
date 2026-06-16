@@ -145,6 +145,7 @@ try {
     $serviceVerificationMatrix = Get-Content $serviceVerificationMatrixFile -Raw
     $preflightJson = Get-Content $preflightJsonFile -Raw
     $helmRender = if (Test-Path $helmRenderFile) { Get-Content $helmRenderFile -Raw } else { '' }
+    powershell -ExecutionPolicy Bypass -File scripts\validate-generated-reports.ps1 -StatusReportFile $statusReportFile -ServiceVerificationFile $serviceVerificationMatrixFile | Out-Null
 
     if ($branchTags -notmatch 'TAX_TAG=main') {
         throw 'Branch tag resolution failed for tax service.'
