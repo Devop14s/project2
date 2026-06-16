@@ -131,8 +131,26 @@ pipeline {
           }
           env.PIPELINE_DISPATCH_MODE = 'true'
           env.SERVICE_CATALOG = params.SERVICE_CATALOG
-          env.SOURCE_ROOT = params.SOURCE_ROOT?.trim()
+          def sourceRootParam = params.SOURCE_ROOT?.trim()
+          if (!sourceRootParam) {
+            sourceRootParam = 'yas-source'
+          }
+
+          if (!fileExists("${sourceRootParam}/.git")) {
+            dir(sourceRootParam) {
+              checkout([
+                $class: 'GitSCM',
+                branches: [[name: '*/main']],
+                userRemoteConfigs: [[url: 'https://github.com/nashtech-garage/yas.git']]
+              ])
+            }
+          }
+
+          env.SOURCE_ROOT = sourceRootParam
           env.SOURCE_GIT_ROOT = params.SOURCE_GIT_ROOT?.trim()
+          if (!env.SOURCE_GIT_ROOT) {
+            env.SOURCE_GIT_ROOT = sourceRootParam
+          }
           env.RELEASE_VERSION = stagingTarget ? (params.RELEASE_VERSION?.trim() ?: 'v1.0.0') : ''
           env.DEPLOYER_ID = (developerBuildTarget || developerCleanupTarget) ? (params.DEPLOYER_ID?.trim() ?: 'dev1') : ''
           env.DOMAIN_NAME = developerBuildTarget ? (params.DOMAIN_NAME?.trim() ?: "storefront-${env.DEPLOYER_ID}.yas.local") : ''
