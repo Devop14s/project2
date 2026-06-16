@@ -24,7 +24,8 @@ foreach ($requiredToken in @(
     'NodePort is open but app is unreachable',
     'Keycloak',
     'Elasticsearch',
-    'work/service-verification.generated.md'
+    'work/service-verification.generated.md',
+    'scripts\report-status.ps1 -SkipCommandChecks'
 )) {
     if (-not $troubleshootingText.Contains($requiredToken)) {
         throw "docs/troubleshooting.md is missing required troubleshooting topic $requiredToken."

@@ -17,6 +17,7 @@ foreach ($requiredToken in @(
     '`yas-staging-release`',
     '`work/runtime-evidence/<namespace>/<release>/`',
     '`work/manifest-update-metadata.json`',
+    'scripts\report-status.ps1 -SkipCommandChecks',
     'sampledata',
     'search',
     'Keycloak'

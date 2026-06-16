@@ -15,7 +15,7 @@ This repository currently contains the assignment brief and an executable scaffo
 - [docs/status-report.md](</D:/App/project2/docs/status-report.md>) summarizes what is already implemented in this repository and what still depends on external runtime access.
 - [docs/remaining-work-plan.md](</D:/App/project2/docs/remaining-work-plan.md>) keeps the detailed next-phase execution plan for unfinished work.
 - [docs/handover-checklist.md](</D:/App/project2/docs/handover-checklist.md>) is the short operator checklist for moving this repo into a real registry, Jenkins, and cluster environment.
-- [work/service-verification.generated.md](</D:/App/project2/work/service-verification.generated.md>) is the current generated per-service verification snapshot.
+- [work/service-verification.generated.md](</D:/App/project2/work/service-verification.generated.md>) is the current generated per-service verification snapshot, refreshed together with [work/status-report.generated.md](</D:/App/project2/work/status-report.generated.md>) by `powershell -ExecutionPolicy Bypass -File scripts\report-status.ps1 -SkipCommandChecks`.
 - `jenkins/services.release-baseline.env` freezes the first deployable subset while `jenkins/services.env` keeps the full source-verified catalog.
 
 ## Current limitation

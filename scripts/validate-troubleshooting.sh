@@ -20,7 +20,8 @@ for required_topic in \
   'NodePort is open but app is unreachable' \
   'Keycloak' \
   'Elasticsearch' \
-  'work/service-verification.generated.md'
+  'work/service-verification.generated.md' \
+  'scripts\report-status.ps1 -SkipCommandChecks'
 do
   printf '%s' "$troubleshooting_text" | grep -F -q "$required_topic" || {
     printf 'docs/troubleshooting.md is missing required troubleshooting topic %s.\n' "$required_topic" >&2

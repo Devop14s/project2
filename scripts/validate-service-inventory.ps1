@@ -65,7 +65,8 @@ foreach ($line in Get-Content $fullCatalog) {
 foreach ($requiredReference in @(
     'jenkins/services.release-baseline.env',
     'jenkins/services.env',
-    'work/service-verification.generated.md'
+    'work/service-verification.generated.md',
+    'scripts\report-status.ps1 -SkipCommandChecks'
 )) {
     if ($inventoryText -notmatch [regex]::Escape($requiredReference)) {
         throw "docs/service-inventory.md should reference $requiredReference."

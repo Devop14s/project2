@@ -46,4 +46,8 @@ if ($statusText -notmatch [regex]::Escape('remaining-work-plan.md')) {
     throw 'docs/status-report.md should still point to remaining-work-plan.md.'
 }
 
+if ($statusText -notmatch [regex]::Escape('scripts\report-status.ps1 -SkipCommandChecks')) {
+    throw 'docs/status-report.md should point to scripts\report-status.ps1 -SkipCommandChecks as the evidence refresh entrypoint.'
+}
+
 Write-Host 'docs/status-report.md is aligned with the current blocker and verification summary.'

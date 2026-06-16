@@ -45,4 +45,9 @@ printf '%s' "$status_text" | grep -F -q 'remaining-work-plan.md' || {
   exit 1
 }
 
+printf '%s' "$status_text" | grep -F -q 'scripts\report-status.ps1 -SkipCommandChecks' || {
+  printf 'docs/status-report.md should point to scripts\\report-status.ps1 -SkipCommandChecks as the evidence refresh entrypoint.\n' >&2
+  exit 1
+}
+
 printf 'docs/status-report.md is aligned with the current blocker and verification summary.\n'
