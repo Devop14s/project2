@@ -85,7 +85,7 @@ powershell -ExecutionPolicy Bypass -File scripts\validate-services-catalog.ps1
 sh scripts/validate-services-catalog.sh
 ```
 
-Generate a current-state markdown report for the scaffold:
+Generate the current-state markdown evidence set for the scaffold:
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File scripts\report-status.ps1 -SkipCommandChecks
@@ -94,6 +94,8 @@ powershell -ExecutionPolicy Bypass -File scripts\report-status.ps1 -SkipCommandC
 ```bash
 sh scripts/report-status.sh --skip-command-checks
 ```
+
+This refreshes both `work/status-report.generated.md` and `work/service-verification.generated.md` together so the high-level summary and per-service matrix stay in sync.
 
 If your machine does not yet have all runtime tools such as `helm`, you can still validate scaffold completeness only:
 

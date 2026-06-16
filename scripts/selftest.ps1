@@ -122,6 +122,7 @@ try {
     }
     powershell -ExecutionPolicy Bypass -File scripts\report-status.ps1 `
         -OutputFile $statusReportFile `
+        -ServiceVerificationFile $serviceVerificationMatrixFile `
         -SkipCommandChecks | Out-Null
     if ($helmExecutable) {
         & $helmExecutable lint 'helm\yas' | Out-Null

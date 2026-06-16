@@ -124,7 +124,7 @@ OUTPUT_FILE="$chart_values_file" \
 sh scripts/generate-chart-values.sh >/dev/null
 sh scripts/update-manifest-values.sh "$manifest_values_file" test-tag >/dev/null
 powershell -ExecutionPolicy Bypass -File scripts/preflight.ps1 -AsJson -SkipCommandChecks >/dev/null
-sh scripts/report-status.sh "$status_report_file" --skip-command-checks >/dev/null
+SERVICE_VERIFICATION_FILE="$service_verification_matrix_file" sh scripts/report-status.sh "$status_report_file" --skip-command-checks >/dev/null
 sh scripts/validate-generated-reports.sh "$status_report_file" "$service_verification_matrix_file" >/dev/null
 if TAGS_FILE="${temp_dir}/missing-tags.env" DOCKERHUB_NAMESPACE="$dockerhub_namespace" OUTPUT_FILE="${temp_dir}/missing-tags-generated-values.yaml" sh scripts/generate-values.sh >/dev/null 2>&1; then
   printf 'generate-values.sh should fail when an explicit TAGS_FILE path is provided but missing.\n' >&2

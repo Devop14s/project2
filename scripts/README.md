@@ -114,6 +114,7 @@ powershell -ExecutionPolicy Bypass -File scripts\validate-status-report.ps1
 powershell -ExecutionPolicy Bypass -File scripts\summarize-failsafe-blockers.ps1
 powershell -ExecutionPolicy Bypass -File scripts\generate-service-verification-matrix.ps1
 powershell -ExecutionPolicy Bypass -File scripts\report-status.ps1 -SkipCommandChecks
+powershell -ExecutionPolicy Bypass -File scripts\report-status.ps1 -OutputFile work\status-report.generated.md -ServiceVerificationFile work\service-verification.generated.md -SkipCommandChecks
 powershell -ExecutionPolicy Bypass -File scripts\resolve-branch-tags.ps1
 powershell -ExecutionPolicy Bypass -File scripts\generate-values.ps1 -DockerhubNamespace your-dockerhub-namespace
 $env:SERVICE_CATALOG='release-baseline'; powershell -ExecutionPolicy Bypass -File scripts\generate-values.ps1 -DockerhubNamespace your-dockerhub-namespace
@@ -153,6 +154,7 @@ sh scripts/validate-status-report.sh
 sh scripts/summarize-failsafe-blockers.sh
 sh scripts/generate-service-verification-matrix.sh
 sh scripts/report-status.sh --skip-command-checks
+SERVICE_VERIFICATION_FILE=work/service-verification.generated.md sh scripts/report-status.sh work/status-report.generated.md --skip-command-checks
 sh scripts/resolve-branch-tags.sh
 DOCKERHUB_NAMESPACE=your-dockerhub-namespace sh scripts/generate-values.sh
 SERVICE_CATALOG=release-baseline DOCKERHUB_NAMESPACE=your-dockerhub-namespace sh scripts/generate-values.sh

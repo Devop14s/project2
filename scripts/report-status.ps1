@@ -1,5 +1,6 @@
 param(
     [string]$OutputFile = 'work/status-report.generated.md',
+    [string]$ServiceVerificationFile = 'work/service-verification.generated.md',
     [switch]$SkipCommandChecks
 )
 
@@ -31,6 +32,24 @@ $resolvedOutputPath = if ([System.IO.Path]::IsPathRooted($OutputFile)) {
     $OutputFile
 } else {
     Join-Path (Get-Location) $OutputFile
+}
+
+$serviceVerificationOutputDir = Split-Path -Parent $ServiceVerificationFile
+if ($serviceVerificationOutputDir) {
+    New-Item -ItemType Directory -Path $serviceVerificationOutputDir -Force | Out-Null
+}
+
+$resolvedServiceVerificationPath = if ([System.IO.Path]::IsPathRooted($ServiceVerificationFile)) {
+    $ServiceVerificationFile
+} else {
+    Join-Path (Get-Location) $ServiceVerificationFile
+}
+
+if (Test-Path 'scripts\generate-service-verification-matrix.ps1') {
+    powershell -ExecutionPolicy Bypass -File scripts\generate-service-verification-matrix.ps1 -OutputFile $resolvedServiceVerificationPath *> $null
+    if ($LASTEXITCODE -ne 0) {
+        throw 'generate-service-verification-matrix.ps1 failed while report-status.ps1 was refreshing generated evidence.'
+    }
 }
 
 $requiredFiles = @(
@@ -779,3 +798,4 @@ $content.Add('- Jenkins credentials and webhook integration cannot be verified l
 
 [System.IO.File]::WriteAllLines($resolvedOutputPath, $content)
 Write-Host "Generated status report: $OutputFile"
+Write-Host "Generated service verification matrix: $ServiceVerificationFile"

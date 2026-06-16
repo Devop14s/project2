@@ -5,6 +5,7 @@ set -eu
 . scripts/source-root.sh
 
 output_file="${1:-work/status-report.generated.md}"
+service_verification_file="${SERVICE_VERIFICATION_FILE:-work/service-verification.generated.md}"
 skip_command_checks=0
 
 if [ "${2:-}" = "--skip-command-checks" ] || [ "${1:-}" = "--skip-command-checks" ]; then
@@ -15,6 +16,11 @@ if [ "${2:-}" = "--skip-command-checks" ] || [ "${1:-}" = "--skip-command-checks
 fi
 
 mkdir -p "$(dirname "$output_file")"
+mkdir -p "$(dirname "$service_verification_file")"
+
+if [ -f "scripts/generate-service-verification-matrix.sh" ]; then
+  sh scripts/generate-service-verification-matrix.sh "$service_verification_file" >/dev/null
+fi
 
 required_files="
 README.md
@@ -703,3 +709,4 @@ fi
 } > "$output_file"
 
 printf 'Generated status report: %s\n' "$output_file"
+printf 'Generated service verification matrix: %s\n' "$service_verification_file"
