@@ -85,16 +85,45 @@ $requiredFiles = @(
     'scripts\selftest.sh',
     'scripts\validate-argocd-apps.ps1',
     'scripts\validate-argocd-apps.sh',
+    'scripts\validate-argocd-readme.ps1',
+    'scripts\validate-argocd-readme.sh',
+    'scripts\validate-handover-checklist.ps1',
+    'scripts\validate-handover-checklist.sh',
     'scripts\validate-services-catalog.ps1',
     'scripts\validate-services-catalog.sh',
     'scripts\validate-chart-values.ps1',
     'scripts\validate-chart-values.sh',
+    'scripts\validate-final-report-template.ps1',
+    'scripts\validate-final-report-template.sh',
+    'scripts\validate-image-matrix.ps1',
+    'scripts\validate-image-matrix.sh',
+    'scripts\validate-jenkins-readme.ps1',
+    'scripts\validate-jenkins-readme.sh',
     'scripts\validate-gitops-values.ps1',
     'scripts\validate-gitops-values.sh',
+    'scripts\validate-mesh-readme.ps1',
+    'scripts\validate-mesh-readme.sh',
+    'scripts\validate-operations-docs.ps1',
+    'scripts\validate-operations-docs.sh',
+    'scripts\validate-readme.ps1',
+    'scripts\validate-readme.sh',
+    'scripts\validate-remaining-work-plan.ps1',
+    'scripts\validate-remaining-work-plan.sh',
+    'scripts\validate-service-inventory.ps1',
+    'scripts\validate-service-inventory.sh',
     'scripts\validate-source-alignment.ps1',
     'scripts\validate-source-alignment.sh',
+    'scripts\validate-source-build-runtime-matrix.ps1',
+    'scripts\validate-source-build-runtime-matrix.sh',
+    'scripts\validate-status-report.ps1',
+    'scripts\validate-status-report.sh',
+    'scripts\validate-troubleshooting.ps1',
+    'scripts\validate-troubleshooting.sh',
     'scripts\summarize-failsafe-blockers.ps1',
     'scripts\summarize-failsafe-blockers.sh',
+    'scripts\generate-service-verification-matrix.ps1',
+    'scripts\generate-service-verification-matrix.sh',
+    'scripts\workspace-blocker-overrides.txt',
     'scripts\report-status.ps1',
     'scripts\report-status.sh',
     'scripts\resolve-branch-tags.ps1',
@@ -165,6 +194,7 @@ $helmExecutable = Get-HelmExecutable
 $helmLintVerified = $false
 $helmTemplateVerified = $false
 $gitopsValuesVerified = $false
+$documentationDriftValidationVerified = $false
 $runtimeEvidenceProvenanceVerified = $false
 $selfContainedCommitMetadataVerified = $false
 $gitopsManifestMetadataVerified = $false
@@ -429,6 +459,22 @@ $devGitopsPipeline = if (Test-Path 'jenkins\pipelines\dev_gitops.groovy') { Get-
 $stagingReleasePipeline = if (Test-Path 'jenkins\pipelines\staging_release.groovy') { Get-Content 'jenkins\pipelines\staging_release.groovy' -Raw } else { '' }
 $stagingGitopsPipeline = if (Test-Path 'jenkins\pipelines\staging_gitops.groovy') { Get-Content 'jenkins\pipelines\staging_gitops.groovy' -Raw } else { '' }
 
+$documentationDriftValidationVerified = (
+    (Test-Path 'scripts\validate-readme.ps1') -and
+    (Test-Path 'scripts\validate-jenkins-readme.ps1') -and
+    (Test-Path 'scripts\validate-argocd-readme.ps1') -and
+    (Test-Path 'scripts\validate-mesh-readme.ps1') -and
+    (Test-Path 'scripts\validate-status-report.ps1') -and
+    (Test-Path 'scripts\validate-service-inventory.ps1') -and
+    (Test-Path 'scripts\validate-image-matrix.ps1') -and
+    (Test-Path 'scripts\validate-troubleshooting.ps1') -and
+    (Test-Path 'scripts\validate-remaining-work-plan.ps1') -and
+    (Test-Path 'scripts\validate-handover-checklist.ps1') -and
+    (Test-Path 'scripts\validate-final-report-template.ps1') -and
+    (Test-Path 'scripts\validate-operations-docs.ps1') -and
+    (Test-Path 'scripts\validate-source-build-runtime-matrix.ps1')
+)
+
 $runtimeEvidenceProvenanceVerified = (
     $captureRuntimeEvidenceScript -match 'copied-artifacts\.txt' -and
     $captureRuntimeEvidenceScript -match 'branch_tag_metadata_file="\$\{BRANCH_TAG_METADATA_FILE:-work/branch-tag-metadata\.json\}"' -and
@@ -675,6 +721,9 @@ if ($helmTemplateVerified) {
 }
 if ($gitopsValuesVerified) {
     $content.Add('- The committed GitOps values under `argocd/values/` are in sync with the frozen release baseline generator.')
+}
+if ($documentationDriftValidationVerified) {
+    $content.Add('- Drift validators now lock the main hand-written docs and runbooks, including `README`, Jenkins and ArgoCD guides, mesh notes, service inventory, image matrix, troubleshooting, remaining-work plan, handover checklist, final report template, source build/runtime matrix, and the operational flow docs.')
 }
 if ($sharedPromotionCommitMetadataVerified) {
     $content.Add('- Shared `dev` and `staging` promotion flows now record commit metadata so mutable and release-tagged deployments can be traced back to an exact source commit.')

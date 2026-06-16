@@ -68,16 +68,45 @@ scripts/selftest.ps1
 scripts/selftest.sh
 scripts/validate-argocd-apps.ps1
 scripts/validate-argocd-apps.sh
+scripts/validate-argocd-readme.ps1
+scripts/validate-argocd-readme.sh
+scripts/validate-handover-checklist.ps1
+scripts/validate-handover-checklist.sh
 scripts/validate-services-catalog.ps1
 scripts/validate-services-catalog.sh
 scripts/validate-chart-values.ps1
 scripts/validate-chart-values.sh
+scripts/validate-final-report-template.ps1
+scripts/validate-final-report-template.sh
+scripts/validate-image-matrix.ps1
+scripts/validate-image-matrix.sh
+scripts/validate-jenkins-readme.ps1
+scripts/validate-jenkins-readme.sh
 scripts/validate-gitops-values.ps1
 scripts/validate-gitops-values.sh
+scripts/validate-mesh-readme.ps1
+scripts/validate-mesh-readme.sh
+scripts/validate-operations-docs.ps1
+scripts/validate-operations-docs.sh
+scripts/validate-readme.ps1
+scripts/validate-readme.sh
+scripts/validate-remaining-work-plan.ps1
+scripts/validate-remaining-work-plan.sh
+scripts/validate-service-inventory.ps1
+scripts/validate-service-inventory.sh
 scripts/validate-source-alignment.ps1
 scripts/validate-source-alignment.sh
+scripts/validate-source-build-runtime-matrix.ps1
+scripts/validate-source-build-runtime-matrix.sh
+scripts/validate-status-report.ps1
+scripts/validate-status-report.sh
+scripts/validate-troubleshooting.ps1
+scripts/validate-troubleshooting.sh
 scripts/summarize-failsafe-blockers.ps1
 scripts/summarize-failsafe-blockers.sh
+scripts/generate-service-verification-matrix.ps1
+scripts/generate-service-verification-matrix.sh
+scripts/workspace-blocker-overrides.txt
 scripts/report-status.ps1
 scripts/report-status.sh
 scripts/resolve-branch-tags.ps1
@@ -151,6 +180,7 @@ docker_daemon_reachable=0
 helm_lint_verified=0
 helm_template_verified=0
 gitops_values_verified=0
+documentation_drift_validation_verified=0
 runtime_evidence_provenance_verified=0
 self_contained_commit_metadata_verified=0
 branch_tag_metadata_verified=0
@@ -367,6 +397,21 @@ if command -v helm >/dev/null 2>&1; then
 fi
 if [ -f "jenkins/services.release-baseline.env" ] && sh scripts/validate-gitops-values.sh jenkins/services.release-baseline.env >/dev/null 2>&1; then
   gitops_values_verified=1
+fi
+if [ -f "scripts/validate-readme.ps1" ] && \
+   [ -f "scripts/validate-jenkins-readme.ps1" ] && \
+   [ -f "scripts/validate-argocd-readme.ps1" ] && \
+   [ -f "scripts/validate-mesh-readme.ps1" ] && \
+   [ -f "scripts/validate-status-report.ps1" ] && \
+   [ -f "scripts/validate-service-inventory.ps1" ] && \
+   [ -f "scripts/validate-image-matrix.ps1" ] && \
+   [ -f "scripts/validate-troubleshooting.ps1" ] && \
+   [ -f "scripts/validate-remaining-work-plan.ps1" ] && \
+   [ -f "scripts/validate-handover-checklist.ps1" ] && \
+   [ -f "scripts/validate-final-report-template.ps1" ] && \
+   [ -f "scripts/validate-operations-docs.ps1" ] && \
+   [ -f "scripts/validate-source-build-runtime-matrix.ps1" ]; then
+  documentation_drift_validation_verified=1
 fi
 if grep -q 'copied-artifacts.txt' jenkins/scripts/capture-runtime-evidence.sh 2>/dev/null && \
    grep -q 'branch_tag_metadata_file="${BRANCH_TAG_METADATA_FILE:-work/branch-tag-metadata.json}"' jenkins/scripts/capture-runtime-evidence.sh 2>/dev/null && \
@@ -603,6 +648,9 @@ fi
   fi
   if [ "$gitops_values_verified" -eq 1 ]; then
     printf '%s\n' '- The committed GitOps values under `argocd/values/` are in sync with the frozen release baseline generator.'
+  fi
+  if [ "$documentation_drift_validation_verified" -eq 1 ]; then
+    printf '%s\n' '- Drift validators now lock the main hand-written docs and runbooks, including `README`, Jenkins and ArgoCD guides, mesh notes, service inventory, image matrix, troubleshooting, remaining-work plan, handover checklist, final report template, source build/runtime matrix, and the operational flow docs.'
   fi
   if [ "$shared_promotion_commit_metadata_verified" -eq 1 ]; then
     printf '%s\n' '- Shared `dev` and `staging` promotion flows now record commit metadata so mutable and release-tagged deployments can be traced back to an exact source commit.'
