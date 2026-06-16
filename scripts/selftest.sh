@@ -85,6 +85,7 @@ sh scripts/validate-services-catalog.sh >/dev/null
 sh scripts/validate-services-catalog.sh jenkins/services.release-baseline.env jenkins/services.env >/dev/null
 sh scripts/validate-argocd-apps.sh >/dev/null
 sh scripts/validate-chart-values.sh >/dev/null
+sh scripts/validate-jenkins-readme.sh >/dev/null
 sh scripts/validate-image-matrix.sh >/dev/null
 sh scripts/validate-readme.sh >/dev/null
 sh scripts/validate-service-inventory.sh >/dev/null
@@ -140,6 +141,7 @@ grep -q '^media|keycloak|' "$failsafe_blockers_file"
 grep -q '^rating|keycloak|' "$failsafe_blockers_file"
 grep -E -q '\| product \| backend \| yes \(`jar`\) \| (yes|no) \| none \| full build verified( \+ image verified)? \|' "$service_verification_matrix_file"
 grep -E -q '\| search \| backend \| yes \(`jar`\) \| (yes|no) \| elasticsearch: ProductCdcConsumerTest \| (package\+image verified|build artifact verified), full test path blocked \|' "$service_verification_matrix_file"
+grep -q 'work/runtime-evidence/<namespace>/<release>/' jenkins/README.md
 grep -q 'work/service-verification.generated.md' docs/image-matrix.md
 grep -q 'work/service-verification.generated.md' README.md
 grep -q 'work/service-verification.generated.md' docs/service-inventory.md

@@ -31,6 +31,8 @@ On Windows, `preflight.ps1`, `selftest.ps1`, and `report-status.ps1` can also pi
 - `validate-services-catalog.sh`
 - `validate-chart-values.ps1`
 - `validate-chart-values.sh`
+- `validate-jenkins-readme.ps1`
+- `validate-jenkins-readme.sh`
 - `validate-image-matrix.ps1`
 - `validate-image-matrix.sh`
 - `validate-readme.ps1`
@@ -81,6 +83,7 @@ powershell -ExecutionPolicy Bypass -File scripts\validate-argocd-apps.ps1
 powershell -ExecutionPolicy Bypass -File scripts\validate-services-catalog.ps1
 powershell -ExecutionPolicy Bypass -File scripts\validate-services-catalog.ps1 -ServicesFile jenkins\services.release-baseline.env -ReferenceServicesFile jenkins\services.env
 powershell -ExecutionPolicy Bypass -File scripts\validate-chart-values.ps1
+powershell -ExecutionPolicy Bypass -File scripts\validate-jenkins-readme.ps1
 powershell -ExecutionPolicy Bypass -File scripts\validate-image-matrix.ps1
 powershell -ExecutionPolicy Bypass -File scripts\validate-readme.ps1
 powershell -ExecutionPolicy Bypass -File scripts\validate-service-inventory.ps1
@@ -113,6 +116,7 @@ sh scripts/validate-argocd-apps.sh
 sh scripts/validate-services-catalog.sh
 sh scripts/validate-services-catalog.sh jenkins/services.release-baseline.env jenkins/services.env
 sh scripts/validate-chart-values.sh
+sh scripts/validate-jenkins-readme.sh
 sh scripts/validate-image-matrix.sh
 sh scripts/validate-readme.sh
 sh scripts/validate-service-inventory.sh

@@ -62,6 +62,8 @@ scripts/validate-services-catalog.ps1
 scripts/validate-services-catalog.sh
 scripts/validate-chart-values.ps1
 scripts/validate-chart-values.sh
+scripts/validate-jenkins-readme.ps1
+scripts/validate-jenkins-readme.sh
 scripts/validate-image-matrix.ps1
 scripts/validate-image-matrix.sh
 scripts/validate-readme.ps1
@@ -169,6 +171,7 @@ validate-services-catalog/full|sh scripts/validate-services-catalog.sh
 validate-services-catalog/release-baseline|sh scripts/validate-services-catalog.sh jenkins/services.release-baseline.env jenkins/services.env
 validate-argocd-apps|sh scripts/validate-argocd-apps.sh
 validate-chart-values|sh scripts/validate-chart-values.sh
+validate-jenkins-readme|sh scripts/validate-jenkins-readme.sh
 validate-image-matrix|sh scripts/validate-image-matrix.sh
 validate-readme|sh scripts/validate-readme.sh
 validate-service-inventory|sh scripts/validate-service-inventory.sh

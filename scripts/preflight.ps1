@@ -103,6 +103,8 @@ $requiredFiles = @(
     'scripts\validate-argocd-apps.sh',
     'scripts\validate-chart-values.ps1',
     'scripts\validate-chart-values.sh',
+    'scripts\validate-jenkins-readme.ps1',
+    'scripts\validate-jenkins-readme.sh',
     'scripts\validate-image-matrix.ps1',
     'scripts\validate-image-matrix.sh',
     'scripts\validate-readme.ps1',
@@ -166,6 +168,11 @@ $validatorDefinitions = @(
     @{
         name = 'validate-chart-values'
         script = 'scripts\validate-chart-values.ps1'
+        arguments = @()
+    },
+    @{
+        name = 'validate-jenkins-readme'
+        script = 'scripts\validate-jenkins-readme.ps1'
         arguments = @()
     },
     @{
