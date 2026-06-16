@@ -30,6 +30,10 @@ if (-not $matrixText.Contains('work/service-verification.generated.md')) {
     throw 'docs/image-matrix.md should reference the generated service verification matrix.'
 }
 
+if (-not $matrixText.Contains('work/host-capabilities.generated.md')) {
+    throw 'docs/image-matrix.md should reference the generated host capabilities snapshot.'
+}
+
 if (-not $matrixText.Contains('scripts\refresh-evidence.ps1 -SkipCommandChecks')) {
     throw 'docs/image-matrix.md should point to scripts\refresh-evidence.ps1 -SkipCommandChecks as the evidence refresh entrypoint.'
 }

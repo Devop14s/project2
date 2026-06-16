@@ -5,6 +5,7 @@ This inventory was updated from the local clone [yas-source](</D:/App/project2/y
 The frozen first deployable subset is tracked in [jenkins/services.release-baseline.env](</D:/App/project2/jenkins/services.release-baseline.env>), while [jenkins/services.env](</D:/App/project2/jenkins/services.env>) remains the full source-verified catalog.
 
 The current service-by-service verification snapshot is generated in [service-verification.generated.md](</D:/App/project2/work/service-verification.generated.md>) and is refreshed together with [status-report.generated.md](</D:/App/project2/work/status-report.generated.md>) when running `powershell -ExecutionPolicy Bypass -File scripts\refresh-evidence.ps1 -SkipCommandChecks`.
+Use [host-capabilities.generated.md](</D:/App/project2/work/host-capabilities.generated.md>) with that snapshot when deciding whether a missing verification result is a repo gap or only a host/runtime gap.
 
 | Service | Runtime type | Path in repo | Dockerfile path | Container port | Expose outside cluster | NodePort | Workload type | Recommended first release | Notes |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |

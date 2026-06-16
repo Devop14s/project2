@@ -21,6 +21,7 @@ for required_topic in \
   'Keycloak' \
   'Elasticsearch' \
   'work/service-verification.generated.md' \
+  'work/host-capabilities.generated.md' \
   'scripts\refresh-evidence.ps1 -SkipCommandChecks'
 do
   printf '%s' "$troubleshooting_text" | grep -F -q "$required_topic" || {

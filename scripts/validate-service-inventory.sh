@@ -58,6 +58,7 @@ for required_reference in \
   'jenkins/services.release-baseline.env' \
   'jenkins/services.env' \
   'work/service-verification.generated.md' \
+  'work/host-capabilities.generated.md' \
   'scripts\refresh-evidence.ps1 -SkipCommandChecks'
 do
   printf '%s' "$inventory_text" | grep -F -q "$required_reference" || {

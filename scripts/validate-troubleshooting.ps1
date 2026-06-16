@@ -25,6 +25,7 @@ foreach ($requiredToken in @(
     'Keycloak',
     'Elasticsearch',
     'work/service-verification.generated.md',
+    'work/host-capabilities.generated.md',
     'scripts\refresh-evidence.ps1 -SkipCommandChecks'
 )) {
     if (-not $troubleshootingText.Contains($requiredToken)) {

@@ -26,6 +26,11 @@ printf '%s' "$matrix_text" | grep -F -q 'work/service-verification.generated.md'
   exit 1
 }
 
+printf '%s' "$matrix_text" | grep -F -q 'work/host-capabilities.generated.md' || {
+  printf 'docs/image-matrix.md should reference the generated host capabilities snapshot.\n' >&2
+  exit 1
+}
+
 printf '%s' "$matrix_text" | grep -F -q 'scripts\refresh-evidence.ps1 -SkipCommandChecks' || {
   printf 'docs/image-matrix.md should point to scripts\\refresh-evidence.ps1 -SkipCommandChecks as the evidence refresh entrypoint.\n' >&2
   exit 1

@@ -1,6 +1,7 @@
 # Troubleshooting
 
 The current generated service snapshot is available at [service-verification.generated.md](</D:/App/project2/work/service-verification.generated.md>) and is refreshed together with [status-report.generated.md](</D:/App/project2/work/status-report.generated.md>) when running `powershell -ExecutionPolicy Bypass -File scripts\refresh-evidence.ps1 -SkipCommandChecks`.
+The companion host/runtime snapshot is available at [host-capabilities.generated.md](</D:/App/project2/work/host-capabilities.generated.md>) and should be checked first when a failure may come from missing tools, missing `sh`, missing Maven on `PATH`, or Docker daemon reachability rather than from repo logic.
 
 ## Common failures
 
@@ -13,6 +14,7 @@ The current generated service snapshot is available at [service-verification.gen
 
 - Confirm Jenkins credentials are correct.
 - Re-run `jenkins/scripts/docker-login.sh` locally inside the Jenkins agent image if needed.
+- Confirm the environment that failed actually had the expected Docker CLI and daemon access; compare it against `work/host-capabilities.generated.md` from the machine where local evidence was collected.
 
 ### `storefront` Docker build takes too long or times out
 
@@ -24,6 +26,7 @@ The current generated service snapshot is available at [service-verification.gen
 
 - Run `helm template` first.
 - Confirm `work/generated-values.yaml` exists and contains valid YAML.
+- If Helm is reported missing globally, check whether the portable binary under `work/tools/` should have been used instead, as captured in `work/host-capabilities.generated.md`.
 
 ### Pods do not become ready
 
@@ -51,6 +54,7 @@ The current generated service snapshot is available at [service-verification.gen
 
 - The concrete failure seen on this host is Keycloak Testcontainers startup timing out on `/health/started`.
 - Check Docker Desktop resource limits, container startup logs, and whether the Keycloak image is already cached.
+- If the host that is rerunning the tests differs from the original local verification host, capture a fresh `work/host-capabilities.generated.md` first so Docker/CLI/runtime differences are explicit.
 - If the immediate goal is delivery-repo coverage rather than integration-test repair, keep the package-and-image evidence and document the full-test blocker explicitly.
 
 ### `search` full upstream-style build fails in `ProductCdcConsumerTest`

@@ -66,6 +66,7 @@ foreach ($requiredReference in @(
     'jenkins/services.release-baseline.env',
     'jenkins/services.env',
     'work/service-verification.generated.md',
+    'work/host-capabilities.generated.md',
     'scripts\refresh-evidence.ps1 -SkipCommandChecks'
 )) {
     if ($inventoryText -notmatch [regex]::Escape($requiredReference)) {

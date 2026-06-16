@@ -3,6 +3,7 @@
 This matrix keeps the intended naming convention and also records the current local verification status of each image path.
 
 The machine-generated per-service snapshot is available at [service-verification.generated.md](</D:/App/project2/work/service-verification.generated.md>) and is refreshed together with [status-report.generated.md](</D:/App/project2/work/status-report.generated.md>) when running `powershell -ExecutionPolicy Bypass -File scripts\refresh-evidence.ps1 -SkipCommandChecks`.
+Use [host-capabilities.generated.md](</D:/App/project2/work/host-capabilities.generated.md>) alongside this matrix when a local image verification status may be limited by Docker daemon access or missing host tools rather than by repo logic.
 
 | Service | Docker repository | Default tag | Branch tag rule | Release tag rule | Local image verification |
 | --- | --- | --- | --- | --- | --- |
@@ -34,3 +35,4 @@ The machine-generated per-service snapshot is available at [service-verification
 - Staging releases use version tags such as `v1.2.3`.
 - The scaffold uses Docker Hub naming, but the upstream repo currently pushes to `ghcr.io/nashtech-garage/`; swap the registry host as needed.
 - A `verified` status here means a local `docker build` completed successfully in this workspace. It does not yet mean the image was pushed to a real registry.
+- If `docker` is installed but the daemon is unreachable in the current execution context, `work/host-capabilities.generated.md` is the authoritative local explanation for missing or incomplete image-verification lines.
