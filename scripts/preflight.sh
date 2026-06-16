@@ -62,6 +62,8 @@ scripts/validate-services-catalog.ps1
 scripts/validate-services-catalog.sh
 scripts/validate-chart-values.ps1
 scripts/validate-chart-values.sh
+scripts/validate-image-matrix.ps1
+scripts/validate-image-matrix.sh
 scripts/validate-gitops-values.ps1
 scripts/validate-gitops-values.sh
 scripts/validate-source-alignment.ps1
@@ -159,6 +161,7 @@ validate-services-catalog/full|sh scripts/validate-services-catalog.sh
 validate-services-catalog/release-baseline|sh scripts/validate-services-catalog.sh jenkins/services.release-baseline.env jenkins/services.env
 validate-argocd-apps|sh scripts/validate-argocd-apps.sh
 validate-chart-values|sh scripts/validate-chart-values.sh
+validate-image-matrix|sh scripts/validate-image-matrix.sh
 validate-gitops-values|sh scripts/validate-gitops-values.sh
 validate-source-alignment|sh scripts/validate-source-alignment.sh
 validate-source-build-runtime-matrix|sh scripts/validate-source-build-runtime-matrix.sh

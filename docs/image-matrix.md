@@ -2,6 +2,8 @@
 
 This matrix keeps the intended naming convention and also records the current local verification status of each image path.
 
+The machine-generated per-service snapshot is available at [service-verification.generated.md](</D:/App/project2/work/service-verification.generated.md>) after running `powershell -ExecutionPolicy Bypass -File scripts\generate-service-verification-matrix.ps1`.
+
 | Service | Docker repository | Default tag | Branch tag rule | Release tag rule | Local image verification |
 | --- | --- | --- | --- | --- | --- |
 | storefront | `docker.io/<namespace>/yas-storefront` | `main` | latest commit SHA of selected branch | semantic version tag | local `docker build` now passes and produces `yas-storefront:codex-verified` |

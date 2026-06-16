@@ -103,6 +103,8 @@ $requiredFiles = @(
     'scripts\validate-argocd-apps.sh',
     'scripts\validate-chart-values.ps1',
     'scripts\validate-chart-values.sh',
+    'scripts\validate-image-matrix.ps1',
+    'scripts\validate-image-matrix.sh',
     'scripts\validate-gitops-values.ps1',
     'scripts\validate-gitops-values.sh',
     'scripts\validate-source-alignment.ps1',
@@ -156,6 +158,11 @@ $validatorDefinitions = @(
     @{
         name = 'validate-chart-values'
         script = 'scripts\validate-chart-values.ps1'
+        arguments = @()
+    },
+    @{
+        name = 'validate-image-matrix'
+        script = 'scripts\validate-image-matrix.ps1'
         arguments = @()
     },
     @{

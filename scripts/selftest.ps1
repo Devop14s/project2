@@ -57,6 +57,7 @@ try {
         -ReferenceServicesFile 'jenkins\services.env' | Out-Null
     powershell -ExecutionPolicy Bypass -File scripts\validate-argocd-apps.ps1 | Out-Null
     powershell -ExecutionPolicy Bypass -File scripts\validate-chart-values.ps1 | Out-Null
+    powershell -ExecutionPolicy Bypass -File scripts\validate-image-matrix.ps1 | Out-Null
     powershell -ExecutionPolicy Bypass -File scripts\validate-gitops-values.ps1 | Out-Null
     powershell -ExecutionPolicy Bypass -File scripts\validate-source-alignment.ps1 | Out-Null
     powershell -ExecutionPolicy Bypass -File scripts\validate-source-build-runtime-matrix.ps1 | Out-Null
@@ -161,6 +162,11 @@ try {
 
     if ($serviceVerificationMatrix -notmatch '\| search \| backend \| yes \(`jar`\) \| (yes|no) \| elasticsearch: ProductCdcConsumerTest \| (package\+image verified|build artifact verified), full test path blocked \|') {
         throw 'generate-service-verification-matrix.ps1 should report the search Elasticsearch blocker.'
+    }
+
+    $imageMatrix = Get-Content 'docs\image-matrix.md' -Raw
+    if ($imageMatrix -notmatch 'work/service-verification.generated.md') {
+        throw 'docs/image-matrix.md should reference the generated service verification matrix.'
     }
 
     if ($branchTagMetadata -notmatch '"branch":\s*"main"') {
