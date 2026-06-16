@@ -35,6 +35,8 @@ On Windows, `preflight.ps1`, `selftest.ps1`, and `report-status.ps1` can also pi
 - `validate-gitops-values.sh`
 - `validate-source-alignment.ps1`
 - `validate-source-alignment.sh`
+- `validate-source-build-runtime-matrix.ps1`
+- `validate-source-build-runtime-matrix.sh`
 - `validate-status-report.ps1`
 - `validate-status-report.sh`
 - `summarize-failsafe-blockers.ps1`
@@ -71,6 +73,7 @@ powershell -ExecutionPolicy Bypass -File scripts\validate-services-catalog.ps1 -
 powershell -ExecutionPolicy Bypass -File scripts\validate-chart-values.ps1
 powershell -ExecutionPolicy Bypass -File scripts\validate-gitops-values.ps1
 powershell -ExecutionPolicy Bypass -File scripts\validate-source-alignment.ps1
+powershell -ExecutionPolicy Bypass -File scripts\validate-source-build-runtime-matrix.ps1
 powershell -ExecutionPolicy Bypass -File scripts\validate-status-report.ps1
 powershell -ExecutionPolicy Bypass -File scripts\summarize-failsafe-blockers.ps1
 powershell -ExecutionPolicy Bypass -File scripts\generate-service-verification-matrix.ps1
@@ -97,6 +100,7 @@ sh scripts/validate-services-catalog.sh jenkins/services.release-baseline.env je
 sh scripts/validate-chart-values.sh
 sh scripts/validate-gitops-values.sh
 sh scripts/validate-source-alignment.sh
+sh scripts/validate-source-build-runtime-matrix.sh
 sh scripts/validate-status-report.sh
 sh scripts/summarize-failsafe-blockers.sh
 sh scripts/generate-service-verification-matrix.sh

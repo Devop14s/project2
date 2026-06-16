@@ -66,6 +66,8 @@ scripts/validate-gitops-values.ps1
 scripts/validate-gitops-values.sh
 scripts/validate-source-alignment.ps1
 scripts/validate-source-alignment.sh
+scripts/validate-source-build-runtime-matrix.ps1
+scripts/validate-source-build-runtime-matrix.sh
 scripts/validate-status-report.ps1
 scripts/validate-status-report.sh
 scripts/summarize-failsafe-blockers.ps1
@@ -159,6 +161,7 @@ validate-argocd-apps|sh scripts/validate-argocd-apps.sh
 validate-chart-values|sh scripts/validate-chart-values.sh
 validate-gitops-values|sh scripts/validate-gitops-values.sh
 validate-source-alignment|sh scripts/validate-source-alignment.sh
+validate-source-build-runtime-matrix|sh scripts/validate-source-build-runtime-matrix.sh
 validate-status-report|sh scripts/validate-status-report.sh
 EOF
 
