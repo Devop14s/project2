@@ -33,6 +33,8 @@ On Windows, `preflight.ps1`, `selftest.ps1`, and `report-status.ps1` can also pi
 - `validate-chart-values.sh`
 - `validate-image-matrix.ps1`
 - `validate-image-matrix.sh`
+- `validate-remaining-work-plan.ps1`
+- `validate-remaining-work-plan.sh`
 - `validate-gitops-values.ps1`
 - `validate-gitops-values.sh`
 - `validate-source-alignment.ps1`
@@ -74,6 +76,7 @@ powershell -ExecutionPolicy Bypass -File scripts\validate-services-catalog.ps1
 powershell -ExecutionPolicy Bypass -File scripts\validate-services-catalog.ps1 -ServicesFile jenkins\services.release-baseline.env -ReferenceServicesFile jenkins\services.env
 powershell -ExecutionPolicy Bypass -File scripts\validate-chart-values.ps1
 powershell -ExecutionPolicy Bypass -File scripts\validate-image-matrix.ps1
+powershell -ExecutionPolicy Bypass -File scripts\validate-remaining-work-plan.ps1
 powershell -ExecutionPolicy Bypass -File scripts\validate-gitops-values.ps1
 powershell -ExecutionPolicy Bypass -File scripts\validate-source-alignment.ps1
 powershell -ExecutionPolicy Bypass -File scripts\validate-source-build-runtime-matrix.ps1
@@ -102,6 +105,7 @@ sh scripts/validate-services-catalog.sh
 sh scripts/validate-services-catalog.sh jenkins/services.release-baseline.env jenkins/services.env
 sh scripts/validate-chart-values.sh
 sh scripts/validate-image-matrix.sh
+sh scripts/validate-remaining-work-plan.sh
 sh scripts/validate-gitops-values.sh
 sh scripts/validate-source-alignment.sh
 sh scripts/validate-source-build-runtime-matrix.sh

@@ -1,6 +1,6 @@
 # Remaining Work Plan
 
-Last updated: June 9, 2026
+Last updated: June 16, 2026
 
 ## Goal
 
@@ -14,11 +14,14 @@ Move this repository from a source-verified delivery scaffold to a working YAS d
   - UI: `storefront`, `backoffice`
   - BFF: `storefront-bff`, `backoffice-bff`
   - backend: `product`, `payment`, `payment-paypal`, `recommendation`, `inventory`, `order`
-- Local package-only evidence exists for:
-  - `sampledata`
-  - `search`
+- Local build-artifact evidence also exists for:
+  - `cart`, `customer`, `location`, `media`, `promotion`, `rating`, `tax`, `webhook`
+  - `sampledata`, `search`
 - Local image build evidence already exists for:
-  - `storefront`, `backoffice`, `storefront-bff`, `backoffice-bff`, `product`, `payment`, `payment-paypal`, `recommendation`, `inventory`, `order`, `sampledata`, `search`
+  - `storefront`, `backoffice`, `storefront-bff`, `backoffice-bff`, `product`, `payment`, `payment-paypal`, `recommendation`, `inventory`, `order`
+  - `cart`, `customer`, `location`, `media`, `promotion`, `rating`, `tax`, `webhook`
+  - `sampledata`, `search`
+- The current per-service verification snapshot is generated in [service-verification.generated.md](</D:/App/project2/work/service-verification.generated.md>), and the high-level summary lives in [status-report.md](</D:/App/project2/docs/status-report.md>).
 
 ## Recommended first deployment subset
 
@@ -147,6 +150,11 @@ Current status: the recommended subset is now frozen in [jenkins/services.releas
 
 ## Phase 5: Close the known blockers
 
+Current workspace blocker set:
+- `sampledata`: `common-library` test compilation blocks the full reactor path.
+- `search`: Elasticsearch Testcontainers does not become ready for `ProductCdcConsumerTest`.
+- `cart`, `customer`, `location`, `media`, `promotion`, `rating`, `tax`, `webhook`: Keycloak Testcontainers does not become healthy on `/health/started`.
+
 ### `sampledata` full test path
 
 1. Capture the exact `common-library` test compilation failure from the workspace.
@@ -156,6 +164,13 @@ Current status: the recommended subset is now frozen in [jenkins/services.releas
 
 1. Reproduce `ProductCdcConsumerTest` with full logs.
 2. Decide whether to fix local Elasticsearch/Testcontainers readiness or exclude `search` from the first release.
+
+### Keycloak-blocked integration paths
+
+1. Reproduce one representative failing service, preferably `customer` or `promotion`, with full logs and container lifecycle output.
+2. Determine whether the host issue is image startup time, port availability, container resource pressure, or Docker networking.
+3. Decide whether the assignment requires fixing the Keycloak startup path locally or accepting package-and-image verification for these services in the report.
+4. If the blocker is fixed once, rerun the remaining Keycloak-blocked services to separate code issues from shared runtime issues.
 
 ### Exit criteria
 

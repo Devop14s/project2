@@ -64,6 +64,8 @@ scripts/validate-chart-values.ps1
 scripts/validate-chart-values.sh
 scripts/validate-image-matrix.ps1
 scripts/validate-image-matrix.sh
+scripts/validate-remaining-work-plan.ps1
+scripts/validate-remaining-work-plan.sh
 scripts/validate-gitops-values.ps1
 scripts/validate-gitops-values.sh
 scripts/validate-source-alignment.ps1
@@ -162,6 +164,7 @@ validate-services-catalog/release-baseline|sh scripts/validate-services-catalog.
 validate-argocd-apps|sh scripts/validate-argocd-apps.sh
 validate-chart-values|sh scripts/validate-chart-values.sh
 validate-image-matrix|sh scripts/validate-image-matrix.sh
+validate-remaining-work-plan|sh scripts/validate-remaining-work-plan.sh
 validate-gitops-values|sh scripts/validate-gitops-values.sh
 validate-source-alignment|sh scripts/validate-source-alignment.sh
 validate-source-build-runtime-matrix|sh scripts/validate-source-build-runtime-matrix.sh

@@ -58,6 +58,7 @@ try {
     powershell -ExecutionPolicy Bypass -File scripts\validate-argocd-apps.ps1 | Out-Null
     powershell -ExecutionPolicy Bypass -File scripts\validate-chart-values.ps1 | Out-Null
     powershell -ExecutionPolicy Bypass -File scripts\validate-image-matrix.ps1 | Out-Null
+    powershell -ExecutionPolicy Bypass -File scripts\validate-remaining-work-plan.ps1 | Out-Null
     powershell -ExecutionPolicy Bypass -File scripts\validate-gitops-values.ps1 | Out-Null
     powershell -ExecutionPolicy Bypass -File scripts\validate-source-alignment.ps1 | Out-Null
     powershell -ExecutionPolicy Bypass -File scripts\validate-source-build-runtime-matrix.ps1 | Out-Null
@@ -167,6 +168,11 @@ try {
     $imageMatrix = Get-Content 'docs\image-matrix.md' -Raw
     if ($imageMatrix -notmatch 'work/service-verification.generated.md') {
         throw 'docs/image-matrix.md should reference the generated service verification matrix.'
+    }
+
+    $remainingWorkPlan = Get-Content 'docs\remaining-work-plan.md' -Raw
+    if ($remainingWorkPlan -notmatch 'work/service-verification.generated.md') {
+        throw 'docs/remaining-work-plan.md should reference the generated service verification matrix.'
     }
 
     if ($branchTagMetadata -notmatch '"branch":\s*"main"') {
