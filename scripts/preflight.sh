@@ -66,10 +66,14 @@ scripts/validate-services-catalog.ps1
 scripts/validate-services-catalog.sh
 scripts/validate-chart-values.ps1
 scripts/validate-chart-values.sh
+scripts/validate-final-report-template.ps1
+scripts/validate-final-report-template.sh
 scripts/validate-jenkins-readme.ps1
 scripts/validate-jenkins-readme.sh
 scripts/validate-image-matrix.ps1
 scripts/validate-image-matrix.sh
+scripts/validate-mesh-readme.ps1
+scripts/validate-mesh-readme.sh
 scripts/validate-readme.ps1
 scripts/validate-readme.sh
 scripts/validate-service-inventory.ps1
@@ -177,8 +181,10 @@ validate-argocd-readme|sh scripts/validate-argocd-readme.sh
 validate-argocd-apps|sh scripts/validate-argocd-apps.sh
 validate-handover-checklist|sh scripts/validate-handover-checklist.sh
 validate-chart-values|sh scripts/validate-chart-values.sh
+validate-final-report-template|sh scripts/validate-final-report-template.sh
 validate-jenkins-readme|sh scripts/validate-jenkins-readme.sh
 validate-image-matrix|sh scripts/validate-image-matrix.sh
+validate-mesh-readme|sh scripts/validate-mesh-readme.sh
 validate-readme|sh scripts/validate-readme.sh
 validate-service-inventory|sh scripts/validate-service-inventory.sh
 validate-troubleshooting|sh scripts/validate-troubleshooting.sh

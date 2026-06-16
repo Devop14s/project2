@@ -59,8 +59,10 @@ try {
     powershell -ExecutionPolicy Bypass -File scripts\validate-argocd-apps.ps1 | Out-Null
     powershell -ExecutionPolicy Bypass -File scripts\validate-handover-checklist.ps1 | Out-Null
     powershell -ExecutionPolicy Bypass -File scripts\validate-chart-values.ps1 | Out-Null
+    powershell -ExecutionPolicy Bypass -File scripts\validate-final-report-template.ps1 | Out-Null
     powershell -ExecutionPolicy Bypass -File scripts\validate-jenkins-readme.ps1 | Out-Null
     powershell -ExecutionPolicy Bypass -File scripts\validate-image-matrix.ps1 | Out-Null
+    powershell -ExecutionPolicy Bypass -File scripts\validate-mesh-readme.ps1 | Out-Null
     powershell -ExecutionPolicy Bypass -File scripts\validate-readme.ps1 | Out-Null
     powershell -ExecutionPolicy Bypass -File scripts\validate-service-inventory.ps1 | Out-Null
     powershell -ExecutionPolicy Bypass -File scripts\validate-troubleshooting.ps1 | Out-Null
@@ -194,6 +196,16 @@ try {
     $handoverChecklist = Get-Content 'docs\handover-checklist.md' -Raw
     if ($handoverChecklist -notmatch 'work/runtime-evidence/<namespace>/<release>/') {
         throw 'docs/handover-checklist.md should reference the runtime evidence directory contract.'
+    }
+
+    $meshReadme = Get-Content 'mesh\README.md' -Raw
+    if ($meshReadme -notmatch 'service-mesh-test-plan.md') {
+        throw 'mesh/README.md should reference the service mesh test plan.'
+    }
+
+    $finalReportTemplate = Get-Content 'docs\final-report-template.md' -Raw
+    if ($finalReportTemplate -notmatch 'work/runtime-evidence/<namespace>/<release>/copied-artifacts.txt') {
+        throw 'docs/final-report-template.md should reference the runtime evidence artifact bundle.'
     }
 
     $serviceInventory = Get-Content 'docs\service-inventory.md' -Raw

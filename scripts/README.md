@@ -35,10 +35,14 @@ On Windows, `preflight.ps1`, `selftest.ps1`, and `report-status.ps1` can also pi
 - `validate-services-catalog.sh`
 - `validate-chart-values.ps1`
 - `validate-chart-values.sh`
+- `validate-final-report-template.ps1`
+- `validate-final-report-template.sh`
 - `validate-jenkins-readme.ps1`
 - `validate-jenkins-readme.sh`
 - `validate-image-matrix.ps1`
 - `validate-image-matrix.sh`
+- `validate-mesh-readme.ps1`
+- `validate-mesh-readme.sh`
 - `validate-readme.ps1`
 - `validate-readme.sh`
 - `validate-service-inventory.ps1`
@@ -89,8 +93,10 @@ powershell -ExecutionPolicy Bypass -File scripts\validate-handover-checklist.ps1
 powershell -ExecutionPolicy Bypass -File scripts\validate-services-catalog.ps1
 powershell -ExecutionPolicy Bypass -File scripts\validate-services-catalog.ps1 -ServicesFile jenkins\services.release-baseline.env -ReferenceServicesFile jenkins\services.env
 powershell -ExecutionPolicy Bypass -File scripts\validate-chart-values.ps1
+powershell -ExecutionPolicy Bypass -File scripts\validate-final-report-template.ps1
 powershell -ExecutionPolicy Bypass -File scripts\validate-jenkins-readme.ps1
 powershell -ExecutionPolicy Bypass -File scripts\validate-image-matrix.ps1
+powershell -ExecutionPolicy Bypass -File scripts\validate-mesh-readme.ps1
 powershell -ExecutionPolicy Bypass -File scripts\validate-readme.ps1
 powershell -ExecutionPolicy Bypass -File scripts\validate-service-inventory.ps1
 powershell -ExecutionPolicy Bypass -File scripts\validate-troubleshooting.ps1
@@ -124,8 +130,10 @@ sh scripts/validate-handover-checklist.sh
 sh scripts/validate-services-catalog.sh
 sh scripts/validate-services-catalog.sh jenkins/services.release-baseline.env jenkins/services.env
 sh scripts/validate-chart-values.sh
+sh scripts/validate-final-report-template.sh
 sh scripts/validate-jenkins-readme.sh
 sh scripts/validate-image-matrix.sh
+sh scripts/validate-mesh-readme.sh
 sh scripts/validate-readme.sh
 sh scripts/validate-service-inventory.sh
 sh scripts/validate-troubleshooting.sh

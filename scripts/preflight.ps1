@@ -107,10 +107,14 @@ $requiredFiles = @(
     'scripts\validate-handover-checklist.sh',
     'scripts\validate-chart-values.ps1',
     'scripts\validate-chart-values.sh',
+    'scripts\validate-final-report-template.ps1',
+    'scripts\validate-final-report-template.sh',
     'scripts\validate-jenkins-readme.ps1',
     'scripts\validate-jenkins-readme.sh',
     'scripts\validate-image-matrix.ps1',
     'scripts\validate-image-matrix.sh',
+    'scripts\validate-mesh-readme.ps1',
+    'scripts\validate-mesh-readme.sh',
     'scripts\validate-readme.ps1',
     'scripts\validate-readme.sh',
     'scripts\validate-service-inventory.ps1',
@@ -185,6 +189,11 @@ $validatorDefinitions = @(
         arguments = @()
     },
     @{
+        name = 'validate-final-report-template'
+        script = 'scripts\validate-final-report-template.ps1'
+        arguments = @()
+    },
+    @{
         name = 'validate-jenkins-readme'
         script = 'scripts\validate-jenkins-readme.ps1'
         arguments = @()
@@ -192,6 +201,11 @@ $validatorDefinitions = @(
     @{
         name = 'validate-image-matrix'
         script = 'scripts\validate-image-matrix.ps1'
+        arguments = @()
+    },
+    @{
+        name = 'validate-mesh-readme'
+        script = 'scripts\validate-mesh-readme.ps1'
         arguments = @()
     },
     @{
