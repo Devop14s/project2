@@ -107,6 +107,8 @@ $requiredFiles = @(
     'scripts\validate-gitops-values.sh',
     'scripts\validate-source-alignment.ps1',
     'scripts\validate-source-alignment.sh',
+    'scripts\validate-status-report.ps1',
+    'scripts\validate-status-report.sh',
     'scripts\summarize-failsafe-blockers.ps1',
     'scripts\summarize-failsafe-blockers.sh',
     'scripts\generate-service-verification-matrix.ps1',
@@ -162,6 +164,11 @@ $validatorDefinitions = @(
     @{
         name = 'validate-source-alignment'
         script = 'scripts\validate-source-alignment.ps1'
+        arguments = @()
+    },
+    @{
+        name = 'validate-status-report'
+        script = 'scripts\validate-status-report.ps1'
         arguments = @()
     }
 )

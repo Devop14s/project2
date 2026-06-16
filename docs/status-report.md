@@ -1,6 +1,6 @@
 # Status Report
 
-Last updated: June 14, 2026
+Last updated: June 16, 2026
 
 ## Completed in this repository
 
@@ -89,6 +89,7 @@ Last updated: June 14, 2026
 ## Detailed remaining plan
 
 - The detailed execution plan for unfinished work is in [remaining-work-plan.md](</D:/App/project2/docs/remaining-work-plan.md>).
+- The machine-generated per-service snapshot is available at [service-verification.generated.md](</D:/App/project2/work/service-verification.generated.md>) after running `powershell -ExecutionPolicy Bypass -File scripts\generate-service-verification-matrix.ps1`.
 
 ## Inputs still required
 

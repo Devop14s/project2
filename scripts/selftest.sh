@@ -87,6 +87,7 @@ sh scripts/validate-argocd-apps.sh >/dev/null
 sh scripts/validate-chart-values.sh >/dev/null
 sh scripts/validate-gitops-values.sh >/dev/null
 sh scripts/validate-source-alignment.sh >/dev/null
+sh scripts/validate-status-report.sh >/dev/null
 sh scripts/summarize-failsafe-blockers.sh "$failsafe_blockers_file" >/dev/null
 powershell -ExecutionPolicy Bypass -File scripts/generate-service-verification-matrix.ps1 -OutputFile "$service_verification_matrix_file" >/dev/null
 OUTPUT_FILE="$branch_tags_file" BRANCH_TAG_METADATA_FILE="$branch_tag_metadata_file" sh scripts/resolve-branch-tags.sh >/dev/null
@@ -133,6 +134,7 @@ grep -q '^media|keycloak|' "$failsafe_blockers_file"
 grep -q '^rating|keycloak|' "$failsafe_blockers_file"
 grep -E -q '\| product \| backend \| yes \(`jar`\) \| (yes|no) \| none \| full build verified( \+ image verified)? \|' "$service_verification_matrix_file"
 grep -E -q '\| search \| backend \| yes \(`jar`\) \| (yes|no) \| elasticsearch: ProductCdcConsumerTest \| (package\+image verified|build artifact verified), full test path blocked \|' "$service_verification_matrix_file"
+grep -q 'work/service-verification.generated.md' docs/status-report.md
 if grep -q 'done < <(' scripts/resolve-branch-tags.sh; then
   printf 'resolve-branch-tags.sh should remain POSIX-safe and must not use process substitution.\n' >&2
   exit 1

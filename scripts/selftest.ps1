@@ -59,6 +59,7 @@ try {
     powershell -ExecutionPolicy Bypass -File scripts\validate-chart-values.ps1 | Out-Null
     powershell -ExecutionPolicy Bypass -File scripts\validate-gitops-values.ps1 | Out-Null
     powershell -ExecutionPolicy Bypass -File scripts\validate-source-alignment.ps1 | Out-Null
+    powershell -ExecutionPolicy Bypass -File scripts\validate-status-report.ps1 | Out-Null
     powershell -ExecutionPolicy Bypass -File scripts\summarize-failsafe-blockers.ps1 -OutputFile $failsafeBlockersFile | Out-Null
     powershell -ExecutionPolicy Bypass -File scripts\generate-service-verification-matrix.ps1 -OutputFile $serviceVerificationMatrixFile | Out-Null
     powershell -ExecutionPolicy Bypass -File scripts\resolve-branch-tags.ps1 -OutputFile $branchTagsFile -MetadataFile $branchTagMetadataNestedFile | Out-Null
