@@ -1,5 +1,7 @@
 # Troubleshooting
 
+The current generated service snapshot is available at [service-verification.generated.md](</D:/App/project2/work/service-verification.generated.md>) after running `powershell -ExecutionPolicy Bypass -File scripts\generate-service-verification-matrix.ps1`.
+
 ## Common failures
 
 ### Docker build path not found

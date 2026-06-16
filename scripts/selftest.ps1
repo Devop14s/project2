@@ -59,6 +59,7 @@ try {
     powershell -ExecutionPolicy Bypass -File scripts\validate-chart-values.ps1 | Out-Null
     powershell -ExecutionPolicy Bypass -File scripts\validate-image-matrix.ps1 | Out-Null
     powershell -ExecutionPolicy Bypass -File scripts\validate-service-inventory.ps1 | Out-Null
+    powershell -ExecutionPolicy Bypass -File scripts\validate-troubleshooting.ps1 | Out-Null
     powershell -ExecutionPolicy Bypass -File scripts\validate-remaining-work-plan.ps1 | Out-Null
     powershell -ExecutionPolicy Bypass -File scripts\validate-gitops-values.ps1 | Out-Null
     powershell -ExecutionPolicy Bypass -File scripts\validate-source-alignment.ps1 | Out-Null
@@ -174,6 +175,11 @@ try {
     $serviceInventory = Get-Content 'docs\service-inventory.md' -Raw
     if ($serviceInventory -notmatch 'work/service-verification.generated.md') {
         throw 'docs/service-inventory.md should reference the generated service verification matrix.'
+    }
+
+    $troubleshooting = Get-Content 'docs\troubleshooting.md' -Raw
+    if ($troubleshooting -notmatch 'work/service-verification.generated.md') {
+        throw 'docs/troubleshooting.md should reference the generated service verification matrix.'
     }
 
     $remainingWorkPlan = Get-Content 'docs\remaining-work-plan.md' -Raw

@@ -66,6 +66,8 @@ scripts/validate-image-matrix.ps1
 scripts/validate-image-matrix.sh
 scripts/validate-service-inventory.ps1
 scripts/validate-service-inventory.sh
+scripts/validate-troubleshooting.ps1
+scripts/validate-troubleshooting.sh
 scripts/validate-remaining-work-plan.ps1
 scripts/validate-remaining-work-plan.sh
 scripts/validate-gitops-values.ps1
@@ -167,6 +169,7 @@ validate-argocd-apps|sh scripts/validate-argocd-apps.sh
 validate-chart-values|sh scripts/validate-chart-values.sh
 validate-image-matrix|sh scripts/validate-image-matrix.sh
 validate-service-inventory|sh scripts/validate-service-inventory.sh
+validate-troubleshooting|sh scripts/validate-troubleshooting.sh
 validate-remaining-work-plan|sh scripts/validate-remaining-work-plan.sh
 validate-gitops-values|sh scripts/validate-gitops-values.sh
 validate-source-alignment|sh scripts/validate-source-alignment.sh

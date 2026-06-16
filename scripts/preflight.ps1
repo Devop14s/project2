@@ -107,6 +107,8 @@ $requiredFiles = @(
     'scripts\validate-image-matrix.sh',
     'scripts\validate-service-inventory.ps1',
     'scripts\validate-service-inventory.sh',
+    'scripts\validate-troubleshooting.ps1',
+    'scripts\validate-troubleshooting.sh',
     'scripts\validate-remaining-work-plan.ps1',
     'scripts\validate-remaining-work-plan.sh',
     'scripts\validate-gitops-values.ps1',
@@ -172,6 +174,11 @@ $validatorDefinitions = @(
     @{
         name = 'validate-service-inventory'
         script = 'scripts\validate-service-inventory.ps1'
+        arguments = @()
+    },
+    @{
+        name = 'validate-troubleshooting'
+        script = 'scripts\validate-troubleshooting.ps1'
         arguments = @()
     },
     @{
