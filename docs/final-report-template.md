@@ -2,6 +2,9 @@
 
 ## 1. Team information
 
+- Refresh `work/status-report.generated.md`, `work/service-verification.generated.md`, and `work/final-report-notes.generated.md` first with `powershell -ExecutionPolicy Bypass -File scripts\report-status.ps1 -SkipCommandChecks`.
+- Use `work/final-report-notes.generated.md` as a prefilled drafting aid, then replace placeholders below with real infrastructure evidence.
+
 - MSSV 1:
 - MSSV 2:
 - MSSV 3:

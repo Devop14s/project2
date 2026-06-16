@@ -35,6 +35,8 @@ On Windows, `preflight.ps1`, `selftest.ps1`, and `report-status.ps1` can also pi
 - `validate-services-catalog.sh`
 - `validate-chart-values.ps1`
 - `validate-chart-values.sh`
+- `validate-final-report-notes.ps1`
+- `validate-final-report-notes.sh`
 - `validate-final-report-template.ps1`
 - `validate-final-report-template.sh`
 - `validate-jenkins-readme.ps1`
@@ -67,6 +69,8 @@ On Windows, `preflight.ps1`, `selftest.ps1`, and `report-status.ps1` can also pi
 - `summarize-failsafe-blockers.sh`
 - `generate-service-verification-matrix.ps1`
 - `generate-service-verification-matrix.sh`
+- `generate-final-report-notes.ps1`
+- `generate-final-report-notes.sh`
 - `workspace-blocker-overrides.txt`
 - `report-status.ps1`
 - `report-status.sh`
@@ -97,6 +101,7 @@ powershell -ExecutionPolicy Bypass -File scripts\validate-handover-checklist.ps1
 powershell -ExecutionPolicy Bypass -File scripts\validate-services-catalog.ps1
 powershell -ExecutionPolicy Bypass -File scripts\validate-services-catalog.ps1 -ServicesFile jenkins\services.release-baseline.env -ReferenceServicesFile jenkins\services.env
 powershell -ExecutionPolicy Bypass -File scripts\validate-chart-values.ps1
+powershell -ExecutionPolicy Bypass -File scripts\validate-final-report-notes.ps1
 powershell -ExecutionPolicy Bypass -File scripts\validate-final-report-template.ps1
 powershell -ExecutionPolicy Bypass -File scripts\validate-jenkins-readme.ps1
 powershell -ExecutionPolicy Bypass -File scripts\validate-image-matrix.ps1
@@ -114,7 +119,7 @@ powershell -ExecutionPolicy Bypass -File scripts\validate-status-report.ps1
 powershell -ExecutionPolicy Bypass -File scripts\summarize-failsafe-blockers.ps1
 powershell -ExecutionPolicy Bypass -File scripts\generate-service-verification-matrix.ps1
 powershell -ExecutionPolicy Bypass -File scripts\report-status.ps1 -SkipCommandChecks
-powershell -ExecutionPolicy Bypass -File scripts\report-status.ps1 -OutputFile work\status-report.generated.md -ServiceVerificationFile work\service-verification.generated.md -SkipCommandChecks
+powershell -ExecutionPolicy Bypass -File scripts\report-status.ps1 -OutputFile work\status-report.generated.md -ServiceVerificationFile work\service-verification.generated.md -FinalReportNotesFile work\final-report-notes.generated.md -SkipCommandChecks
 powershell -ExecutionPolicy Bypass -File scripts\resolve-branch-tags.ps1
 powershell -ExecutionPolicy Bypass -File scripts\generate-values.ps1 -DockerhubNamespace your-dockerhub-namespace
 $env:SERVICE_CATALOG='release-baseline'; powershell -ExecutionPolicy Bypass -File scripts\generate-values.ps1 -DockerhubNamespace your-dockerhub-namespace
@@ -137,6 +142,7 @@ sh scripts/validate-handover-checklist.sh
 sh scripts/validate-services-catalog.sh
 sh scripts/validate-services-catalog.sh jenkins/services.release-baseline.env jenkins/services.env
 sh scripts/validate-chart-values.sh
+sh scripts/validate-final-report-notes.sh
 sh scripts/validate-final-report-template.sh
 sh scripts/validate-jenkins-readme.sh
 sh scripts/validate-image-matrix.sh
@@ -154,7 +160,7 @@ sh scripts/validate-status-report.sh
 sh scripts/summarize-failsafe-blockers.sh
 sh scripts/generate-service-verification-matrix.sh
 sh scripts/report-status.sh --skip-command-checks
-SERVICE_VERIFICATION_FILE=work/service-verification.generated.md sh scripts/report-status.sh work/status-report.generated.md --skip-command-checks
+SERVICE_VERIFICATION_FILE=work/service-verification.generated.md FINAL_REPORT_NOTES_FILE=work/final-report-notes.generated.md sh scripts/report-status.sh work/status-report.generated.md --skip-command-checks
 sh scripts/resolve-branch-tags.sh
 DOCKERHUB_NAMESPACE=your-dockerhub-namespace sh scripts/generate-values.sh
 SERVICE_CATALOG=release-baseline DOCKERHUB_NAMESPACE=your-dockerhub-namespace sh scripts/generate-values.sh

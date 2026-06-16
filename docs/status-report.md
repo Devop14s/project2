@@ -92,6 +92,7 @@ Last updated: June 16, 2026
 - The detailed execution plan for unfinished work is in [remaining-work-plan.md](</D:/App/project2/docs/remaining-work-plan.md>).
 - The short environment handover list is in [handover-checklist.md](</D:/App/project2/docs/handover-checklist.md>).
 - The machine-generated per-service snapshot is available at [service-verification.generated.md](</D:/App/project2/work/service-verification.generated.md>) and is refreshed together with [status-report.generated.md](</D:/App/project2/work/status-report.generated.md>) when running `powershell -ExecutionPolicy Bypass -File scripts\report-status.ps1 -SkipCommandChecks`.
+- The generated drafting aid for the submission report is available at [final-report-notes.generated.md](</D:/App/project2/work/final-report-notes.generated.md>) and is refreshed by the same `report-status` command.
 
 ## Inputs still required
 

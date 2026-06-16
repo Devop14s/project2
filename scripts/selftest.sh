@@ -17,6 +17,7 @@ manifest_values_file="${temp_dir}/dev-values.yaml"
 status_report_file="${temp_dir}/status-report.generated.md"
 failsafe_blockers_file="${temp_dir}/failsafe-blockers.txt"
 service_verification_matrix_file="${temp_dir}/service-verification.generated.md"
+final_report_notes_file="${temp_dir}/final-report-notes.generated.md"
 commit_sha_file="work/commit_sha.txt"
 commit_short_sha_file="work/commit_short_sha.txt"
 commit_metadata_file="work/commit-metadata.json"
@@ -87,6 +88,7 @@ sh scripts/validate-argocd-readme.sh >/dev/null
 sh scripts/validate-argocd-apps.sh >/dev/null
 sh scripts/validate-handover-checklist.sh >/dev/null
 sh scripts/validate-chart-values.sh >/dev/null
+sh scripts/validate-final-report-notes.sh >/dev/null
 sh scripts/validate-final-report-template.sh >/dev/null
 sh scripts/validate-jenkins-readme.sh >/dev/null
 sh scripts/validate-image-matrix.sh >/dev/null
@@ -124,8 +126,9 @@ OUTPUT_FILE="$chart_values_file" \
 sh scripts/generate-chart-values.sh >/dev/null
 sh scripts/update-manifest-values.sh "$manifest_values_file" test-tag >/dev/null
 powershell -ExecutionPolicy Bypass -File scripts/preflight.ps1 -AsJson -SkipCommandChecks >/dev/null
-SERVICE_VERIFICATION_FILE="$service_verification_matrix_file" sh scripts/report-status.sh "$status_report_file" --skip-command-checks >/dev/null
+SERVICE_VERIFICATION_FILE="$service_verification_matrix_file" FINAL_REPORT_NOTES_FILE="$final_report_notes_file" sh scripts/report-status.sh "$status_report_file" --skip-command-checks >/dev/null
 sh scripts/validate-generated-reports.sh "$status_report_file" "$service_verification_matrix_file" >/dev/null
+sh scripts/validate-final-report-notes.sh "$final_report_notes_file" >/dev/null
 if TAGS_FILE="${temp_dir}/missing-tags.env" DOCKERHUB_NAMESPACE="$dockerhub_namespace" OUTPUT_FILE="${temp_dir}/missing-tags-generated-values.yaml" sh scripts/generate-values.sh >/dev/null 2>&1; then
   printf 'generate-values.sh should fail when an explicit TAGS_FILE path is provided but missing.\n' >&2
   exit 1
@@ -360,6 +363,8 @@ grep -q 'repository: docker.io/example/yas-storefront' "$chart_values_file"
 grep -q 'host: backoffice.yas.local' "$chart_values_file"
 grep -q 'tag: test-tag' "$manifest_values_file"
 grep -q '## Runtime Access Notes' "$status_report_file"
+grep -q '# Final Report Notes' "$final_report_notes_file"
+grep -q 'scripts\\report-status.ps1 -SkipCommandChecks' "$final_report_notes_file"
 grep -q 'Runtime evidence directories now snapshot commit, manifest, build, push, and verification artifacts' "$status_report_file"
 grep -q 'Commit metadata artifacts now embed the exact commit SHA and short SHA directly in `commit-metadata.json`' "$status_report_file"
 grep -q 'GitOps manifest-update helpers now preserve a dedicated metadata artifact' "$status_report_file"

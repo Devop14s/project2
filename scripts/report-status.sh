@@ -6,6 +6,7 @@ set -eu
 
 output_file="${1:-work/status-report.generated.md}"
 service_verification_file="${SERVICE_VERIFICATION_FILE:-work/service-verification.generated.md}"
+final_report_notes_file="${FINAL_REPORT_NOTES_FILE:-work/final-report-notes.generated.md}"
 skip_command_checks=0
 
 if [ "${2:-}" = "--skip-command-checks" ] || [ "${1:-}" = "--skip-command-checks" ]; then
@@ -17,6 +18,7 @@ fi
 
 mkdir -p "$(dirname "$output_file")"
 mkdir -p "$(dirname "$service_verification_file")"
+mkdir -p "$(dirname "$final_report_notes_file")"
 
 if [ -f "scripts/generate-service-verification-matrix.sh" ]; then
   sh scripts/generate-service-verification-matrix.sh "$service_verification_file" >/dev/null
@@ -708,5 +710,10 @@ fi
   printf '%s\n' '- Jenkins credentials and webhook integration cannot be verified locally.'
 } > "$output_file"
 
+if [ -f "scripts/generate-final-report-notes.sh" ]; then
+  sh scripts/generate-final-report-notes.sh "$final_report_notes_file" "$output_file" "$service_verification_file" >/dev/null
+fi
+
 printf 'Generated status report: %s\n' "$output_file"
 printf 'Generated service verification matrix: %s\n' "$service_verification_file"
+printf 'Generated final report notes: %s\n' "$final_report_notes_file"

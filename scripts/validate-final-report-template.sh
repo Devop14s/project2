@@ -5,6 +5,8 @@ template_file="${1:-docs/final-report-template.md}"
 template_text="$(cat "$template_file")"
 
 for token in \
+  'scripts\report-status.ps1 -SkipCommandChecks' \
+  'work/final-report-notes.generated.md' \
   'work/image-digests.txt' \
   'work/cleanup-evidence/<namespace>/<release>/' \
   'work/commit-metadata.json' \

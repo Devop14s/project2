@@ -107,6 +107,8 @@ $requiredFiles = @(
     'scripts\validate-handover-checklist.sh',
     'scripts\validate-chart-values.ps1',
     'scripts\validate-chart-values.sh',
+    'scripts\validate-final-report-notes.ps1',
+    'scripts\validate-final-report-notes.sh',
     'scripts\validate-final-report-template.ps1',
     'scripts\validate-final-report-template.sh',
     'scripts\validate-jenkins-readme.ps1',
@@ -139,6 +141,8 @@ $requiredFiles = @(
     'scripts\summarize-failsafe-blockers.sh',
     'scripts\generate-service-verification-matrix.ps1',
     'scripts\generate-service-verification-matrix.sh',
+    'scripts\generate-final-report-notes.ps1',
+    'scripts\generate-final-report-notes.sh',
     'scripts\workspace-blocker-overrides.txt',
     'scripts\report-status.ps1',
     'scripts\report-status.sh',
@@ -152,6 +156,7 @@ $requiredFiles = @(
     'scripts\generate-chart-values.sh',
     'scripts\update-manifest-values.ps1',
     'scripts\update-manifest-values.sh',
+    'work\final-report-notes.generated.md',
     'work\status-report.generated.md',
     'work\service-verification.generated.md'
 )
@@ -192,6 +197,11 @@ $validatorDefinitions = @(
     @{
         name = 'validate-chart-values'
         script = 'scripts\validate-chart-values.ps1'
+        arguments = @()
+    },
+    @{
+        name = 'validate-final-report-notes'
+        script = 'scripts\validate-final-report-notes.ps1'
         arguments = @()
     },
     @{

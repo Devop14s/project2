@@ -45,6 +45,11 @@ printf '%s' "$status_text" | grep -F -q 'remaining-work-plan.md' || {
   exit 1
 }
 
+printf '%s' "$status_text" | grep -F -q 'work/final-report-notes.generated.md' || {
+  printf 'docs/status-report.md should reference work/final-report-notes.generated.md.\n' >&2
+  exit 1
+}
+
 printf '%s' "$status_text" | grep -F -q 'scripts\report-status.ps1 -SkipCommandChecks' || {
   printf 'docs/status-report.md should point to scripts\\report-status.ps1 -SkipCommandChecks as the evidence refresh entrypoint.\n' >&2
   exit 1

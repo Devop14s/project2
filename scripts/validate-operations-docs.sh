@@ -59,7 +59,8 @@ assert_contains_all "${docs_root}/local-dry-run.md" \
   'scripts\selftest.ps1' \
   'scripts/selftest.sh' \
   'scripts\preflight.ps1 -SkipCommandChecks' \
-  'scripts/preflight.sh --skip-command-checks'
+  'scripts/preflight.sh --skip-command-checks' \
+  'work/final-report-notes.generated.md'
 
 assert_contains_all "${docs_root}/local-k8s-bootstrap.md" \
   '`kubectl`' \

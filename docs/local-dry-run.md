@@ -95,7 +95,7 @@ powershell -ExecutionPolicy Bypass -File scripts\report-status.ps1 -SkipCommandC
 sh scripts/report-status.sh --skip-command-checks
 ```
 
-This refreshes both `work/status-report.generated.md` and `work/service-verification.generated.md` together so the high-level summary and per-service matrix stay in sync.
+This refreshes `work/status-report.generated.md`, `work/service-verification.generated.md`, and `work/final-report-notes.generated.md` together so the high-level summary, per-service matrix, and report-drafting notes stay in sync.
 
 If your machine does not yet have all runtime tools such as `helm`, you can still validate scaffold completeness only:
 

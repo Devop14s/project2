@@ -46,6 +46,10 @@ if ($statusText -notmatch [regex]::Escape('remaining-work-plan.md')) {
     throw 'docs/status-report.md should still point to remaining-work-plan.md.'
 }
 
+if ($statusText -notmatch [regex]::Escape('work/final-report-notes.generated.md')) {
+    throw 'docs/status-report.md should reference work/final-report-notes.generated.md.'
+}
+
 if ($statusText -notmatch [regex]::Escape('scripts\report-status.ps1 -SkipCommandChecks')) {
     throw 'docs/status-report.md should point to scripts\report-status.ps1 -SkipCommandChecks as the evidence refresh entrypoint.'
 }

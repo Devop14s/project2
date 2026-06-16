@@ -66,6 +66,8 @@ scripts/validate-services-catalog.ps1
 scripts/validate-services-catalog.sh
 scripts/validate-chart-values.ps1
 scripts/validate-chart-values.sh
+scripts/validate-final-report-notes.ps1
+scripts/validate-final-report-notes.sh
 scripts/validate-final-report-template.ps1
 scripts/validate-final-report-template.sh
 scripts/validate-jenkins-readme.ps1
@@ -98,6 +100,8 @@ scripts/summarize-failsafe-blockers.ps1
 scripts/summarize-failsafe-blockers.sh
 scripts/generate-service-verification-matrix.ps1
 scripts/generate-service-verification-matrix.sh
+scripts/generate-final-report-notes.ps1
+scripts/generate-final-report-notes.sh
 scripts/workspace-blocker-overrides.txt
 scripts/report-status.ps1
 scripts/report-status.sh
@@ -111,6 +115,7 @@ scripts/generate-chart-values.ps1
 scripts/generate-chart-values.sh
 scripts/update-manifest-values.ps1
 scripts/update-manifest-values.sh
+work/final-report-notes.generated.md
 work/status-report.generated.md
 work/service-verification.generated.md
 "
@@ -187,6 +192,7 @@ validate-argocd-readme|sh scripts/validate-argocd-readme.sh
 validate-argocd-apps|sh scripts/validate-argocd-apps.sh
 validate-handover-checklist|sh scripts/validate-handover-checklist.sh
 validate-chart-values|sh scripts/validate-chart-values.sh
+validate-final-report-notes|sh scripts/validate-final-report-notes.sh
 validate-final-report-template|sh scripts/validate-final-report-template.sh
 validate-jenkins-readme|sh scripts/validate-jenkins-readme.sh
 validate-image-matrix|sh scripts/validate-image-matrix.sh

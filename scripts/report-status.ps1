@@ -1,6 +1,7 @@
 param(
     [string]$OutputFile = 'work/status-report.generated.md',
     [string]$ServiceVerificationFile = 'work/service-verification.generated.md',
+    [string]$FinalReportNotesFile = 'work/final-report-notes.generated.md',
     [switch]$SkipCommandChecks
 )
 
@@ -43,6 +44,17 @@ $resolvedServiceVerificationPath = if ([System.IO.Path]::IsPathRooted($ServiceVe
     $ServiceVerificationFile
 } else {
     Join-Path (Get-Location) $ServiceVerificationFile
+}
+
+$finalReportNotesOutputDir = Split-Path -Parent $FinalReportNotesFile
+if ($finalReportNotesOutputDir) {
+    New-Item -ItemType Directory -Path $finalReportNotesOutputDir -Force | Out-Null
+}
+
+$resolvedFinalReportNotesPath = if ([System.IO.Path]::IsPathRooted($FinalReportNotesFile)) {
+    $FinalReportNotesFile
+} else {
+    Join-Path (Get-Location) $FinalReportNotesFile
 }
 
 if (Test-Path 'scripts\generate-service-verification-matrix.ps1') {
@@ -797,5 +809,12 @@ $content.Add('- Real Kubernetes deployment cannot be executed.')
 $content.Add('- Jenkins credentials and webhook integration cannot be verified locally.')
 
 [System.IO.File]::WriteAllLines($resolvedOutputPath, $content)
+if (Test-Path 'scripts\generate-final-report-notes.ps1') {
+    powershell -ExecutionPolicy Bypass -File scripts\generate-final-report-notes.ps1 -OutputFile $resolvedFinalReportNotesPath -StatusReportFile $resolvedOutputPath -ServiceVerificationFile $resolvedServiceVerificationPath *> $null
+    if ($LASTEXITCODE -ne 0) {
+        throw 'generate-final-report-notes.ps1 failed while report-status.ps1 was refreshing generated evidence.'
+    }
+}
 Write-Host "Generated status report: $OutputFile"
 Write-Host "Generated service verification matrix: $ServiceVerificationFile"
+Write-Host "Generated final report notes: $FinalReportNotesFile"

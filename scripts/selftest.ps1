@@ -45,6 +45,7 @@ $sampleDeveloperHelmRenderFile = Join-Path $tempDir 'sample-developer-helm-rende
 $statusReportFile = Join-Path $tempDir 'status-report.generated.md'
 $failsafeBlockersFile = Join-Path $tempDir 'failsafe-blockers.txt'
 $serviceVerificationMatrixFile = Join-Path $tempDir 'service-verification.generated.md'
+$finalReportNotesFile = Join-Path $tempDir 'final-report-notes.generated.md'
 $preflightJsonFile = Join-Path $tempDir 'preflight.json'
 $helmExecutable = Get-HelmExecutable
 
@@ -59,6 +60,7 @@ try {
     powershell -ExecutionPolicy Bypass -File scripts\validate-argocd-apps.ps1 | Out-Null
     powershell -ExecutionPolicy Bypass -File scripts\validate-handover-checklist.ps1 | Out-Null
     powershell -ExecutionPolicy Bypass -File scripts\validate-chart-values.ps1 | Out-Null
+    powershell -ExecutionPolicy Bypass -File scripts\validate-final-report-notes.ps1 -NotesFile 'work/final-report-notes.generated.md' | Out-Null
     powershell -ExecutionPolicy Bypass -File scripts\validate-final-report-template.ps1 | Out-Null
     powershell -ExecutionPolicy Bypass -File scripts\validate-jenkins-readme.ps1 | Out-Null
     powershell -ExecutionPolicy Bypass -File scripts\validate-image-matrix.ps1 | Out-Null
@@ -123,6 +125,7 @@ try {
     powershell -ExecutionPolicy Bypass -File scripts\report-status.ps1 `
         -OutputFile $statusReportFile `
         -ServiceVerificationFile $serviceVerificationMatrixFile `
+        -FinalReportNotesFile $finalReportNotesFile `
         -SkipCommandChecks | Out-Null
     if ($helmExecutable) {
         & $helmExecutable lint 'helm\yas' | Out-Null
@@ -144,9 +147,11 @@ try {
     $statusReport = Get-Content $statusReportFile -Raw
     $failsafeBlockers = Get-Content $failsafeBlockersFile -Raw
     $serviceVerificationMatrix = Get-Content $serviceVerificationMatrixFile -Raw
+    $finalReportNotes = Get-Content $finalReportNotesFile -Raw
     $preflightJson = Get-Content $preflightJsonFile -Raw
     $helmRender = if (Test-Path $helmRenderFile) { Get-Content $helmRenderFile -Raw } else { '' }
     powershell -ExecutionPolicy Bypass -File scripts\validate-generated-reports.ps1 -StatusReportFile $statusReportFile -ServiceVerificationFile $serviceVerificationMatrixFile | Out-Null
+    powershell -ExecutionPolicy Bypass -File scripts\validate-final-report-notes.ps1 -NotesFile $finalReportNotesFile | Out-Null
 
     if ($branchTags -notmatch 'TAX_TAG=main') {
         throw 'Branch tag resolution failed for tax service.'
@@ -928,6 +933,14 @@ try {
 
     if ($statusReport -notmatch '## Runtime Access Notes') {
         throw 'Generated status report is missing the runtime access notes section.'
+    }
+
+    if ($finalReportNotes -notmatch '# Final Report Notes') {
+        throw 'Generated final report notes are missing the expected title.'
+    }
+
+    if ($finalReportNotes -notmatch 'scripts\\report-status\.ps1 -SkipCommandChecks') {
+        throw 'Generated final report notes should reference the unified evidence refresh entrypoint.'
     }
 
     if ($statusReport -notmatch 'Runtime evidence directories now snapshot commit, manifest, build, push, and verification artifacts') {
