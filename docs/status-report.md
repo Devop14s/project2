@@ -7,7 +7,7 @@ Last updated: June 16, 2026
 - Assignment analysis and phased notes exist in `plan/`.
 - Delivery scaffold exists for Jenkins, Helm, ArgoCD, and service-mesh work in `jenkins/`, `helm/`, `argocd/`, and `mesh/`.
 - Cross-platform local helper set exists in `scripts/` for preflight, selftest, dry run, values generation, GitOps values generation, chart-values generation, service-catalog validation, chart validation, source alignment, and status reporting.
-- Drift validators now cover the main hand-written docs and runbooks, including `README`, Jenkins and ArgoCD guides, mesh notes, service inventory, image matrix, troubleshooting, remaining-work plan, handover checklist, final report template, source build/runtime matrix, and the operational flow docs.
+- Drift validators now cover the main hand-written docs and runbooks, including `README`, Jenkins and ArgoCD guides, mesh notes plus mesh test/result templates, service inventory, image matrix, troubleshooting, remaining-work plan, handover checklist, final report template, source build/runtime matrix, and the operational flow docs.
 - Shared catalog exists in `jenkins/services.env` with 20 app services, 2 public entrypoints, and explicit `ui` versus `backend` workload typing.
 - Frozen first-release baseline exists in `jenkins/services.release-baseline.env` so Jenkins can target the agreed initial deployable subset without losing the full catalog.
 - Helm chart baseline is generated from the shared catalog and validates locally with `helm lint` and `helm template`.

@@ -65,6 +65,7 @@ try {
     powershell -ExecutionPolicy Bypass -File scripts\validate-jenkins-readme.ps1 | Out-Null
     powershell -ExecutionPolicy Bypass -File scripts\validate-image-matrix.ps1 | Out-Null
     powershell -ExecutionPolicy Bypass -File scripts\validate-mesh-readme.ps1 | Out-Null
+    powershell -ExecutionPolicy Bypass -File scripts\validate-service-mesh-docs.ps1 | Out-Null
     powershell -ExecutionPolicy Bypass -File scripts\validate-operations-docs.ps1 | Out-Null
     powershell -ExecutionPolicy Bypass -File scripts\validate-readme.ps1 | Out-Null
     powershell -ExecutionPolicy Bypass -File scripts\validate-service-inventory.ps1 | Out-Null
@@ -209,6 +210,16 @@ try {
     $meshReadme = Get-Content 'mesh\README.md' -Raw
     if ($meshReadme -notmatch 'service-mesh-test-plan.md') {
         throw 'mesh/README.md should reference the service mesh test plan.'
+    }
+
+    $serviceMeshPlan = Get-Content 'docs\service-mesh-test-plan.md' -Raw
+    if ($serviceMeshPlan -notmatch 'mesh/peer-authentication.yaml') {
+        throw 'docs/service-mesh-test-plan.md should reference mesh/peer-authentication.yaml.'
+    }
+
+    $serviceMeshResults = Get-Content 'docs\service-mesh-results.md' -Raw
+    if ($serviceMeshResults -notmatch '<link to curl output or screenshot>') {
+        throw 'docs/service-mesh-results.md should keep the authorization evidence placeholder.'
     }
 
     $ciFlow = Get-Content 'docs\ci-flow.md' -Raw

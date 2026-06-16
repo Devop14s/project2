@@ -40,6 +40,7 @@ Use this checklist when moving from the current scaffold-and-local-evidence stat
 - Confirm `kubectl` can reach the cluster from the real Jenkins agent.
 - Confirm the agent can create namespaces and install Helm releases.
 - If using ArgoCD or Istio, confirm those controllers already exist before testing GitOps or mesh flows.
+- If using Istio, walk through [service-mesh-test-plan.md](</D:/App/project2/docs/service-mesh-test-plan.md>) and record the actual outcome in [service-mesh-results.md](</D:/App/project2/docs/service-mesh-results.md>).
 
 ## 5. Run the first real image push
 

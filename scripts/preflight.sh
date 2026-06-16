@@ -78,6 +78,8 @@ scripts/validate-image-matrix.ps1
 scripts/validate-image-matrix.sh
 scripts/validate-mesh-readme.ps1
 scripts/validate-mesh-readme.sh
+scripts/validate-service-mesh-docs.ps1
+scripts/validate-service-mesh-docs.sh
 scripts/validate-operations-docs.ps1
 scripts/validate-operations-docs.sh
 scripts/validate-readme.ps1
@@ -199,6 +201,7 @@ validate-final-report-template|sh scripts/validate-final-report-template.sh
 validate-jenkins-readme|sh scripts/validate-jenkins-readme.sh
 validate-image-matrix|sh scripts/validate-image-matrix.sh
 validate-mesh-readme|sh scripts/validate-mesh-readme.sh
+validate-service-mesh-docs|sh scripts/validate-service-mesh-docs.sh
 validate-operations-docs|sh scripts/validate-operations-docs.sh
 validate-readme|sh scripts/validate-readme.sh
 validate-service-inventory|sh scripts/validate-service-inventory.sh

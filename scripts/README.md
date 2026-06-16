@@ -49,6 +49,8 @@ Use `refresh-evidence.ps1` or `refresh-evidence.sh` as the canonical user-facing
 - `validate-image-matrix.sh`
 - `validate-mesh-readme.ps1`
 - `validate-mesh-readme.sh`
+- `validate-service-mesh-docs.ps1`
+- `validate-service-mesh-docs.sh`
 - `validate-operations-docs.ps1`
 - `validate-operations-docs.sh`
 - `validate-readme.ps1`
@@ -110,6 +112,7 @@ powershell -ExecutionPolicy Bypass -File scripts\validate-final-report-template.
 powershell -ExecutionPolicy Bypass -File scripts\validate-jenkins-readme.ps1
 powershell -ExecutionPolicy Bypass -File scripts\validate-image-matrix.ps1
 powershell -ExecutionPolicy Bypass -File scripts\validate-mesh-readme.ps1
+powershell -ExecutionPolicy Bypass -File scripts\validate-service-mesh-docs.ps1
 powershell -ExecutionPolicy Bypass -File scripts\validate-operations-docs.ps1
 powershell -ExecutionPolicy Bypass -File scripts\validate-readme.ps1
 powershell -ExecutionPolicy Bypass -File scripts\validate-service-inventory.ps1
@@ -151,6 +154,7 @@ sh scripts/validate-final-report-template.sh
 sh scripts/validate-jenkins-readme.sh
 sh scripts/validate-image-matrix.sh
 sh scripts/validate-mesh-readme.sh
+sh scripts/validate-service-mesh-docs.sh
 sh scripts/validate-operations-docs.sh
 sh scripts/validate-readme.sh
 sh scripts/validate-service-inventory.sh

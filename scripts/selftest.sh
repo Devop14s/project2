@@ -93,6 +93,7 @@ sh scripts/validate-final-report-template.sh >/dev/null
 sh scripts/validate-jenkins-readme.sh >/dev/null
 sh scripts/validate-image-matrix.sh >/dev/null
 sh scripts/validate-mesh-readme.sh >/dev/null
+sh scripts/validate-service-mesh-docs.sh >/dev/null
 sh scripts/validate-operations-docs.sh >/dev/null
 sh scripts/validate-readme.sh >/dev/null
 sh scripts/validate-service-inventory.sh >/dev/null
@@ -153,6 +154,8 @@ grep -E -q '\| search \| backend \| yes \(`jar`\) \| (yes|no) \| elasticsearch: 
 grep -q 'work/manifest-update-metadata.json' argocd/README.md
 grep -q 'work/runtime-evidence/<namespace>/<release>/' docs/handover-checklist.md
 grep -q 'service-mesh-test-plan.md' mesh/README.md
+grep -q 'mesh/peer-authentication.yaml' docs/service-mesh-test-plan.md
+grep -q '<link to curl output or screenshot>' docs/service-mesh-results.md
 grep -q 'work/image-digests.txt' docs/ci-flow.md
 grep -q 'ALLOW_SHARED_NAMESPACE_DELETE' docs/developer-cleanup.md
 grep -q 'work/runtime-evidence/<namespace>/<release>/copied-artifacts.txt' docs/final-report-template.md
