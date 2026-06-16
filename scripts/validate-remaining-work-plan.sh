@@ -32,6 +32,8 @@ for required_reference in \
   'jenkins/services.release-baseline.env' \
   'status-report.md' \
   'work/service-verification.generated.md' \
+  'work/host-capabilities.generated.md' \
+  'Jenkins agent' \
   'scripts\refresh-evidence.ps1 -SkipCommandChecks'
 do
   printf '%s' "$plan_text" | grep -F -q "$required_reference" || {

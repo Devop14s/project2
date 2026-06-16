@@ -22,6 +22,7 @@ Move this repository from a source-verified delivery scaffold to a working YAS d
   - `cart`, `customer`, `location`, `media`, `promotion`, `rating`, `tax`, `webhook`
   - `sampledata`, `search`
 - The current per-service verification snapshot is generated in [service-verification.generated.md](</D:/App/project2/work/service-verification.generated.md>), and the high-level summary lives in [status-report.md](</D:/App/project2/docs/status-report.md>).
+- The current host/runtime capability snapshot is generated in [host-capabilities.generated.md](</D:/App/project2/work/host-capabilities.generated.md>) and shows which local tools and runtime dependencies were actually reachable when the evidence bundle was refreshed.
 - Run `powershell -ExecutionPolicy Bypass -File scripts\refresh-evidence.ps1 -SkipCommandChecks` before a handover or report-writing session so the generated evidence bundle stays in sync.
 
 ## Recommended first deployment subset
@@ -85,11 +86,13 @@ Current status: the recommended subset is now frozen in [jenkins/services.releas
 2. Run one image push manually from Jenkins for a service already verified locally, preferably `product` or `storefront-bff`.
 3. Confirm pushed tag, digest, and pull access from another environment.
 4. Expand push validation to the full release subset.
+5. Record which Jenkins agent or runtime host executed the successful push so the final report can separate host limitations from repo limitations.
 
 ### Deliverables
 
 - Real pushed images for the chosen subset
 - Stored image list with tags and digests
+- Host or Jenkins-agent identity tied to the successful run
 - Jenkins logs proving login, build, and push
 
 ### Exit criteria

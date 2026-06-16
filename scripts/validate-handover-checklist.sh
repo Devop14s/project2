@@ -15,8 +15,11 @@ for token in \
   '`yas-developer-cleanup`' \
   '`yas-dev-cd`' \
   '`yas-staging-release`' \
+  '`work/final-report-notes.generated.md`' \
+  '`work/host-capabilities.generated.md`' \
   '`work/runtime-evidence/<namespace>/<release>/`' \
   '`work/manifest-update-metadata.json`' \
+  'host or Jenkins agent' \
   'scripts\refresh-evidence.ps1 -SkipCommandChecks' \
   'sampledata' \
   'search' \

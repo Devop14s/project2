@@ -7,7 +7,7 @@ Use this checklist when moving from the current scaffold-and-local-evidence stat
 - Confirm whether the first real rollout should use `release-baseline` or `full`.
 - If the first rollout is still limited, keep `SERVICE_CATALOG=release-baseline`.
 - Re-check [service-inventory.md](</D:/App/project2/docs/service-inventory.md>) and [service-verification.generated.md](</D:/App/project2/work/service-verification.generated.md>) before changing the subset.
-- Refresh [status-report.generated.md](</D:/App/project2/work/status-report.generated.md>) and [service-verification.generated.md](</D:/App/project2/work/service-verification.generated.md>) together with `powershell -ExecutionPolicy Bypass -File scripts\refresh-evidence.ps1 -SkipCommandChecks` before handing the repo to the infrastructure owner.
+- Refresh [status-report.generated.md](</D:/App/project2/work/status-report.generated.md>), [service-verification.generated.md](</D:/App/project2/work/service-verification.generated.md>), [final-report-notes.generated.md](</D:/App/project2/work/final-report-notes.generated.md>) from `work/final-report-notes.generated.md`, and [host-capabilities.generated.md](</D:/App/project2/work/host-capabilities.generated.md>) from `work/host-capabilities.generated.md` together with `powershell -ExecutionPolicy Bypass -File scripts\refresh-evidence.ps1 -SkipCommandChecks` before handing the repo to the infrastructure owner.
 
 ## 2. Prepare the registry
 
@@ -47,6 +47,7 @@ Use this checklist when moving from the current scaffold-and-local-evidence stat
 - Start with one service already strongly verified locally, preferably `product` or `storefront-bff`.
 - Run a real Jenkins flow that builds and pushes the image.
 - Record:
+  - host or Jenkins agent that ran the flow
   - image repository
   - image tag
   - image digest
@@ -102,5 +103,6 @@ Use this checklist when moving from the current scaffold-and-local-evidence stat
 - Real Jenkins job configuration
 - Real kubeconfig credential
 - Chosen `SERVICE_CATALOG`
+- Refreshed `work/host-capabilities.generated.md`
 - One successful build/push/deploy/smoke-test evidence bundle
 - Updated final report draft
