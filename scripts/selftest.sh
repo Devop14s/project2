@@ -86,6 +86,7 @@ sh scripts/validate-services-catalog.sh jenkins/services.release-baseline.env je
 sh scripts/validate-argocd-apps.sh >/dev/null
 sh scripts/validate-chart-values.sh >/dev/null
 sh scripts/validate-image-matrix.sh >/dev/null
+sh scripts/validate-service-inventory.sh >/dev/null
 sh scripts/validate-remaining-work-plan.sh >/dev/null
 sh scripts/validate-gitops-values.sh >/dev/null
 sh scripts/validate-source-alignment.sh >/dev/null
@@ -138,6 +139,7 @@ grep -q '^rating|keycloak|' "$failsafe_blockers_file"
 grep -E -q '\| product \| backend \| yes \(`jar`\) \| (yes|no) \| none \| full build verified( \+ image verified)? \|' "$service_verification_matrix_file"
 grep -E -q '\| search \| backend \| yes \(`jar`\) \| (yes|no) \| elasticsearch: ProductCdcConsumerTest \| (package\+image verified|build artifact verified), full test path blocked \|' "$service_verification_matrix_file"
 grep -q 'work/service-verification.generated.md' docs/image-matrix.md
+grep -q 'work/service-verification.generated.md' docs/service-inventory.md
 grep -q 'work/service-verification.generated.md' docs/remaining-work-plan.md
 grep -q 'work/service-verification.generated.md' docs/status-report.md
 if grep -q 'done < <(' scripts/resolve-branch-tags.sh; then
