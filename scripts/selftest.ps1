@@ -63,6 +63,7 @@ try {
     powershell -ExecutionPolicy Bypass -File scripts\validate-jenkins-readme.ps1 | Out-Null
     powershell -ExecutionPolicy Bypass -File scripts\validate-image-matrix.ps1 | Out-Null
     powershell -ExecutionPolicy Bypass -File scripts\validate-mesh-readme.ps1 | Out-Null
+    powershell -ExecutionPolicy Bypass -File scripts\validate-operations-docs.ps1 | Out-Null
     powershell -ExecutionPolicy Bypass -File scripts\validate-readme.ps1 | Out-Null
     powershell -ExecutionPolicy Bypass -File scripts\validate-service-inventory.ps1 | Out-Null
     powershell -ExecutionPolicy Bypass -File scripts\validate-troubleshooting.ps1 | Out-Null
@@ -201,6 +202,16 @@ try {
     $meshReadme = Get-Content 'mesh\README.md' -Raw
     if ($meshReadme -notmatch 'service-mesh-test-plan.md') {
         throw 'mesh/README.md should reference the service mesh test plan.'
+    }
+
+    $ciFlow = Get-Content 'docs\ci-flow.md' -Raw
+    if ($ciFlow -notmatch 'work/image-digests.txt') {
+        throw 'docs/ci-flow.md should reference work/image-digests.txt.'
+    }
+
+    $developerCleanup = Get-Content 'docs\developer-cleanup.md' -Raw
+    if ($developerCleanup -notmatch 'ALLOW_SHARED_NAMESPACE_DELETE') {
+        throw 'docs/developer-cleanup.md should reference ALLOW_SHARED_NAMESPACE_DELETE.'
     }
 
     $finalReportTemplate = Get-Content 'docs\final-report-template.md' -Raw

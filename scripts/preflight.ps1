@@ -115,6 +115,8 @@ $requiredFiles = @(
     'scripts\validate-image-matrix.sh',
     'scripts\validate-mesh-readme.ps1',
     'scripts\validate-mesh-readme.sh',
+    'scripts\validate-operations-docs.ps1',
+    'scripts\validate-operations-docs.sh',
     'scripts\validate-readme.ps1',
     'scripts\validate-readme.sh',
     'scripts\validate-service-inventory.ps1',
@@ -206,6 +208,11 @@ $validatorDefinitions = @(
     @{
         name = 'validate-mesh-readme'
         script = 'scripts\validate-mesh-readme.ps1'
+        arguments = @()
+    },
+    @{
+        name = 'validate-operations-docs'
+        script = 'scripts\validate-operations-docs.ps1'
         arguments = @()
     },
     @{
