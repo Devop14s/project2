@@ -95,7 +95,7 @@ powershell -ExecutionPolicy Bypass -File scripts\refresh-evidence.ps1 -SkipComma
 sh scripts/refresh-evidence.sh --skip-command-checks
 ```
 
-This refreshes `work/status-report.generated.md`, `work/service-verification.generated.md`, and `work/final-report-notes.generated.md` together so the high-level summary, per-service matrix, and report-drafting notes stay in sync.
+This refreshes `work/status-report.generated.md`, `work/service-verification.generated.md`, `work/final-report-notes.generated.md`, and `work/host-capabilities.generated.md` together so the high-level summary, per-service matrix, report-drafting notes, and host/runtime snapshot stay in sync.
 
 If your machine does not yet have all runtime tools such as `helm`, you can still validate scaffold completeness only:
 

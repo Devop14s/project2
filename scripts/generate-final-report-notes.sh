@@ -4,7 +4,8 @@ set -eu
 output_file="${1:-work/final-report-notes.generated.md}"
 status_report_file="${2:-work/status-report.generated.md}"
 service_verification_file="${3:-work/service-verification.generated.md}"
-baseline_services_file="${4:-jenkins/services.release-baseline.env}"
+host_capabilities_file="${4:-work/host-capabilities.generated.md}"
+baseline_services_file="${5:-jenkins/services.release-baseline.env}"
 
 mkdir -p "$(dirname "$output_file")"
 
@@ -83,6 +84,7 @@ done < "$blockers_file"
   printf '## Evidence Files To Reuse In The Report\n'
   printf '%s\n' '- `work/status-report.generated.md`'
   printf '%s\n' '- `work/service-verification.generated.md`'
+  printf '%s\n' '- `work/host-capabilities.generated.md`'
   printf '%s\n' '- `docs/source-build-runtime-matrix.md`'
   printf '%s\n' '- `docs/image-matrix.md`'
   printf '%s\n' '- `work/image-digests.txt` after a real push run'
@@ -93,6 +95,7 @@ done < "$blockers_file"
   printf '\n'
   printf '## Suggested Wording For The Conclusion\n'
   printf '%s\n' '- Verified locally only: scaffold structure, source alignment, catalog generation, local builds, local image builds where available, and Helm rendering.'
+  printf '%s\n' '- Current host capability evidence: `work/host-capabilities.generated.md` shows which tools and runtime dependencies were actually reachable while the local evidence bundle was generated.'
   printf '%s\n' '- Verified end to end on real infrastructure: leave empty until registry push, Jenkins flow, and cluster deploy evidence exist.'
   printf '%s\n' '- Known accepted gaps: any service intentionally excluded from the first release subset, plus services still blocked by workspace-specific Testcontainers issues.'
 } > "$output_file"

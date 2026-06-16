@@ -1,11 +1,12 @@
 param(
     [string]$StatusReportFile = 'work/status-report.generated.md',
     [string]$ServiceVerificationFile = 'work/service-verification.generated.md',
+    [string]$HostCapabilitiesFile = 'work/host-capabilities.generated.md',
     [string]$ServicesFile = 'jenkins/services.env',
     [string]$ReleaseBaselineServicesFile = 'jenkins/services.release-baseline.env'
 )
 
-foreach ($requiredFile in @($StatusReportFile, $ServiceVerificationFile, $ServicesFile, $ReleaseBaselineServicesFile)) {
+foreach ($requiredFile in @($StatusReportFile, $ServiceVerificationFile, $HostCapabilitiesFile, $ServicesFile, $ReleaseBaselineServicesFile)) {
     if (-not (Test-Path $requiredFile)) {
         throw "Required file not found: $requiredFile"
     }
@@ -13,6 +14,7 @@ foreach ($requiredFile in @($StatusReportFile, $ServiceVerificationFile, $Servic
 
 $statusText = Get-Content $StatusReportFile -Raw -ErrorAction Stop
 $serviceVerificationText = Get-Content $ServiceVerificationFile -Raw -ErrorAction Stop
+$hostCapabilitiesText = Get-Content $HostCapabilitiesFile -Raw -ErrorAction Stop
 
 $serviceCount = 0
 $releaseBaselineServiceCount = 0
@@ -100,6 +102,32 @@ foreach ($requiredServiceMatrixToken in @(
     }
 }
 
+foreach ($requiredHostToken in @(
+    '# Host Capabilities Report',
+    '## Tool Availability',
+    '## Runtime Reachability',
+    '## Workspace Inputs',
+    '## Generated Evidence Snapshot',
+    '## Interpretation',
+    '`git`:',
+    '`docker`:',
+    '`kubectl`:',
+    '`helm`:',
+    '`java`:',
+    '`mvn`:',
+    '`node`:',
+    '`npm`:',
+    '`powershell`:',
+    '`sh`:',
+    'work/status-report.generated.md',
+    'work/service-verification.generated.md',
+    'work/final-report-notes.generated.md'
+)) {
+    if (-not $hostCapabilitiesText.Contains($requiredHostToken)) {
+        throw "Generated host capabilities report is missing required token $requiredHostToken."
+    }
+}
+
 $blockerLines = @(powershell -ExecutionPolicy Bypass -File scripts\summarize-failsafe-blockers.ps1)
 foreach ($blockerLine in $blockerLines) {
     $parts = $blockerLine -split '\|', 4
@@ -119,4 +147,4 @@ foreach ($blockerLine in $blockerLines) {
     }
 }
 
-Write-Host 'Generated status and service-verification reports are aligned with the current catalog, validator coverage, and blocker summary.'
+Write-Host 'Generated status, service-verification, and host-capabilities reports are aligned with the current catalog, validator coverage, and blocker summary.'

@@ -3,12 +3,14 @@ set -eu
 
 status_report_file="${1:-work/status-report.generated.md}"
 service_verification_file="${2:-work/service-verification.generated.md}"
-services_file="${3:-jenkins/services.env}"
-release_baseline_services_file="${4:-jenkins/services.release-baseline.env}"
+host_capabilities_file="${3:-work/host-capabilities.generated.md}"
+services_file="${4:-jenkins/services.env}"
+release_baseline_services_file="${5:-jenkins/services.release-baseline.env}"
 
 for required_file in \
   "$status_report_file" \
   "$service_verification_file" \
+  "$host_capabilities_file" \
   "$services_file" \
   "$release_baseline_services_file"
 do
@@ -20,6 +22,7 @@ done
 
 status_text="$(cat "$status_report_file")"
 service_verification_text="$(cat "$service_verification_file")"
+host_capabilities_text="$(cat "$host_capabilities_file")"
 
 service_count=0
 release_baseline_service_count=0
@@ -70,6 +73,33 @@ do
   }
 done
 
+for required_host_token in \
+  '# Host Capabilities Report' \
+  '## Tool Availability' \
+  '## Runtime Reachability' \
+  '## Workspace Inputs' \
+  '## Generated Evidence Snapshot' \
+  '## Interpretation' \
+  '`git`:' \
+  '`docker`:' \
+  '`kubectl`:' \
+  '`helm`:' \
+  '`java`:' \
+  '`mvn`:' \
+  '`node`:' \
+  '`npm`:' \
+  '`powershell`:' \
+  '`sh`:' \
+  'work/status-report.generated.md' \
+  'work/service-verification.generated.md' \
+  'work/final-report-notes.generated.md'
+do
+  printf '%s' "$host_capabilities_text" | grep -F -q "$required_host_token" || {
+    printf 'Generated host capabilities report is missing required token %s.\n' "$required_host_token" >&2
+    exit 1
+  }
+done
+
 while IFS= read -r service; do
   [ -n "$service" ] || continue
   printf '%s' "$service_verification_text" | grep -F -q "| ${service} |" || {
@@ -112,4 +142,4 @@ while IFS='|' read -r service category suite message || [ -n "${service}${catego
   }
 done < "$blockers_tmp"
 
-printf 'Generated status and service-verification reports are aligned with the current catalog, validator coverage, and blocker summary.\n'
+printf 'Generated status, service-verification, and host-capabilities reports are aligned with the current catalog, validator coverage, and blocker summary.\n'

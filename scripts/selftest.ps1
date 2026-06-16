@@ -46,6 +46,7 @@ $statusReportFile = Join-Path $tempDir 'status-report.generated.md'
 $failsafeBlockersFile = Join-Path $tempDir 'failsafe-blockers.txt'
 $serviceVerificationMatrixFile = Join-Path $tempDir 'service-verification.generated.md'
 $finalReportNotesFile = Join-Path $tempDir 'final-report-notes.generated.md'
+$hostCapabilitiesFile = Join-Path $tempDir 'host-capabilities.generated.md'
 $preflightJsonFile = Join-Path $tempDir 'preflight.json'
 $helmExecutable = Get-HelmExecutable
 
@@ -127,6 +128,7 @@ try {
         -OutputFile $statusReportFile `
         -ServiceVerificationFile $serviceVerificationMatrixFile `
         -FinalReportNotesFile $finalReportNotesFile `
+        -HostCapabilitiesFile $hostCapabilitiesFile `
         -SkipCommandChecks | Out-Null
     if ($helmExecutable) {
         & $helmExecutable lint 'helm\yas' | Out-Null
@@ -149,10 +151,19 @@ try {
     $failsafeBlockers = Get-Content $failsafeBlockersFile -Raw
     $serviceVerificationMatrix = Get-Content $serviceVerificationMatrixFile -Raw
     $finalReportNotes = Get-Content $finalReportNotesFile -Raw
+    $hostCapabilities = Get-Content $hostCapabilitiesFile -Raw
     $preflightJson = Get-Content $preflightJsonFile -Raw
     $helmRender = if (Test-Path $helmRenderFile) { Get-Content $helmRenderFile -Raw } else { '' }
-    powershell -ExecutionPolicy Bypass -File scripts\validate-generated-reports.ps1 -StatusReportFile $statusReportFile -ServiceVerificationFile $serviceVerificationMatrixFile | Out-Null
+    powershell -ExecutionPolicy Bypass -File scripts\validate-generated-reports.ps1 -StatusReportFile $statusReportFile -ServiceVerificationFile $serviceVerificationMatrixFile -HostCapabilitiesFile $hostCapabilitiesFile | Out-Null
     powershell -ExecutionPolicy Bypass -File scripts\validate-final-report-notes.ps1 -NotesFile $finalReportNotesFile | Out-Null
+
+    if ($hostCapabilities -notmatch '## Tool Availability') {
+        throw 'generate-host-capabilities.ps1 should emit the Tool Availability section.'
+    }
+
+    if ($hostCapabilities -notmatch 'work/final-report-notes.generated.md') {
+        throw 'generate-host-capabilities.ps1 should reference work/final-report-notes.generated.md in the generated evidence snapshot.'
+    }
 
     if ($branchTags -notmatch 'TAX_TAG=main') {
         throw 'Branch tag resolution failed for tax service.'

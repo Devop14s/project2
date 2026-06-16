@@ -9,6 +9,7 @@ for token in \
   'docs/remaining-work-plan.md' \
   'work/service-verification.generated.md' \
   'work/final-report-notes.generated.md' \
+  'work/host-capabilities.generated.md' \
   'scripts\refresh-evidence.ps1 -SkipCommandChecks' \
   'jenkins/services.release-baseline.env' \
   '`storefront`' \

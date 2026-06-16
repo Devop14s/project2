@@ -2,6 +2,7 @@ param(
     [string]$OutputFile = 'work/final-report-notes.generated.md',
     [string]$StatusReportFile = 'work/status-report.generated.md',
     [string]$ServiceVerificationFile = 'work/service-verification.generated.md',
+    [string]$HostCapabilitiesFile = 'work/host-capabilities.generated.md',
     [string]$BaselineServicesFile = 'jenkins/services.release-baseline.env'
 )
 
@@ -107,6 +108,7 @@ $content.Add('')
 $content.Add('## Evidence Files To Reuse In The Report')
 $content.Add('- `work/status-report.generated.md`')
 $content.Add('- `work/service-verification.generated.md`')
+$content.Add('- `work/host-capabilities.generated.md`')
 $content.Add('- `docs/source-build-runtime-matrix.md`')
 $content.Add('- `docs/image-matrix.md`')
 $content.Add('- `work/image-digests.txt` after a real push run')
@@ -117,6 +119,7 @@ $content.Add('- `work/manifest-update-metadata.json` after GitOps manifest-updat
 $content.Add('')
 $content.Add('## Suggested Wording For The Conclusion')
 $content.Add('- Verified locally only: scaffold structure, source alignment, catalog generation, local builds, local image builds where available, and Helm rendering.')
+$content.Add('- Current host capability evidence: `work/host-capabilities.generated.md` shows which tools and runtime dependencies were actually reachable while the local evidence bundle was generated.')
 $content.Add('- Verified end to end on real infrastructure: leave empty until registry push, Jenkins flow, and cluster deploy evidence exist.')
 $content.Add('- Known accepted gaps: any service intentionally excluded from the first release subset, plus services still blocked by workspace-specific Testcontainers issues.')
 

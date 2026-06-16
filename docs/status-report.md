@@ -93,6 +93,7 @@ Last updated: June 16, 2026
 - The short environment handover list is in [handover-checklist.md](</D:/App/project2/docs/handover-checklist.md>).
 - The machine-generated per-service snapshot is available at [service-verification.generated.md](</D:/App/project2/work/service-verification.generated.md>) and is refreshed together with [status-report.generated.md](</D:/App/project2/work/status-report.generated.md>) when running `powershell -ExecutionPolicy Bypass -File scripts\refresh-evidence.ps1 -SkipCommandChecks`.
 - The generated drafting aid for the submission report is available at [final-report-notes.generated.md](</D:/App/project2/work/final-report-notes.generated.md>) and is refreshed by the same `refresh-evidence` command.
+- The generated host capability snapshot is available at [host-capabilities.generated.md](</D:/App/project2/work/host-capabilities.generated.md>) and records which tools and runtime dependencies were actually reachable on the machine that produced the local evidence bundle.
 
 ## Inputs still required
 

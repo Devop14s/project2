@@ -104,6 +104,8 @@ scripts/summarize-failsafe-blockers.ps1
 scripts/summarize-failsafe-blockers.sh
 scripts/generate-service-verification-matrix.ps1
 scripts/generate-service-verification-matrix.sh
+scripts/generate-host-capabilities.ps1
+scripts/generate-host-capabilities.sh
 scripts/generate-final-report-notes.ps1
 scripts/generate-final-report-notes.sh
 scripts/workspace-blocker-overrides.txt
@@ -119,6 +121,7 @@ scripts/generate-chart-values.ps1
 scripts/generate-chart-values.sh
 scripts/update-manifest-values.ps1
 scripts/update-manifest-values.sh
+work/host-capabilities.generated.md
 work/final-report-notes.generated.md
 work/status-report.generated.md
 work/service-verification.generated.md

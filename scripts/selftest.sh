@@ -18,6 +18,7 @@ status_report_file="${temp_dir}/status-report.generated.md"
 failsafe_blockers_file="${temp_dir}/failsafe-blockers.txt"
 service_verification_matrix_file="${temp_dir}/service-verification.generated.md"
 final_report_notes_file="${temp_dir}/final-report-notes.generated.md"
+host_capabilities_file="${temp_dir}/host-capabilities.generated.md"
 commit_sha_file="work/commit_sha.txt"
 commit_short_sha_file="work/commit_short_sha.txt"
 commit_metadata_file="work/commit-metadata.json"
@@ -127,8 +128,8 @@ OUTPUT_FILE="$chart_values_file" \
 sh scripts/generate-chart-values.sh >/dev/null
 sh scripts/update-manifest-values.sh "$manifest_values_file" test-tag >/dev/null
 powershell -ExecutionPolicy Bypass -File scripts/preflight.ps1 -AsJson -SkipCommandChecks >/dev/null
-SERVICE_VERIFICATION_FILE="$service_verification_matrix_file" FINAL_REPORT_NOTES_FILE="$final_report_notes_file" sh scripts/refresh-evidence.sh "$status_report_file" --skip-command-checks >/dev/null
-sh scripts/validate-generated-reports.sh "$status_report_file" "$service_verification_matrix_file" >/dev/null
+SERVICE_VERIFICATION_FILE="$service_verification_matrix_file" FINAL_REPORT_NOTES_FILE="$final_report_notes_file" HOST_CAPABILITIES_FILE="$host_capabilities_file" sh scripts/refresh-evidence.sh "$status_report_file" --skip-command-checks >/dev/null
+sh scripts/validate-generated-reports.sh "$status_report_file" "$service_verification_matrix_file" "$host_capabilities_file" >/dev/null
 sh scripts/validate-final-report-notes.sh "$final_report_notes_file" >/dev/null
 if TAGS_FILE="${temp_dir}/missing-tags.env" DOCKERHUB_NAMESPACE="$dockerhub_namespace" OUTPUT_FILE="${temp_dir}/missing-tags-generated-values.yaml" sh scripts/generate-values.sh >/dev/null 2>&1; then
   printf 'generate-values.sh should fail when an explicit TAGS_FILE path is provided but missing.\n' >&2
@@ -166,6 +167,8 @@ grep -q 'work/service-verification.generated.md' docs/service-inventory.md
 grep -q 'work/service-verification.generated.md' docs/troubleshooting.md
 grep -q 'work/service-verification.generated.md' docs/remaining-work-plan.md
 grep -q 'work/service-verification.generated.md' docs/status-report.md
+grep -q '## Tool Availability' "$host_capabilities_file"
+grep -q 'work/final-report-notes.generated.md' "$host_capabilities_file"
 if grep -q 'done < <(' scripts/resolve-branch-tags.sh; then
   printf 'resolve-branch-tags.sh should remain POSIX-safe and must not use process substitution.\n' >&2
   exit 1

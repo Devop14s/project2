@@ -2,6 +2,7 @@ param(
     [string]$OutputFile = 'work/status-report.generated.md',
     [string]$ServiceVerificationFile = 'work/service-verification.generated.md',
     [string]$FinalReportNotesFile = 'work/final-report-notes.generated.md',
+    [string]$HostCapabilitiesFile = 'work/host-capabilities.generated.md',
     [switch]$SkipCommandChecks
 )
 
@@ -57,10 +58,28 @@ $resolvedFinalReportNotesPath = if ([System.IO.Path]::IsPathRooted($FinalReportN
     Join-Path (Get-Location) $FinalReportNotesFile
 }
 
+$hostCapabilitiesOutputDir = Split-Path -Parent $HostCapabilitiesFile
+if ($hostCapabilitiesOutputDir) {
+    New-Item -ItemType Directory -Path $hostCapabilitiesOutputDir -Force | Out-Null
+}
+
+$resolvedHostCapabilitiesPath = if ([System.IO.Path]::IsPathRooted($HostCapabilitiesFile)) {
+    $HostCapabilitiesFile
+} else {
+    Join-Path (Get-Location) $HostCapabilitiesFile
+}
+
 if (Test-Path 'scripts\generate-service-verification-matrix.ps1') {
     powershell -ExecutionPolicy Bypass -File scripts\generate-service-verification-matrix.ps1 -OutputFile $resolvedServiceVerificationPath *> $null
     if ($LASTEXITCODE -ne 0) {
         throw 'generate-service-verification-matrix.ps1 failed while report-status.ps1 was refreshing generated evidence.'
+    }
+}
+
+if (Test-Path 'scripts\generate-host-capabilities.ps1') {
+    powershell -ExecutionPolicy Bypass -File scripts\generate-host-capabilities.ps1 -OutputFile $resolvedHostCapabilitiesPath *> $null
+    if ($LASTEXITCODE -ne 0) {
+        throw 'generate-host-capabilities.ps1 failed while report-status.ps1 was refreshing generated evidence.'
     }
 }
 
@@ -810,7 +829,7 @@ $content.Add('- Jenkins credentials and webhook integration cannot be verified l
 
 [System.IO.File]::WriteAllLines($resolvedOutputPath, $content)
 if (Test-Path 'scripts\generate-final-report-notes.ps1') {
-    powershell -ExecutionPolicy Bypass -File scripts\generate-final-report-notes.ps1 -OutputFile $resolvedFinalReportNotesPath -StatusReportFile $resolvedOutputPath -ServiceVerificationFile $resolvedServiceVerificationPath *> $null
+    powershell -ExecutionPolicy Bypass -File scripts\generate-final-report-notes.ps1 -OutputFile $resolvedFinalReportNotesPath -StatusReportFile $resolvedOutputPath -ServiceVerificationFile $resolvedServiceVerificationPath -HostCapabilitiesFile $resolvedHostCapabilitiesPath *> $null
     if ($LASTEXITCODE -ne 0) {
         throw 'generate-final-report-notes.ps1 failed while report-status.ps1 was refreshing generated evidence.'
     }
@@ -818,3 +837,4 @@ if (Test-Path 'scripts\generate-final-report-notes.ps1') {
 Write-Host "Generated status report: $OutputFile"
 Write-Host "Generated service verification matrix: $ServiceVerificationFile"
 Write-Host "Generated final report notes: $FinalReportNotesFile"
+Write-Host "Generated host capabilities report: $HostCapabilitiesFile"

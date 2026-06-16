@@ -10,6 +10,7 @@ for token in \
   'docs/final-report-template.md' \
   'work/status-report.generated.md' \
   'work/service-verification.generated.md' \
+  'work/host-capabilities.generated.md' \
   'work/image-digests.txt' \
   'work/commit-metadata.json' \
   'work/runtime-evidence/<namespace>/<release>/' \
@@ -17,6 +18,7 @@ for token in \
   'work/manifest-update-metadata.json' \
   'scripts\refresh-evidence.ps1 -SkipCommandChecks' \
   'Verified locally only:' \
+  'Current host capability evidence:' \
   'Verified end to end on real infrastructure:'
 do
   printf '%s' "$notes_text" | grep -F -q "$token" || {

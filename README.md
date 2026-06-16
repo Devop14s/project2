@@ -17,6 +17,7 @@ This repository currently contains the assignment brief and an executable scaffo
 - [docs/handover-checklist.md](</D:/App/project2/docs/handover-checklist.md>) is the short operator checklist for moving this repo into a real registry, Jenkins, and cluster environment.
 - [work/service-verification.generated.md](</D:/App/project2/work/service-verification.generated.md>) is the current generated per-service verification snapshot, refreshed together with [work/status-report.generated.md](</D:/App/project2/work/status-report.generated.md>) by `powershell -ExecutionPolicy Bypass -File scripts\refresh-evidence.ps1 -SkipCommandChecks`.
 - [work/final-report-notes.generated.md](</D:/App/project2/work/final-report-notes.generated.md>) is the current generated drafting aid for the submission report and is refreshed by the same `refresh-evidence` flow.
+- [work/host-capabilities.generated.md](</D:/App/project2/work/host-capabilities.generated.md>) is the current generated host/runtime capability snapshot and is refreshed by the same `refresh-evidence` flow.
 - `jenkins/services.release-baseline.env` freezes the first deployable subset while `jenkins/services.env` keeps the full source-verified catalog.
 
 ## Current limitation
