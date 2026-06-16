@@ -173,6 +173,8 @@ $requiredFiles = @(
     'scripts\summarize-failsafe-blockers.sh',
     'scripts\generate-service-verification-matrix.ps1',
     'scripts\generate-service-verification-matrix.sh',
+    'scripts\generate-host-capabilities.ps1',
+    'scripts\generate-host-capabilities.sh',
     'scripts\workspace-blocker-overrides.txt',
     'scripts\report-status.ps1',
     'scripts\report-status.sh',
@@ -780,6 +782,9 @@ if ($sharedPromotionCommitMetadataVerified) {
 }
 if ($runtimeEvidenceProvenanceVerified) {
     $content.Add('- Runtime evidence directories now snapshot commit, manifest, build, push, and verification artifacts such as `commit-metadata.json`, `manifest-update-metadata.json`, and `image-digests.txt` per run.')
+}
+if (Test-Path $resolvedHostCapabilitiesPath) {
+    $content.Add('- A machine-generated host capability snapshot now records which tools and runtime dependencies were actually reachable while this local evidence bundle was produced.')
 }
 if ($selfContainedCommitMetadataVerified) {
     $content.Add('- Commit metadata artifacts now embed the exact commit SHA and short SHA directly in `commit-metadata.json`, not only in sidecar text files.')

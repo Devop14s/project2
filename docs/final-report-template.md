@@ -2,7 +2,7 @@
 
 ## 1. Team information
 
-- Refresh `work/status-report.generated.md`, `work/service-verification.generated.md`, and `work/final-report-notes.generated.md` first with `powershell -ExecutionPolicy Bypass -File scripts\refresh-evidence.ps1 -SkipCommandChecks`.
+- Refresh `work/status-report.generated.md`, `work/service-verification.generated.md`, `work/final-report-notes.generated.md`, and `work/host-capabilities.generated.md` first with `powershell -ExecutionPolicy Bypass -File scripts\refresh-evidence.ps1 -SkipCommandChecks`.
 - Use `work/final-report-notes.generated.md` as a prefilled drafting aid, then replace placeholders below with real infrastructure evidence.
 
 - MSSV 1:
@@ -36,6 +36,7 @@
 - one successful build-and-push example with tag and digest
 - `work/image-digests.txt` excerpt or equivalent digest evidence
 - evidence that branch builds use commit SHA or the chosen rule
+- note which host or Jenkins agent actually ran the flow, using `work/host-capabilities.generated.md` or equivalent runtime-host evidence
 
 ## 5. Developer deployment flow
 
@@ -84,5 +85,6 @@
 - what works
 - what remains risky
 - what was verified locally only
+- which host/tooling constraints still applied while local evidence was collected
 - what was verified end to end on real infrastructure
 

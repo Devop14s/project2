@@ -672,6 +672,9 @@ fi
   if [ "$runtime_evidence_provenance_verified" -eq 1 ]; then
     printf '%s\n' '- Runtime evidence directories now snapshot commit, manifest, build, push, and verification artifacts such as `commit-metadata.json`, `manifest-update-metadata.json`, and `image-digests.txt` per run.'
   fi
+  if [ -f "$host_capabilities_file" ]; then
+    printf '%s\n' '- A machine-generated host capability snapshot now records which tools and runtime dependencies were actually reachable while this local evidence bundle was produced.'
+  fi
   if [ "$self_contained_commit_metadata_verified" -eq 1 ]; then
     printf '%s\n' '- Commit metadata artifacts now embed the exact commit SHA and short SHA directly in `commit-metadata.json`, not only in sidecar text files.'
   fi

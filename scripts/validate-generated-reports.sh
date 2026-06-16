@@ -64,6 +64,7 @@ for token in \
   "- UI workloads in catalog: ${ui_count}" \
   "- Backend workloads in catalog: ${backend_count}" \
   'Drift validators now lock the main hand-written docs and runbooks' \
+  'A machine-generated host capability snapshot now records which tools and runtime dependencies were actually reachable while this local evidence bundle was produced.' \
   'Real Kubernetes deployment cannot be executed.' \
   'Jenkins credentials and webhook integration cannot be verified locally.'
 do

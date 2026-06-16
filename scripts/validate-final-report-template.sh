@@ -7,6 +7,7 @@ template_text="$(cat "$template_file")"
 for token in \
   'scripts\refresh-evidence.ps1 -SkipCommandChecks' \
   'work/final-report-notes.generated.md' \
+  'work/host-capabilities.generated.md' \
   'work/image-digests.txt' \
   'work/cleanup-evidence/<namespace>/<release>/' \
   'work/commit-metadata.json' \
@@ -14,6 +15,8 @@ for token in \
   'ArgoCD' \
   'Service mesh' \
   'scaffold-only' \
+  'which host or Jenkins agent actually ran the flow' \
+  'which host/tooling constraints still applied while local evidence was collected' \
   'verified end to end on real infrastructure'
 do
   printf '%s' "$template_text" | grep -F -q "$token" || {

@@ -68,6 +68,7 @@ foreach ($requiredStatusToken in @(
     "- UI workloads in catalog: $uiCount",
     "- Backend workloads in catalog: $backendCount",
     'Drift validators now lock the main hand-written docs and runbooks',
+    'A machine-generated host capability snapshot now records which tools and runtime dependencies were actually reachable while this local evidence bundle was produced.',
     'Real Kubernetes deployment cannot be executed.',
     'Jenkins credentials and webhook integration cannot be verified locally.'
 )) {
