@@ -33,6 +33,8 @@ On Windows, `preflight.ps1`, `selftest.ps1`, and `report-status.ps1` can also pi
 - `validate-chart-values.sh`
 - `validate-image-matrix.ps1`
 - `validate-image-matrix.sh`
+- `validate-readme.ps1`
+- `validate-readme.sh`
 - `validate-service-inventory.ps1`
 - `validate-service-inventory.sh`
 - `validate-troubleshooting.ps1`
@@ -80,6 +82,7 @@ powershell -ExecutionPolicy Bypass -File scripts\validate-services-catalog.ps1
 powershell -ExecutionPolicy Bypass -File scripts\validate-services-catalog.ps1 -ServicesFile jenkins\services.release-baseline.env -ReferenceServicesFile jenkins\services.env
 powershell -ExecutionPolicy Bypass -File scripts\validate-chart-values.ps1
 powershell -ExecutionPolicy Bypass -File scripts\validate-image-matrix.ps1
+powershell -ExecutionPolicy Bypass -File scripts\validate-readme.ps1
 powershell -ExecutionPolicy Bypass -File scripts\validate-service-inventory.ps1
 powershell -ExecutionPolicy Bypass -File scripts\validate-troubleshooting.ps1
 powershell -ExecutionPolicy Bypass -File scripts\validate-remaining-work-plan.ps1
@@ -111,6 +114,7 @@ sh scripts/validate-services-catalog.sh
 sh scripts/validate-services-catalog.sh jenkins/services.release-baseline.env jenkins/services.env
 sh scripts/validate-chart-values.sh
 sh scripts/validate-image-matrix.sh
+sh scripts/validate-readme.sh
 sh scripts/validate-service-inventory.sh
 sh scripts/validate-troubleshooting.sh
 sh scripts/validate-remaining-work-plan.sh

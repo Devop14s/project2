@@ -12,11 +12,14 @@ This repository currently contains the assignment brief and an executable scaffo
 - `docs/` contains runbooks, templates, and tracking documents.
 - `scripts/` contains local validation helpers for this scaffold.
 - [docs/source-build-runtime-matrix.md](</D:/App/project2/docs/source-build-runtime-matrix.md>) records source-verified build commands and runtime ports from the local `yas-source` clone.
+- [docs/status-report.md](</D:/App/project2/docs/status-report.md>) summarizes what is already implemented in this repository and what still depends on external runtime access.
+- [docs/remaining-work-plan.md](</D:/App/project2/docs/remaining-work-plan.md>) keeps the detailed next-phase execution plan for unfinished work.
+- [work/service-verification.generated.md](</D:/App/project2/work/service-verification.generated.md>) is the current generated per-service verification snapshot.
 - `jenkins/services.release-baseline.env` freezes the first deployable subset while `jenkins/services.env` keeps the full source-verified catalog.
 
 ## Current limitation
 
-The actual YAS application source repository is now cloned locally under [yas-source](</D:/App/project2/yas-source/README.md>), so service paths and Dockerfiles can be checked against real source. This workspace has already verified real local builds for `storefront`, `backoffice`, `storefront-bff`, `backoffice-bff`, `product`, `payment`, `payment-paypal`, `recommendation`, `inventory`, and `order`, plus test-skipped packaging for `sampledata` and `search`. Real local Docker image builds were verified for `storefront`, `backoffice`, `storefront-bff`, `backoffice-bff`, `product`, `payment`, `payment-paypal`, `recommendation`, `sampledata`, `search`, `inventory`, and `order`. Helm chart lint and template rendering were also validated locally with Helm 4.2.0, but the delivery repo still cannot yet:
+The actual YAS application source repository is now cloned locally under [yas-source](</D:/App/project2/yas-source/README.md>), so service paths and Dockerfiles can be checked against real source. This workspace has already verified real local builds for `storefront`, `backoffice`, `storefront-bff`, `backoffice-bff`, `product`, `payment`, `payment-paypal`, `recommendation`, `inventory`, and `order`; test-skipped packaging for `cart`, `customer`, `location`, `media`, `promotion`, `rating`, `tax`, `webhook`, `sampledata`, and `search`; and real local Docker image builds for the same verified services. Helm chart lint and template rendering were also validated locally with Helm 4.2.0, but the delivery repo still cannot yet:
 
 The Jenkins helper scripts now understand `SOURCE_ROOT` and `SOURCE_GIT_ROOT`, so this delivery repo can target a sibling or nested source checkout such as `yas-source/` instead of assuming the application code lives at the delivery-repo root.
 
