@@ -136,8 +136,13 @@ pipeline {
             sourceRootParam = 'yas-source'
           }
 
-          if (!fileExists("${sourceRootParam}/.git")) {
-            dir(sourceRootParam) {
+          def sourceRootPath = sourceRootParam
+          if (!sourceRootParam.startsWith('/')) {
+            sourceRootPath = "${pwd()}/${sourceRootParam}"
+          }
+
+          if (!fileExists("${sourceRootPath}/.git")) {
+            dir(sourceRootPath) {
               checkout([
                 $class: 'GitSCM',
                 branches: [[name: '*/main']],
@@ -146,11 +151,12 @@ pipeline {
             }
           }
 
-          env.SOURCE_ROOT = sourceRootParam
+          env.SOURCE_ROOT = sourceRootPath
           env.SOURCE_GIT_ROOT = params.SOURCE_GIT_ROOT?.trim()
           if (!env.SOURCE_GIT_ROOT) {
-            env.SOURCE_GIT_ROOT = sourceRootParam
+            env.SOURCE_GIT_ROOT = sourceRootPath
           }
+
           env.RELEASE_VERSION = stagingTarget ? (params.RELEASE_VERSION?.trim() ?: 'v1.0.0') : ''
           env.DEPLOYER_ID = (developerBuildTarget || developerCleanupTarget) ? (params.DEPLOYER_ID?.trim() ?: 'dev1') : ''
           env.DOMAIN_NAME = developerBuildTarget ? (params.DOMAIN_NAME?.trim() ?: "storefront-${env.DEPLOYER_ID}.yas.local") : ''
