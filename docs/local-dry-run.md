@@ -4,7 +4,7 @@
 
 Simulate the `developer_build` branch override flow locally without Jenkins, Kubernetes, or Helm.
 
-If `yas-source/` exists beside this delivery repo, branch-tag resolution automatically uses that source checkout. Override with `SOURCE_GIT_ROOT` only when needed.
+If `yas-source-upstream/` exists beside this delivery repo, branch-tag resolution automatically uses that source checkout. If it is absent but `yas-source/` exists, the scripts fall back to that clone. Override with `SOURCE_GIT_ROOT` only when needed.
 
 ## Outputs
 

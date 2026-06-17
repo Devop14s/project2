@@ -1,13 +1,13 @@
 # Source Build And Runtime Matrix
 
-This matrix is derived from the local clone [yas-source](</D:/App/project2/yas-source/README.md>) on June 9, 2026.
+This matrix is derived from the local clone [yas-source-upstream](</D:/App/project2/yas-source-upstream/README.md>) on June 9, 2026.
 
 It combines evidence from:
 
-- `yas-source/.github/workflows/*.yaml`
-- `yas-source/*/Dockerfile`
-- `yas-source/*/package.json`
-- `yas-source/*/src/main/resources/application.*`
+- `yas-source-upstream/.github/workflows/*.yaml`
+- `yas-source-upstream/*/Dockerfile`
+- `yas-source-upstream/*/package.json`
+- `yas-source-upstream/*/src/main/resources/application.*`
 
 ## Verified build evidence on this host
 
@@ -66,36 +66,36 @@ Checked directly in the cloned source:
 
 | Service | Source path | CI build steps | Docker context | Upstream image | Runtime port | Runtime command | Notes |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| storefront | `yas-source/storefront` | `npm ci`, `npm run build`, `npm run lint`, `npx prettier --check .` | `./storefront` | `ghcr.io/nashtech-garage/yas-storefront:latest` | `3000` | `node server.js` | Real build and lint were verified locally; prettier check failed upstream. |
-| backoffice | `yas-source/backoffice` | `npm ci`, `npm run build`, `npm run lint`, `npx prettier --check .` | `./backoffice` | `ghcr.io/nashtech-garage/yas-backoffice:latest` | `3000` | `node server.js` | Real build and lint were verified locally; Docker image build also passed. Build logs still show post-build `quill` SSR traces. |
+| storefront | `yas-source-upstream/storefront` | `npm ci`, `npm run build`, `npm run lint`, `npx prettier --check .` | `./storefront` | `ghcr.io/nashtech-garage/yas-storefront:latest` | `3000` | `node server.js` | Real build and lint were verified locally; prettier check failed upstream. |
+| backoffice | `yas-source-upstream/backoffice` | `npm ci`, `npm run build`, `npm run lint`, `npx prettier --check .` | `./backoffice` | `ghcr.io/nashtech-garage/yas-backoffice:latest` | `3000` | `node server.js` | Real build and lint were verified locally; Docker image build also passed. Build logs still show post-build `quill` SSR traces. |
 
 ## BFF services
 
 | Service | Source path | CI build command | Docker context | Upstream image | App port | Context path | Runtime command | Notes |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| storefront-bff | `yas-source/storefront-bff` | `mvn clean install -pl storefront-bff -am` | `./storefront-bff` | `ghcr.io/nashtech-garage/yas-storefront-bff:latest` | `8087` | n/a | `java -jar /app.jar` | Real Maven build and Docker image build were both verified locally. Routes to Next.js storefront in `application-prod.yaml`. |
-| backoffice-bff | `yas-source/backoffice-bff` | `mvn clean verify -f backoffice-bff` | `./backoffice-bff` | `ghcr.io/nashtech-garage/yas-backoffice-bff:latest` | `8087` | n/a | `java -jar /app.jar` | Real Maven verify and Docker image build were both verified locally. Routes to Next.js backoffice in `application-prod.yaml`. |
+| storefront-bff | `yas-source-upstream/storefront-bff` | `mvn clean install -pl storefront-bff -am` | `./storefront-bff` | `ghcr.io/nashtech-garage/yas-storefront-bff:latest` | `8087` | n/a | `java -jar /app.jar` | Real Maven build and Docker image build were both verified locally. Routes to Next.js storefront in `application-prod.yaml`. |
+| backoffice-bff | `yas-source-upstream/backoffice-bff` | `mvn clean verify -f backoffice-bff` | `./backoffice-bff` | `ghcr.io/nashtech-garage/yas-backoffice-bff:latest` | `8087` | n/a | `java -jar /app.jar` | Real Maven verify and Docker image build were both verified locally. Routes to Next.js backoffice in `application-prod.yaml`. |
 
 ## Backend services
 
 | Service | Source path | CI build command | Docker context | Upstream image | App port | Context path | Runtime command | Notes |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| product | `yas-source/product` | `mvn clean install -pl product -am` | `./product` | `ghcr.io/nashtech-garage/yas-product:latest` | `8080` | `/product` | `java -jar /app.jar` | Real Maven build was verified locally, produced `target/product-1.0-SNAPSHOT.jar`, and the Docker image build also passed. |
-| media | `yas-source/media` | `mvn clean install -pl media -am` | `./media` | `ghcr.io/nashtech-garage/yas-media:latest` | `8083` | none declared | `java -jar /app.jar` | Package and Docker image build were verified locally; the full upstream-style integration path is currently blocked by Keycloak Testcontainers startup on this host. |
-| cart | `yas-source/cart` | `mvn clean install -pl cart -am` | `./cart` | `ghcr.io/nashtech-garage/yas-cart:latest` | `8084` | `/cart` | `java -jar /app.jar` | Package and Docker image build were verified locally; the full upstream-style integration path is currently blocked by Keycloak Testcontainers startup on this host. |
-| order | `yas-source/order` | `mvn clean install -pl order -am` | `./order` | `ghcr.io/nashtech-garage/yas-order:latest` | `8085` | `/order` | `java -jar /app.jar` | Real Maven build and Docker image build were both verified locally, including passing test coverage during the upstream-style reactor build. |
-| location | `yas-source/location` | `mvn clean install -pl location -am` | `./location` | `ghcr.io/nashtech-garage/yas-location:latest` | `8086` | `/location` | `java -jar /app.jar` | Package and Docker image build were verified locally; the full upstream-style integration path is currently blocked by Keycloak Testcontainers startup on this host. |
-| customer | `yas-source/customer` | `mvn clean install -pl customer -am` | `./customer` | `ghcr.io/nashtech-garage/yas-customer:latest` | `8088` | `/customer` | `java -jar /app.jar` | Package and Docker image build were verified locally; the full upstream-style integration path is currently blocked by Keycloak Testcontainers startup on this host. |
-| rating | `yas-source/rating` | `mvn clean install -pl rating -am` | `./rating` | `ghcr.io/nashtech-garage/yas-rating:latest` | `8089` | `/rating` | `java -jar /app.jar` | Package and Docker image build were verified locally; the full upstream-style integration path is currently blocked by Keycloak Testcontainers startup on this host. |
-| inventory | `yas-source/inventory` | `mvn clean install -pl inventory -am` | `./inventory` | `ghcr.io/nashtech-garage/yas-inventory:latest` | `8090` | `/inventory` | `java -jar /app.jar` | Real Maven build and Docker image build were both verified locally, including passing test coverage during the upstream-style reactor build. |
-| tax | `yas-source/tax` | `mvn clean install -pl tax -am` | `./tax` | `ghcr.io/nashtech-garage/yas-tax:latest` | `8091` | `/tax` | `java -jar /app.jar` | Package and Docker image build were verified locally; the full upstream-style integration path is currently blocked by Keycloak Testcontainers startup on this host. |
-| search | `yas-source/search` | `mvn clean install -pl search -am` | `./search` | `ghcr.io/nashtech-garage/yas-search:latest` | `8092` | `/search` | `java -jar /app.jar` | Search also appears in a separate compose profile upstream. |
-| promotion | `yas-source/promotion` | `mvn clean install -pl promotion -am` | `./promotion` | `ghcr.io/nashtech-garage/yas-promotion:latest` | `8092` | `/promotion` | `java -jar /app.jar` | Package and Docker image build were verified locally; the full upstream-style integration path is currently blocked by Keycloak Testcontainers startup on this host. |
-| webhook | `yas-source/webhook` | `mvn clean install -pl webhook -am` | `./webhook` | `ghcr.io/nashtech-garage/yas-webhook:latest` | `8092` | `/webhook` | `java -jar /app.jar` | Package and Docker image build were verified locally; the full upstream-style integration path is currently blocked by Keycloak Testcontainers startup on this host. |
-| recommendation | `yas-source/recommendation` | `mvn clean install -pl recommendation -am` | `./recommendation` | `ghcr.io/nashtech-garage/yas-recommendation:latest` | `8095` | `/recommendation` | `java -jar /app.jar` | Real Maven build and Docker image build were verified locally. First parallel build attempt only hit a shared-target cleanup conflict in `common-library`. |
-| payment | `yas-source/payment` | `mvn clean install -pl payment -am` | `./payment` | `ghcr.io/nashtech-garage/yas-payment:latest` | `8081` | `/payment` | `java -jar /app.jar` | Real Maven build and Docker image build were both verified locally; tests exercised container-backed integration flow. |
-| payment-paypal | `yas-source/payment-paypal` | `mvn clean install -pl payment-paypal -am` | `./payment-paypal` | `ghcr.io/nashtech-garage/yas-payment-paypal:latest` | `8093` | `/payment-paypal` | `java -jar /app.jar` | Real Maven build and Docker image build were both verified locally; test suite exercised the PayPal integration adapter. |
-| sampledata | `yas-source/sampledata` | `mvn clean install -pl sampledata -am` | `./sampledata` | `ghcr.io/nashtech-garage/yas-sampledata:latest` | `8094` | `/sampledata` | `java -jar /app.jar` | Packaging and Docker image build were verified locally with `maven.test.skip=true`; full upstream-style test path is currently blocked by `common-library` test compilation in this workspace. |
+| product | `yas-source-upstream/product` | `mvn clean install -pl product -am` | `./product` | `ghcr.io/nashtech-garage/yas-product:latest` | `8080` | `/product` | `java -jar /app.jar` | Real Maven build was verified locally, produced `target/product-1.0-SNAPSHOT.jar`, and the Docker image build also passed. |
+| media | `yas-source-upstream/media` | `mvn clean install -pl media -am` | `./media` | `ghcr.io/nashtech-garage/yas-media:latest` | `8083` | none declared | `java -jar /app.jar` | Package and Docker image build were verified locally; the full upstream-style integration path is currently blocked by Keycloak Testcontainers startup on this host. |
+| cart | `yas-source-upstream/cart` | `mvn clean install -pl cart -am` | `./cart` | `ghcr.io/nashtech-garage/yas-cart:latest` | `8084` | `/cart` | `java -jar /app.jar` | Package and Docker image build were verified locally; the full upstream-style integration path is currently blocked by Keycloak Testcontainers startup on this host. |
+| order | `yas-source-upstream/order` | `mvn clean install -pl order -am` | `./order` | `ghcr.io/nashtech-garage/yas-order:latest` | `8085` | `/order` | `java -jar /app.jar` | Real Maven build and Docker image build were both verified locally, including passing test coverage during the upstream-style reactor build. |
+| location | `yas-source-upstream/location` | `mvn clean install -pl location -am` | `./location` | `ghcr.io/nashtech-garage/yas-location:latest` | `8086` | `/location` | `java -jar /app.jar` | Package and Docker image build were verified locally; the full upstream-style integration path is currently blocked by Keycloak Testcontainers startup on this host. |
+| customer | `yas-source-upstream/customer` | `mvn clean install -pl customer -am` | `./customer` | `ghcr.io/nashtech-garage/yas-customer:latest` | `8088` | `/customer` | `java -jar /app.jar` | Package and Docker image build were verified locally; the full upstream-style integration path is currently blocked by Keycloak Testcontainers startup on this host. |
+| rating | `yas-source-upstream/rating` | `mvn clean install -pl rating -am` | `./rating` | `ghcr.io/nashtech-garage/yas-rating:latest` | `8089` | `/rating` | `java -jar /app.jar` | Package and Docker image build were verified locally; the full upstream-style integration path is currently blocked by Keycloak Testcontainers startup on this host. |
+| inventory | `yas-source-upstream/inventory` | `mvn clean install -pl inventory -am` | `./inventory` | `ghcr.io/nashtech-garage/yas-inventory:latest` | `8090` | `/inventory` | `java -jar /app.jar` | Real Maven build and Docker image build were both verified locally, including passing test coverage during the upstream-style reactor build. |
+| tax | `yas-source-upstream/tax` | `mvn clean install -pl tax -am` | `./tax` | `ghcr.io/nashtech-garage/yas-tax:latest` | `8091` | `/tax` | `java -jar /app.jar` | Package and Docker image build were verified locally; the full upstream-style integration path is currently blocked by Keycloak Testcontainers startup on this host. |
+| search | `yas-source-upstream/search` | `mvn clean install -pl search -am` | `./search` | `ghcr.io/nashtech-garage/yas-search:latest` | `8092` | `/search` | `java -jar /app.jar` | Search also appears in a separate compose profile upstream. |
+| promotion | `yas-source-upstream/promotion` | `mvn clean install -pl promotion -am` | `./promotion` | `ghcr.io/nashtech-garage/yas-promotion:latest` | `8092` | `/promotion` | `java -jar /app.jar` | Package and Docker image build were verified locally; the full upstream-style integration path is currently blocked by Keycloak Testcontainers startup on this host. |
+| webhook | `yas-source-upstream/webhook` | `mvn clean install -pl webhook -am` | `./webhook` | `ghcr.io/nashtech-garage/yas-webhook:latest` | `8092` | `/webhook` | `java -jar /app.jar` | Package and Docker image build were verified locally; the full upstream-style integration path is currently blocked by Keycloak Testcontainers startup on this host. |
+| recommendation | `yas-source-upstream/recommendation` | `mvn clean install -pl recommendation -am` | `./recommendation` | `ghcr.io/nashtech-garage/yas-recommendation:latest` | `8095` | `/recommendation` | `java -jar /app.jar` | Real Maven build and Docker image build were both verified locally. First parallel build attempt only hit a shared-target cleanup conflict in `common-library`. |
+| payment | `yas-source-upstream/payment` | `mvn clean install -pl payment -am` | `./payment` | `ghcr.io/nashtech-garage/yas-payment:latest` | `8081` | `/payment` | `java -jar /app.jar` | Real Maven build and Docker image build were both verified locally; tests exercised container-backed integration flow. |
+| payment-paypal | `yas-source-upstream/payment-paypal` | `mvn clean install -pl payment-paypal -am` | `./payment-paypal` | `ghcr.io/nashtech-garage/yas-payment-paypal:latest` | `8093` | `/payment-paypal` | `java -jar /app.jar` | Real Maven build and Docker image build were both verified locally; test suite exercised the PayPal integration adapter. |
+| sampledata | `yas-source-upstream/sampledata` | `mvn clean install -pl sampledata -am` | `./sampledata` | `ghcr.io/nashtech-garage/yas-sampledata:latest` | `8094` | `/sampledata` | `java -jar /app.jar` | Packaging and Docker image build were verified locally with `maven.test.skip=true`; full upstream-style test path is currently blocked by `common-library` test compilation in this workspace. |
 
 ## Notes
 

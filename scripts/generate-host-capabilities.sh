@@ -1,6 +1,8 @@
 #!/usr/bin/env sh
 set -eu
 
+. scripts/source-root.sh
+
 output_file="${1:-work/host-capabilities.generated.md}"
 mkdir -p "$(dirname "$output_file")"
 
@@ -59,6 +61,7 @@ sh_summary="$(get_command_summary sh)"
 
 docker_status="$(printf '%s' "$docker_summary" | cut -d'|' -f1)"
 docker_daemon_reachable=0
+resolved_source_root="$(resolve_source_root)"
 if [ "$docker_status" = "present" ] && docker version >/dev/null 2>&1; then
   docker_daemon_reachable=1
 fi
@@ -111,6 +114,12 @@ emit_tool_line() {
   fi
   printf '\n'
   printf '## Workspace Inputs\n'
+  if [ -e "$resolved_source_root" ]; then
+    printf '%s%s%s\n' '- Default resolved source root: `' "$resolved_source_root" '` (present)'
+  else
+    printf '%s%s%s\n' '- Default resolved source root: `' "$resolved_source_root" '` (missing)'
+  fi
+  [ -d yas-source-upstream ] && printf '%s\n' '- `yas-source-upstream/`: present' || printf '%s\n' '- `yas-source-upstream/`: missing'
   [ -d yas-source ] && printf '%s\n' '- `yas-source/`: present' || printf '%s\n' '- `yas-source/`: missing'
   [ -f jenkins/services.env ] && printf '%s\n' '- `jenkins/services.env`: present' || printf '%s\n' '- `jenkins/services.env`: missing'
   [ -f jenkins/services.release-baseline.env ] && printf '%s\n' '- `jenkins/services.release-baseline.env`: present' || printf '%s\n' '- `jenkins/services.release-baseline.env`: missing'

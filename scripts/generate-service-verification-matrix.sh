@@ -46,7 +46,7 @@ image_verified() {
 mkdir -p "$(dirname "$output_file")"
 {
   printf '# Service Verification Matrix\n\n'
-  printf '%s\n' 'This file is generated from `jenkins/services.env`, local source artifacts under `yas-source/`, local Docker images, and workspace blocker summaries.'
+  printf '%s%s%s%s%s\n' 'This file is generated from `jenkins/services.env`, local source artifacts under `' "$source_root" '/`, local Docker images, and workspace blocker summaries.'
   printf '\n'
   printf '| Service | Workload | Build evidence | Local image | Blocker | Overall status |\n'
   printf '| --- | --- | --- | --- | --- | --- |\n'

@@ -1,6 +1,6 @@
 # Service Inventory
 
-This inventory was updated from the local clone [yas-source](</D:/App/project2/yas-source/README.md>) of `nashtech-garage/yas` using the source tree, GitHub workflow files, Dockerfiles, Docker Compose files, and Kubernetes chart defaults on June 16, 2026.
+This inventory was updated from the local clone [yas-source-upstream](</D:/App/project2/yas-source-upstream/README.md>) of `nashtech-garage/yas` using the source tree, GitHub workflow files, Dockerfiles, Docker Compose files, and Kubernetes chart defaults on June 16, 2026.
 
 The frozen first deployable subset is tracked in [jenkins/services.release-baseline.env](</D:/App/project2/jenkins/services.release-baseline.env>), while [jenkins/services.env](</D:/App/project2/jenkins/services.env>) remains the full source-verified catalog.
 

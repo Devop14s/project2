@@ -41,7 +41,7 @@ The companion host/runtime snapshot is available at [host-capabilities.generated
 
 ### `recommendation` Maven build fails only during parallel local verification
 
-- Avoid running multiple `mvn clean install -pl <service> -am` reactors at the same time in the same `yas-source` workspace.
+- Avoid running multiple `mvn clean install -pl <service> -am` reactors at the same time in the same source workspace, especially the clean `yas-source-upstream` clone used for evidence generation.
 - The earlier failure observed here came from concurrent cleanup of `common-library/target`, not from a service-code failure.
 
 ### `sampledata` full upstream-style build fails in this workspace

@@ -10,7 +10,7 @@ The default full catalog remains in `jenkins/services.env`, while the frozen fir
 
 You can switch the default catalog for most generators and validators by exporting `SERVICE_CATALOG=release-baseline` instead of passing `SERVICES_FILE` manually.
 
-Source-dependent helpers such as branch-tag resolution and Docker builds now also understand `SOURCE_ROOT` and `SOURCE_GIT_ROOT`. If `yas-source/` exists locally, it becomes the default source tree and Git root automatically.
+Source-dependent helpers such as branch-tag resolution and Docker builds now also understand `SOURCE_ROOT` and `SOURCE_GIT_ROOT`. If `yas-source-upstream/` exists locally, it becomes the default source tree and Git root automatically; `yas-source/` remains the fallback when the clean upstream clone is absent.
 Branch-tag resolution now also emits `branch-tag-metadata.json`, which records both the requested branch override and the resolved tag per service.
 
 On Windows, `preflight.ps1`, `selftest.ps1`, and `report-status.ps1` can also pick up a portable Helm binary under `work/tools/helm-v*/windows-amd64/helm.exe`, so Helm chart validation does not depend on a global install.

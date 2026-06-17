@@ -8,7 +8,7 @@ Move this repository from a source-verified delivery scaffold to a working YAS d
 
 ## Current baseline
 
-- Service catalog is source-verified against the local `yas-source` clone.
+- Service catalog is source-verified against the local `yas-source-upstream` clone.
 - Helm chart and GitOps overlays are generated from the shared catalog.
 - Local build evidence already exists for:
   - UI: `storefront`, `backoffice`

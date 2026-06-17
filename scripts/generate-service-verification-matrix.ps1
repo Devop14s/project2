@@ -66,7 +66,7 @@ function Get-ImageVerified {
 $rows = New-Object System.Collections.Generic.List[string]
 $rows.Add('# Service Verification Matrix')
 $rows.Add('')
-$rows.Add('This file is generated from `jenkins/services.env`, local source artifacts under `yas-source/`, local Docker images, and workspace blocker summaries.')
+$rows.Add(("This file is generated from `jenkins/services.env`, local source artifacts under `{0}/`, local Docker images, and workspace blocker summaries." -f $sourceRoot))
 $rows.Add('')
 $rows.Add('| Service | Workload | Build evidence | Local image | Blocker | Overall status |')
 $rows.Add('| --- | --- | --- | --- | --- | --- |')

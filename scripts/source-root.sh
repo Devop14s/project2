@@ -6,6 +6,11 @@ resolve_source_root() {
     return
   fi
 
+  if [ -d "yas-source-upstream" ]; then
+    printf 'yas-source-upstream'
+    return
+  fi
+
   if [ -d "yas-source" ]; then
     printf 'yas-source'
     return

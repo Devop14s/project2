@@ -11,7 +11,7 @@ This repository currently contains the assignment brief and an executable scaffo
 - `mesh/` contains Istio and Kiali manifest skeletons.
 - `docs/` contains runbooks, templates, and tracking documents.
 - `scripts/` contains local validation helpers for this scaffold.
-- [docs/source-build-runtime-matrix.md](</D:/App/project2/docs/source-build-runtime-matrix.md>) records source-verified build commands and runtime ports from the local `yas-source` clone.
+- [docs/source-build-runtime-matrix.md](</D:/App/project2/docs/source-build-runtime-matrix.md>) records source-verified build commands and runtime ports from the local `yas-source-upstream` clone.
 - [docs/status-report.md](</D:/App/project2/docs/status-report.md>) summarizes what is already implemented in this repository and what still depends on external runtime access.
 - [docs/remaining-work-plan.md](</D:/App/project2/docs/remaining-work-plan.md>) keeps the detailed next-phase execution plan for unfinished work.
 - [docs/handover-checklist.md](</D:/App/project2/docs/handover-checklist.md>) is the short operator checklist for moving this repo into a real registry, Jenkins, and cluster environment.
@@ -22,9 +22,9 @@ This repository currently contains the assignment brief and an executable scaffo
 
 ## Current limitation
 
-The actual YAS application source repository is now cloned locally under [yas-source](</D:/App/project2/yas-source/README.md>), so service paths and Dockerfiles can be checked against real source. This workspace has already verified real local builds for `storefront`, `backoffice`, `storefront-bff`, `backoffice-bff`, `product`, `payment`, `payment-paypal`, `recommendation`, `inventory`, and `order`; test-skipped packaging for `cart`, `customer`, `location`, `media`, `promotion`, `rating`, `tax`, `webhook`, `sampledata`, and `search`; and real local Docker image builds for the same verified services. Helm chart lint and template rendering were also validated locally with Helm 4.2.0, but the delivery repo still cannot yet:
+The actual YAS application source repository is now cloned locally under [yas-source-upstream](</D:/App/project2/yas-source-upstream/README.md>) as the clean authoritative checkout, while [yas-source](</D:/App/project2/yas-source/README.md>) remains available as a legacy local workspace clone. This workspace has already verified real local builds for `storefront`, `backoffice`, `storefront-bff`, `backoffice-bff`, `product`, `payment`, `payment-paypal`, `recommendation`, `inventory`, and `order`; test-skipped packaging for `cart`, `customer`, `location`, `media`, `promotion`, `rating`, `tax`, `webhook`, `sampledata`, and `search`; and real local Docker image builds for the same verified services. Helm chart lint and template rendering were also validated locally with Helm 4.2.0, but the delivery repo still cannot yet:
 
-The Jenkins helper scripts now understand `SOURCE_ROOT` and `SOURCE_GIT_ROOT`, so this delivery repo can target a sibling or nested source checkout such as `yas-source/` instead of assuming the application code lives at the delivery-repo root.
+The Jenkins helper scripts now understand `SOURCE_ROOT` and `SOURCE_GIT_ROOT`, prefer `yas-source-upstream/` when it exists, and still fall back to a sibling or nested source checkout such as `yas-source/` instead of assuming the application code lives at the delivery-repo root.
 
 - build and push a full real image set
 - deploy a working cluster release

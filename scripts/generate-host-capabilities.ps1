@@ -2,6 +2,8 @@ param(
     [string]$OutputFile = 'work/host-capabilities.generated.md'
 )
 
+. "$PSScriptRoot\source-root.ps1"
+
 function Get-HelmExecutable {
     $helmCommand = Get-Command helm -ErrorAction SilentlyContinue
     if ($helmCommand) {
@@ -98,7 +100,10 @@ if ($toolSummaries['docker'].status -eq 'present') {
     }
 }
 
-$sourceRootExists = Test-Path 'yas-source'
+$resolvedSourceRoot = Resolve-SourceRoot -SourceRoot ''
+$defaultSourceRootExists = Test-Path $resolvedSourceRoot
+$upstreamSourceRootExists = Test-Path 'yas-source-upstream'
+$legacySourceRootExists = Test-Path 'yas-source'
 $serviceCatalogExists = Test-Path 'jenkins\services.env'
 $releaseBaselineExists = Test-Path 'jenkins\services.release-baseline.env'
 $portableHelmExists = $null -ne $helmPath -and ($helmPath -like '*work\tools*')
@@ -141,7 +146,9 @@ if ($toolSummaries['docker'].status -eq 'present') {
 }
 $content.Add('')
 $content.Add('## Workspace Inputs')
-$content.Add('- `yas-source/`: ' + ($(if ($sourceRootExists) { 'present' } else { 'missing' })))
+$content.Add('- Default resolved source root: `' + $resolvedSourceRoot + '` (' + ($(if ($defaultSourceRootExists) { 'present' } else { 'missing' })) + ')')
+$content.Add('- `yas-source-upstream/`: ' + ($(if ($upstreamSourceRootExists) { 'present' } else { 'missing' })))
+$content.Add('- `yas-source/`: ' + ($(if ($legacySourceRootExists) { 'present' } else { 'missing' })))
 $content.Add('- `jenkins/services.env`: ' + ($(if ($serviceCatalogExists) { 'present' } else { 'missing' })))
 $content.Add('- `jenkins/services.release-baseline.env`: ' + ($(if ($releaseBaselineExists) { 'present' } else { 'missing' })))
 $content.Add('- Portable Helm under `work/tools/`: ' + ($(if ($portableHelmExists) { 'present' } else { 'missing' })))

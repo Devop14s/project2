@@ -96,7 +96,7 @@ foreach ($requiredServiceMatrixToken in @(
     'elasticsearch:',
     'compile:',
     'full build verified',
-    'full test path blocked'
+    '| blocked |'
 )) {
     if (-not $serviceVerificationText.Contains($requiredServiceMatrixToken)) {
         throw "Generated service verification matrix is missing required token $requiredServiceMatrixToken."

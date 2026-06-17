@@ -10,6 +10,10 @@ function Resolve-SourceRoot {
         return $envSourceRoot
     }
 
+    if (Test-Path 'yas-source-upstream') {
+        return 'yas-source-upstream'
+    }
+
     if (Test-Path 'yas-source') {
         return 'yas-source'
     }

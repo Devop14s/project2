@@ -29,7 +29,7 @@ Each job can point to the same `Jenkinsfile` and pass a fixed `PIPELINE_TARGET`,
 - `DOCKERHUB_NAMESPACE` for pipelines that build, push, or verify remote image tags: `yas-ci`, `yas-developer-build`, `yas-dev-cd`, `yas-staging-release`, `yas-dev-gitops`, and `yas-staging-gitops`
 - `SERVICES_FILE` if you want a direct-load Jenkins job to use something other than the default full catalog
 - `SERVICE_CATALOG` as a simpler alternative to `SERVICES_FILE`, using either `release-baseline` or `full`
-- `SOURCE_ROOT` when the service source tree is not checked out at the workspace root; leave it blank to auto-detect `yas-source/` or the workspace root
+- `SOURCE_ROOT` when the service source tree is not checked out at the workspace root; leave it blank to auto-detect `yas-source-upstream/`, then `yas-source/`, then the workspace root
 - `SOURCE_GIT_ROOT` when branch and commit resolution should use a different Git checkout than `SOURCE_ROOT`
 
 ## Service catalog format
@@ -58,7 +58,7 @@ The repository now keeps two catalogs:
 3. Run `jenkins/scripts/build-images.sh` locally in the agent environment.
 4. Run `helm template demo helm/yas -f helm/yas/values.yaml`.
 
-If this delivery repo lives beside a cloned YAS source tree under `yas-source/`, you can usually leave `SOURCE_ROOT` blank and let the scripts auto-detect it. Set `SOURCE_ROOT` explicitly only when the source checkout lives somewhere else. If branch and commit resolution should also come from that clone, leave `SOURCE_GIT_ROOT` unset and it will follow `SOURCE_ROOT` automatically when that directory contains `.git`.
+If this delivery repo lives beside a clean cloned YAS source tree under `yas-source-upstream/`, you can usually leave `SOURCE_ROOT` blank and let the scripts auto-detect it. If only `yas-source/` exists, that remains the fallback. Set `SOURCE_ROOT` explicitly only when the source checkout lives somewhere else. If branch and commit resolution should also come from that clone, leave `SOURCE_GIT_ROOT` unset and it will follow `SOURCE_ROOT` automatically when that directory contains `.git`.
 
 Successful deploy and smoke-test runs now also leave runtime evidence under `work/runtime-evidence/<namespace>/<release>/`, including Helm status, pod/service snapshots, the discovered public endpoints, and copied build/push provenance such as `commit-metadata.json`, `image-digests.txt`, and related artifact indexes. The deploy and smoke-test helpers now capture that evidence on failure as well, so failed rollout or public-endpoint verification attempts still leave diagnostics behind.
 The build, push, and remote-tag verification helpers now also keep their `*-metadata.json` artifacts even on mid-run failure, including completion state and the last attempted image reference.

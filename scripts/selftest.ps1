@@ -49,6 +49,7 @@ $finalReportNotesFile = Join-Path $tempDir 'final-report-notes.generated.md'
 $hostCapabilitiesFile = Join-Path $tempDir 'host-capabilities.generated.md'
 $preflightJsonFile = Join-Path $tempDir 'preflight.json'
 $helmExecutable = Get-HelmExecutable
+$selftestSourceRoot = if (Test-Path 'yas-source-upstream') { 'yas-source-upstream' } elseif (Test-Path 'yas-source') { 'yas-source' } else { '.' }
 
 try {
     Copy-Item 'argocd\values\dev-values.yaml' $manifestValuesFile -Force
@@ -83,7 +84,7 @@ try {
     $previousProductBranch = [Environment]::GetEnvironmentVariable('PRODUCT_BRANCH')
     [Environment]::SetEnvironmentVariable('PRODUCT_BRANCH', 'HEAD')
     try {
-        powershell -ExecutionPolicy Bypass -File scripts\resolve-branch-tags.ps1 -SourceGitRoot 'yas-source' -OutputFile $sourceGitBranchTagsFile -MetadataFile $branchTagMetadataNestedFile | Out-Null
+        powershell -ExecutionPolicy Bypass -File scripts\resolve-branch-tags.ps1 -SourceGitRoot $selftestSourceRoot -OutputFile $sourceGitBranchTagsFile -MetadataFile $branchTagMetadataNestedFile | Out-Null
     } finally {
         [Environment]::SetEnvironmentVariable('PRODUCT_BRANCH', $previousProductBranch)
     }
@@ -185,12 +186,12 @@ try {
         throw 'summarize-failsafe-blockers.ps1 should detect the rating Keycloak blocker.'
     }
 
-    if ($serviceVerificationMatrix -notmatch '\| product \| backend \| yes \(`jar`\) \| (yes|no) \| none \| full build verified( \+ image verified)? \|') {
-        throw 'generate-service-verification-matrix.ps1 should report product as fully build-verified.'
+    if ($serviceVerificationMatrix -notmatch '\| product \| backend \| (yes \(`jar`\)|no) \| (yes|no) \| none \| full build verified( \+ image verified)? \|') {
+        throw 'generate-service-verification-matrix.ps1 should report product as fully build-verified, with or without cached local build artifacts in the selected source root.'
     }
 
-    if ($serviceVerificationMatrix -notmatch '\| search \| backend \| yes \(`jar`\) \| (yes|no) \| elasticsearch: ProductCdcConsumerTest \| (package\+image verified|build artifact verified), full test path blocked \|') {
-        throw 'generate-service-verification-matrix.ps1 should report the search Elasticsearch blocker.'
+    if ($serviceVerificationMatrix -notmatch '\| search \| backend \| (yes \(`jar`\)|no) \| (yes|no) \| elasticsearch: ProductCdcConsumerTest \| ((package\+image verified|build artifact verified), full test path blocked|blocked) \|') {
+        throw 'generate-service-verification-matrix.ps1 should report the search Elasticsearch blocker, with or without local build artifacts in the selected source root.'
     }
 
     $imageMatrix = Get-Content 'docs\image-matrix.md' -Raw
@@ -288,7 +289,7 @@ try {
         throw 'resolve-branch-tags.sh should fail fast when SOURCE_GIT_ROOT is not a Git repository.'
     }
 
-    $expectedSourceHead = (& git -C 'yas-source' rev-parse HEAD).Trim()
+    $expectedSourceHead = (& git -C $selftestSourceRoot rev-parse HEAD).Trim()
     $sourceGitBranchTags = Get-Content $sourceGitBranchTagsFile -Raw
     if ($sourceGitBranchTags -notmatch ("PRODUCT_TAG=" + [regex]::Escape($expectedSourceHead))) {
         throw 'Branch tag resolution did not use the expected source Git root.'

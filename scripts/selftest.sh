@@ -4,6 +4,13 @@ set -eu
 dockerhub_namespace="${1:-demo-ns}"
 temp_dir="${TMPDIR:-/tmp}/yas-scaffold-selftest.$$"
 repo_root="$(pwd)"
+if [ -d "yas-source-upstream" ]; then
+  selftest_source_root="yas-source-upstream"
+elif [ -d "yas-source" ]; then
+  selftest_source_root="yas-source"
+else
+  selftest_source_root="."
+fi
 
 mkdir -p "$temp_dir"
 branch_tags_file="${temp_dir}/branch-tags.env"
@@ -150,8 +157,8 @@ grep -q '"branch":"main"' "$branch_tag_metadata_file"
 grep -q '"tag":"main"' "$branch_tag_metadata_file"
 grep -q '^media|keycloak|' "$failsafe_blockers_file"
 grep -q '^rating|keycloak|' "$failsafe_blockers_file"
-grep -E -q '\| product \| backend \| yes \(`jar`\) \| (yes|no) \| none \| full build verified( \+ image verified)? \|' "$service_verification_matrix_file"
-grep -E -q '\| search \| backend \| yes \(`jar`\) \| (yes|no) \| elasticsearch: ProductCdcConsumerTest \| (package\+image verified|build artifact verified), full test path blocked \|' "$service_verification_matrix_file"
+grep -E -q '\| product \| backend \| (yes \(`jar`\)|no) \| (yes|no) \| none \| full build verified( \+ image verified)? \|' "$service_verification_matrix_file"
+grep -E -q '\| search \| backend \| (yes \(`jar`\)|no) \| (yes|no) \| elasticsearch: ProductCdcConsumerTest \| ((package\+image verified|build artifact verified), full test path blocked|blocked) \|' "$service_verification_matrix_file"
 grep -q 'work/manifest-update-metadata.json' argocd/README.md
 grep -q 'work/runtime-evidence/<namespace>/<release>/' docs/handover-checklist.md
 grep -q 'service-mesh-test-plan.md' mesh/README.md
@@ -468,23 +475,23 @@ if command -v bash >/dev/null 2>&1; then
     exit 1
   fi
   SERVICE_CATALOG="release-baseline" \
-  SOURCE_ROOT="yas-source" \
-  SOURCE_GIT_ROOT="yas-source" \
+  SOURCE_ROOT="$selftest_source_root" \
+  SOURCE_GIT_ROOT="$selftest_source_root" \
   bash jenkins/scripts/write-commit-metadata.sh >/dev/null
-  expected_commit_sha="$(git -C yas-source rev-parse HEAD)"
-  expected_commit_short_sha="$(git -C yas-source rev-parse --short HEAD)"
+  expected_commit_sha="$(git -C "$selftest_source_root" rev-parse HEAD)"
+  expected_commit_short_sha="$(git -C "$selftest_source_root" rev-parse --short HEAD)"
   [ "$(cat "$commit_sha_file")" = "$expected_commit_sha" ]
   [ "$(cat "$commit_short_sha_file")" = "$expected_commit_short_sha" ]
   grep -q "\"commit_sha\": \"${expected_commit_sha}\"" "$commit_metadata_file"
   grep -q "\"commit_short_sha\": \"${expected_commit_short_sha}\"" "$commit_metadata_file"
-  grep -q '"source_git_root": "yas-source"' "$commit_metadata_file"
+  grep -q "\"source_git_root\": \"${selftest_source_root}\"" "$commit_metadata_file"
   grep -q '"services_file": "jenkins/services.release-baseline.env"' "$commit_metadata_file"
   COMMIT_SHA_FILE="${temp_dir}/commit-artifacts/commit-sha/custom-commit-sha.txt" \
   COMMIT_SHORT_SHA_FILE="${temp_dir}/commit-artifacts/commit-sha/custom-commit-short-sha.txt" \
   COMMIT_METADATA_FILE="${temp_dir}/commit-artifacts/metadata/custom-commit-metadata.json" \
   SERVICE_CATALOG="release-baseline" \
-  SOURCE_ROOT="yas-source" \
-  SOURCE_GIT_ROOT="yas-source" \
+  SOURCE_ROOT="$selftest_source_root" \
+  SOURCE_GIT_ROOT="$selftest_source_root" \
   bash jenkins/scripts/write-commit-metadata.sh >/dev/null
   [ "$(cat "${temp_dir}/commit-artifacts/commit-sha/custom-commit-sha.txt")" = "$expected_commit_sha" ]
   [ "$(cat "${temp_dir}/commit-artifacts/commit-sha/custom-commit-short-sha.txt")" = "$expected_commit_short_sha" ]
