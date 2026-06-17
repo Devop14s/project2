@@ -12,7 +12,7 @@ Last updated: June 16, 2026
 - Frozen first-release baseline exists in `jenkins/services.release-baseline.env` so Jenkins can target the agreed initial deployable subset without losing the full catalog.
 - Helm chart baseline is generated from the shared catalog and validates locally with `helm lint` and `helm template`.
 - GitOps overlays under `argocd/values/` are generated from the same shared catalog rather than maintained manually.
-- Local clone `yas-source-upstream/` is now used as the default evidence base for service paths, Dockerfiles, build commands, runtime ports, and upstream image naming.
+- Local clone `yas-source-upstream/` is now used as the default evidence base for service paths, Dockerfiles, build commands, runtime ports, and upstream image naming, but it is expected to be cloned into the workspace rather than committed into this delivery repo.
 
 ## Verified locally on this host
 

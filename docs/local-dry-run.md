@@ -6,6 +6,8 @@ Simulate the `developer_build` branch override flow locally without Jenkins, Kub
 
 If `yas-source-upstream/` exists beside this delivery repo, branch-tag resolution automatically uses that source checkout. If it is absent but `yas-source/` exists, the scripts fall back to that clone. Override with `SOURCE_GIT_ROOT` only when needed.
 
+For Jenkins usage, the top-level `Jenkinsfile` defaults to cloning `https://github.com/nashtech-garage/yas.git` into `yas-source-upstream/` when the source checkout is missing from the agent workspace.
+
 ## Outputs
 
 - `branch-tags.env`

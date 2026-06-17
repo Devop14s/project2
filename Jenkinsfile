@@ -21,7 +21,7 @@ pipeline {
     string(
       name: 'SOURCE_ROOT',
       defaultValue: '',
-      description: 'Optional relative path to the checked-out YAS source tree; leave blank to auto-detect workspace root or yas-source/'
+      description: 'Optional relative path to the checked-out YAS source tree; leave blank to clone or reuse yas-source-upstream/ automatically'
     )
     string(
       name: 'SOURCE_GIT_ROOT',
@@ -133,7 +133,7 @@ pipeline {
           env.SERVICE_CATALOG = params.SERVICE_CATALOG
           def sourceRootParam = params.SOURCE_ROOT?.trim()
           if (!sourceRootParam) {
-            sourceRootParam = 'yas-source'
+            sourceRootParam = 'yas-source-upstream'
           }
 
           def sourceRootPath = sourceRootParam

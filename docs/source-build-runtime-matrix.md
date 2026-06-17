@@ -1,6 +1,6 @@
 # Source Build And Runtime Matrix
 
-This matrix is derived from the local clone [yas-source-upstream](</D:/App/project2/yas-source-upstream/README.md>) on June 9, 2026.
+This matrix is derived from a local clone under `yas-source-upstream/` on June 9, 2026.
 
 It combines evidence from:
 

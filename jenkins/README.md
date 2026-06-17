@@ -60,6 +60,8 @@ The repository now keeps two catalogs:
 
 If this delivery repo lives beside a clean cloned YAS source tree under `yas-source-upstream/`, you can usually leave `SOURCE_ROOT` blank and let the scripts auto-detect it. If only `yas-source/` exists, that remains the fallback. Set `SOURCE_ROOT` explicitly only when the source checkout lives somewhere else. If branch and commit resolution should also come from that clone, leave `SOURCE_GIT_ROOT` unset and it will follow `SOURCE_ROOT` automatically when that directory contains `.git`.
 
+The top-level `Jenkinsfile` also supports the simplest agent setup: leave `SOURCE_ROOT` blank and it will default to `yas-source-upstream/`. If that checkout is missing, the dispatcher clones `https://github.com/nashtech-garage/yas.git` into that directory before handing control to the target pipeline.
+
 Successful deploy and smoke-test runs now also leave runtime evidence under `work/runtime-evidence/<namespace>/<release>/`, including Helm status, pod/service snapshots, the discovered public endpoints, and copied build/push provenance such as `commit-metadata.json`, `image-digests.txt`, and related artifact indexes. The deploy and smoke-test helpers now capture that evidence on failure as well, so failed rollout or public-endpoint verification attempts still leave diagnostics behind.
 The build, push, and remote-tag verification helpers now also keep their `*-metadata.json` artifacts even on mid-run failure, including completion state and the last attempted image reference.
 
