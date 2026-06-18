@@ -2,6 +2,8 @@
 
 Use this checklist when moving from the current scaffold-and-local-evidence state to a real deployment environment.
 
+When the environment is ready and the first real runs start, switch to [acceptance-checklist.md](</D:/App/project2/docs/acceptance-checklist.md>) so each outcome is marked explicitly as `PASS`, `FAIL`, or `N/A`.
+
 ## 1. Freeze the deployment subset
 
 - Confirm whether the first real rollout should use `release-baseline` or `full`.
