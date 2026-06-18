@@ -354,6 +354,10 @@ grep -q 'docker version' scripts/preflight.sh
 grep -q 'present but daemon inaccessible' scripts/preflight.sh
 grep -q 'validate-gitops-values' scripts/preflight.ps1
 grep -q 'validate-source-alignment' scripts/preflight.sh
+grep -q 'docker-daemon' scripts/agent-readiness.ps1
+grep -q 'cluster-connectivity' scripts/agent-readiness.ps1
+grep -q 'docker-daemon' scripts/agent-readiness.sh
+grep -q 'cluster-connectivity' scripts/agent-readiness.sh
 if (cd "$temp_dir" && powershell -ExecutionPolicy Bypass -File "${repo_root}/scripts/preflight.ps1" -AsJson >/dev/null 2>&1); then
   printf 'preflight.ps1 -AsJson should fail outside the repo root when scaffold files are missing.\n' >&2
   exit 1

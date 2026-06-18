@@ -965,6 +965,24 @@ try {
         throw 'preflight.ps1 -AsJson is missing the GitOps validator result.'
     }
 
+    $agentReadinessPowerShell = Get-Content 'scripts\agent-readiness.ps1' -Raw
+    if ($agentReadinessPowerShell -notmatch 'docker-daemon') {
+        throw 'agent-readiness.ps1 is missing the Docker daemon readiness check.'
+    }
+
+    if ($agentReadinessPowerShell -notmatch 'cluster-connectivity') {
+        throw 'agent-readiness.ps1 is missing the cluster connectivity readiness check.'
+    }
+
+    $agentReadinessShell = Get-Content 'scripts\agent-readiness.sh' -Raw
+    if ($agentReadinessShell -notmatch 'docker-daemon') {
+        throw 'agent-readiness.sh is missing the Docker daemon readiness check.'
+    }
+
+    if ($agentReadinessShell -notmatch 'cluster-connectivity') {
+        throw 'agent-readiness.sh is missing the cluster connectivity readiness check.'
+    }
+
     Push-Location $tempDir
     try {
         powershell -ExecutionPolicy Bypass -File "$PSScriptRoot\preflight.ps1" -AsJson *> $null

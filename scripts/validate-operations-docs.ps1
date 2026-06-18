@@ -94,4 +94,24 @@ Assert-ContainsAll -FilePath (Join-Path $DocsRoot 'argocd-flow.md') -Tokens @(
     '`work/manifest-update-metadata.json`'
 )
 
+Assert-ContainsAll -FilePath (Join-Path $DocsRoot 'jenkins-bootstrap-runbook.md') -Tokens @(
+    '`dockerhub-creds`',
+    '`kubeconfig-file`',
+    '`SOURCE_REPO_URL`',
+    '`SOURCE_REPO_REF`',
+    '`yas-source-upstream/`',
+    '`scripts/agent-readiness.ps1`',
+    '`yas-ci`'
+)
+
+Assert-ContainsAll -FilePath (Join-Path $DocsRoot 'failure-triage.md') -Tokens @(
+    '`source bootstrap`',
+    '`registry/auth`',
+    '`agent tooling`',
+    '`cluster access`',
+    '`deploy/runtime`',
+    '`REPO FIX REQUIRED`',
+    '`scripts/agent-readiness.ps1`'
+)
+
 Write-Host 'Operational runbooks and topology docs are aligned with the current pipeline, runtime-evidence, and GitOps contracts.'

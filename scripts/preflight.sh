@@ -48,6 +48,8 @@ mesh/peer-authentication.yaml
 mesh/virtual-service-retry.yaml
 scripts/preflight.ps1
 scripts/preflight.sh
+scripts/agent-readiness.ps1
+scripts/agent-readiness.sh
 scripts/developer-build-dry-run.ps1
 scripts/developer-build-dry-run.sh
 scripts/catalog.ps1

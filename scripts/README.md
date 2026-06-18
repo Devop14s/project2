@@ -25,6 +25,8 @@ That generated evidence bundle now also includes `work/host-capabilities.generat
 
 - `preflight.ps1`
 - `preflight.sh`
+- `agent-readiness.ps1`
+- `agent-readiness.sh`
 - `developer-build-dry-run.ps1`
 - `developer-build-dry-run.sh`
 - `selftest.ps1`
@@ -102,6 +104,7 @@ That generated evidence bundle now also includes `work/host-capabilities.generat
 ```powershell
 powershell -ExecutionPolicy Bypass -File scripts\preflight.ps1
 powershell -ExecutionPolicy Bypass -File scripts\preflight.ps1 -SkipCommandChecks
+powershell -ExecutionPolicy Bypass -File scripts\agent-readiness.ps1
 powershell -ExecutionPolicy Bypass -File scripts\developer-build-dry-run.ps1 -DockerhubNamespace your-dockerhub-namespace
 powershell -ExecutionPolicy Bypass -File scripts\developer-build-dry-run.ps1 -DockerhubNamespace your-dockerhub-namespace -ServiceCatalog release-baseline
 powershell -ExecutionPolicy Bypass -File scripts\selftest.ps1
@@ -145,6 +148,7 @@ powershell -ExecutionPolicy Bypass -File scripts\update-manifest-values.ps1 -Val
 ```bash
 sh scripts/preflight.sh
 sh scripts/preflight.sh --skip-command-checks
+sh scripts/agent-readiness.sh
 sh scripts/developer-build-dry-run.sh your-dockerhub-namespace
 sh scripts/developer-build-dry-run.sh your-dockerhub-namespace work/dry-run release-baseline
 sh scripts/selftest.sh

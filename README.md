@@ -16,6 +16,8 @@ This repository currently contains the assignment brief and an executable scaffo
 - [docs/remaining-work-plan.md](</D:/App/project2/docs/remaining-work-plan.md>) keeps the detailed next-phase execution plan for unfinished work.
 - [docs/handover-checklist.md](</D:/App/project2/docs/handover-checklist.md>) is the short operator checklist for moving this repo into a real registry, Jenkins, and cluster environment.
 - [docs/acceptance-checklist.md](</D:/App/project2/docs/acceptance-checklist.md>) is the final pass/fail gate to decide whether any remaining failure is infrastructure-only or still requires repo changes.
+- [docs/jenkins-bootstrap-runbook.md](</D:/App/project2/docs/jenkins-bootstrap-runbook.md>) is the first-run playbook for attaching a real Jenkins agent to this repo.
+- [docs/failure-triage.md](</D:/App/project2/docs/failure-triage.md>) is the fast classification checklist for the first failed real infrastructure run.
 - [work/service-verification.generated.md](</D:/App/project2/work/service-verification.generated.md>) is the current generated per-service verification snapshot, refreshed together with [work/status-report.generated.md](</D:/App/project2/work/status-report.generated.md>) by `powershell -ExecutionPolicy Bypass -File scripts\refresh-evidence.ps1 -SkipCommandChecks`.
 - [work/final-report-notes.generated.md](</D:/App/project2/work/final-report-notes.generated.md>) is the current generated drafting aid for the submission report and is refreshed by the same `refresh-evidence` flow.
 - [work/host-capabilities.generated.md](</D:/App/project2/work/host-capabilities.generated.md>) is the current generated host/runtime capability snapshot and is refreshed by the same `refresh-evidence` flow.
