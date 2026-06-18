@@ -198,17 +198,28 @@ grep -q "name: 'DELETE_NAMESPACE'" Jenkinsfile
 grep -q "name: 'ALLOW_SHARED_ENVIRONMENT_CLEANUP'" Jenkinsfile
 grep -q "name: 'ALLOW_SHARED_NAMESPACE_DELETE'" Jenkinsfile
 grep -q "name: 'STOREFRONT_BRANCH'" Jenkinsfile
+grep -q "name: 'SOURCE_REPO_URL'" Jenkinsfile
+grep -q "name: 'SOURCE_REPO_REF'" Jenkinsfile
 grep -q "PIPELINE_DISPATCH_MODE = 'true'" Jenkinsfile
 grep -q "env.RELEASE_VERSION = stagingTarget" Jenkinsfile
 grep -q 'env.DOMAIN_NAME = developerBuildTarget' Jenkinsfile
 grep -q 'env."${branchParam}" = developerBuildTarget' Jenkinsfile
+grep -q "load('jenkins/pipelines/source-bootstrap.groovy')" Jenkinsfile
+grep -q 'ensureSourceCheckout' jenkins/pipelines/source-bootstrap.groovy
+grep -q 'https://github.com/nashtech-garage/yas.git' jenkins/pipelines/source-bootstrap.groovy
 grep -q "if (env.PIPELINE_DISPATCH_MODE != 'true')" jenkins/pipelines/ci.groovy
 grep -q "name: 'DOCKERHUB_NAMESPACE'" jenkins/pipelines/ci.groovy
+grep -q "name: 'SOURCE_REPO_URL'" jenkins/pipelines/ci.groovy
+grep -q "name: 'SOURCE_REPO_REF'" jenkins/pipelines/ci.groovy
 grep -q 'DOCKERHUB_NAMESPACE must be provided as a parameter or Jenkins job environment value\.' jenkins/pipelines/ci.groovy
+grep -q "load('jenkins/pipelines/source-bootstrap.groovy')" jenkins/pipelines/ci.groovy
 grep -q "if (env.PIPELINE_DISPATCH_MODE != 'true')" jenkins/pipelines/developer_build.groovy
 grep -q "stage('Docker Login')" jenkins/pipelines/developer_build.groovy
 grep -q "stage('Verify Image Tags')" jenkins/pipelines/developer_build.groovy
 grep -q "name: 'DOCKERHUB_NAMESPACE'" jenkins/pipelines/developer_build.groovy
+grep -q "name: 'SOURCE_REPO_URL'" jenkins/pipelines/developer_build.groovy
+grep -q "name: 'SOURCE_REPO_REF'" jenkins/pipelines/developer_build.groovy
+grep -q "load('jenkins/pipelines/source-bootstrap.groovy')" jenkins/pipelines/developer_build.groovy
 grep -q "\[string\]\$PaymentBranch = 'main'" scripts/developer-build-dry-run.ps1
 grep -q 'branch-tag-metadata.json' scripts/developer-build-dry-run.ps1
 grep -q 'helm/yas' scripts/validate-argocd-apps.sh
@@ -244,20 +255,32 @@ grep -q "name: 'ALLOW_SHARED_ENVIRONMENT_CLEANUP'" jenkins/pipelines/developer_c
 grep -q "name: 'ALLOW_SHARED_NAMESPACE_DELETE'" jenkins/pipelines/developer_cleanup.groovy
 grep -q "if (env.PIPELINE_DISPATCH_MODE != 'true')" jenkins/pipelines/dev_cd.groovy
 grep -q "name: 'DOCKERHUB_NAMESPACE'" jenkins/pipelines/dev_cd.groovy
+grep -q "name: 'SOURCE_REPO_URL'" jenkins/pipelines/dev_cd.groovy
+grep -q "name: 'SOURCE_REPO_REF'" jenkins/pipelines/dev_cd.groovy
 grep -q "stage('Resolve Commit Metadata')" jenkins/pipelines/dev_cd.groovy
 grep -q 'jenkins/scripts/write-commit-metadata.sh' jenkins/pipelines/dev_cd.groovy
+grep -q "load('jenkins/pipelines/source-bootstrap.groovy')" jenkins/pipelines/dev_cd.groovy
 grep -q "if (env.PIPELINE_DISPATCH_MODE != 'true')" jenkins/pipelines/dev_gitops.groovy
 grep -q "name: 'DOCKERHUB_NAMESPACE'" jenkins/pipelines/dev_gitops.groovy
+grep -q "name: 'SOURCE_REPO_URL'" jenkins/pipelines/dev_gitops.groovy
+grep -q "name: 'SOURCE_REPO_REF'" jenkins/pipelines/dev_gitops.groovy
 grep -q "stage('Resolve Commit Metadata')" jenkins/pipelines/dev_gitops.groovy
 grep -q 'jenkins/scripts/write-commit-metadata.sh' jenkins/pipelines/dev_gitops.groovy
+grep -q "load('jenkins/pipelines/source-bootstrap.groovy')" jenkins/pipelines/dev_gitops.groovy
 grep -q "if (env.PIPELINE_DISPATCH_MODE != 'true')" jenkins/pipelines/staging_gitops.groovy
 grep -q "name: 'DOCKERHUB_NAMESPACE'" jenkins/pipelines/staging_gitops.groovy
+grep -q "name: 'SOURCE_REPO_URL'" jenkins/pipelines/staging_gitops.groovy
+grep -q "name: 'SOURCE_REPO_REF'" jenkins/pipelines/staging_gitops.groovy
 grep -q "stage('Resolve Commit Metadata')" jenkins/pipelines/staging_gitops.groovy
 grep -q 'jenkins/scripts/write-commit-metadata.sh' jenkins/pipelines/staging_gitops.groovy
+grep -q "load('jenkins/pipelines/source-bootstrap.groovy')" jenkins/pipelines/staging_gitops.groovy
 grep -q "if (env.PIPELINE_DISPATCH_MODE != 'true')" jenkins/pipelines/staging_release.groovy
 grep -q "name: 'DOCKERHUB_NAMESPACE'" jenkins/pipelines/staging_release.groovy
+grep -q "name: 'SOURCE_REPO_URL'" jenkins/pipelines/staging_release.groovy
+grep -q "name: 'SOURCE_REPO_REF'" jenkins/pipelines/staging_release.groovy
 grep -q "stage('Resolve Commit Metadata')" jenkins/pipelines/staging_release.groovy
 grep -q 'jenkins/scripts/write-commit-metadata.sh' jenkins/pipelines/staging_release.groovy
+grep -q "load('jenkins/pipelines/source-bootstrap.groovy')" jenkins/pipelines/staging_release.groovy
 grep -q '"commit_sha": "${commit_sha}"' jenkins/scripts/write-commit-metadata.sh
 grep -q '"commit_short_sha": "${commit_short_sha}"' jenkins/scripts/write-commit-metadata.sh
 grep -q 'COMMIT_SHA_FILE="${COMMIT_SHA_FILE:-work/commit_sha.txt}"' jenkins/scripts/write-commit-metadata.sh

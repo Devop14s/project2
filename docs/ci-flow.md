@@ -20,6 +20,8 @@ Build and push service images on every branch push. The image tag must equal the
 - `DOCKER_PASS`
 - `SOURCE_ROOT` when the YAS source checkout is not at the workspace root
 - `SOURCE_GIT_ROOT` when commit and branch resolution should use a different Git checkout
+- `SOURCE_REPO_URL` when the job should clone YAS from a mirror, fork, or private remote on demand
+- `SOURCE_REPO_REF` when the job should clone a branch, tag, or ref other than `main`
 
 ## Output artifacts
 
@@ -36,4 +38,5 @@ The build, push, and remote-tag verification helpers now preserve their metadata
 ## Source-of-truth note
 
 When this delivery repo is separate from the YAS source repo, the CI scripts resolve Docker build contexts from `SOURCE_ROOT` and derive default commit-SHA tags from `SOURCE_GIT_ROOT`.
+The top-level dispatcher and direct-load Jenkins pipeline files can now also bootstrap that source checkout automatically into `yas-source-upstream/` when the workspace starts with only the delivery repo.
 

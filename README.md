@@ -26,7 +26,7 @@ The actual YAS application source repository is expected to be cloned locally un
 
 The Jenkins helper scripts now understand `SOURCE_ROOT` and `SOURCE_GIT_ROOT`, prefer `yas-source-upstream/` when it exists, and still fall back to a sibling or nested source checkout such as `yas-source/` instead of assuming the application code lives at the delivery-repo root.
 
-The top-level `Jenkinsfile` now defaults `SOURCE_ROOT` to `yas-source-upstream/` and clones `https://github.com/nashtech-garage/yas.git` there automatically when that checkout is missing on the agent.
+The top-level `Jenkinsfile` and the direct-load pipeline entrypoints now default `SOURCE_ROOT` to `yas-source-upstream/` and clone `https://github.com/nashtech-garage/yas.git` there automatically when that checkout is missing on the agent. They also expose `SOURCE_REPO_URL` and `SOURCE_REPO_REF`, so a mirror, fork, tag, or release branch can be injected later without changing repo code.
 
 - build and push a full real image set
 - deploy a working cluster release

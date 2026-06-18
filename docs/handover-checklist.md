@@ -31,7 +31,8 @@ Use this checklist when moving from the current scaffold-and-local-evidence stat
   - `kubectl`
   - `helm`
   - `bash`
-- Set `SOURCE_ROOT` if the real YAS source checkout is not auto-detected.
+- Decide whether Jenkins should use the default public upstream source clone or override `SOURCE_REPO_URL` and `SOURCE_REPO_REF`.
+- Set `SOURCE_ROOT` only if the real YAS source checkout path should not default to `yas-source-upstream/`.
 
 ## 4. Prepare the cluster
 

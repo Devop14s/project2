@@ -31,6 +31,8 @@ Each job can point to the same `Jenkinsfile` and pass a fixed `PIPELINE_TARGET`,
 - `SERVICE_CATALOG` as a simpler alternative to `SERVICES_FILE`, using either `release-baseline` or `full`
 - `SOURCE_ROOT` when the service source tree is not checked out at the workspace root; leave it blank to auto-detect `yas-source-upstream/`, then `yas-source/`, then the workspace root
 - `SOURCE_GIT_ROOT` when branch and commit resolution should use a different Git checkout than `SOURCE_ROOT`
+- `SOURCE_REPO_URL` when the Jenkins agent should clone YAS from a mirror, private fork, or alternate Git remote instead of the public upstream URL
+- `SOURCE_REPO_REF` when the Jenkins agent should clone a branch, tag, or ref other than `main`
 
 ## Service catalog format
 
@@ -61,6 +63,7 @@ The repository now keeps two catalogs:
 If this delivery repo lives beside a clean cloned YAS source tree under `yas-source-upstream/`, you can usually leave `SOURCE_ROOT` blank and let the scripts auto-detect it. If only `yas-source/` exists, that remains the fallback. Set `SOURCE_ROOT` explicitly only when the source checkout lives somewhere else. If branch and commit resolution should also come from that clone, leave `SOURCE_GIT_ROOT` unset and it will follow `SOURCE_ROOT` automatically when that directory contains `.git`.
 
 The top-level `Jenkinsfile` also supports the simplest agent setup: leave `SOURCE_ROOT` blank and it will default to `yas-source-upstream/`. If that checkout is missing, the dispatcher clones `https://github.com/nashtech-garage/yas.git` into that directory before handing control to the target pipeline.
+The same source-bootstrap behavior now also exists in the direct-load pipeline files under `jenkins/pipelines/`, so even jobs that bypass the top-level dispatcher can clone or reuse the expected YAS source tree automatically.
 
 Successful deploy and smoke-test runs now also leave runtime evidence under `work/runtime-evidence/<namespace>/<release>/`, including Helm status, pod/service snapshots, the discovered public endpoints, and copied build/push provenance such as `commit-metadata.json`, `image-digests.txt`, and related artifact indexes. The deploy and smoke-test helpers now capture that evidence on failure as well, so failed rollout or public-endpoint verification attempts still leave diagnostics behind.
 The build, push, and remote-tag verification helpers now also keep their `*-metadata.json` artifacts even on mid-run failure, including completion state and the last attempted image reference.

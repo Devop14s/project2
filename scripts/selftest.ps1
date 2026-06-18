@@ -394,6 +394,14 @@ try {
         throw 'Jenkinsfile is missing the shared branch-override parameters for dispatch mode.'
     }
 
+    if ($jenkinsfile -notmatch "name: 'SOURCE_REPO_URL'") {
+        throw 'Jenkinsfile is missing the shared SOURCE_REPO_URL parameter.'
+    }
+
+    if ($jenkinsfile -notmatch "name: 'SOURCE_REPO_REF'") {
+        throw 'Jenkinsfile is missing the shared SOURCE_REPO_REF parameter.'
+    }
+
     if ($jenkinsfile -notmatch "PIPELINE_DISPATCH_MODE = 'true'") {
         throw 'Jenkinsfile no longer marks dispatched pipeline execution.'
     }
@@ -410,6 +418,19 @@ try {
         throw 'Jenkinsfile no longer scopes branch overrides to developer-build dispatches.'
     }
 
+    if ($jenkinsfile -notmatch "load\('jenkins/pipelines/source-bootstrap\.groovy'\)") {
+        throw 'Jenkinsfile no longer loads the shared source-bootstrap helper.'
+    }
+
+    $sourceBootstrap = Get-Content 'jenkins\pipelines\source-bootstrap.groovy' -Raw
+    if ($sourceBootstrap -notmatch 'ensureSourceCheckout') {
+        throw 'jenkins/pipelines/source-bootstrap.groovy is missing the shared source checkout helper.'
+    }
+
+    if ($sourceBootstrap -notmatch 'https://github\.com/nashtech-garage/yas\.git') {
+        throw 'jenkins/pipelines/source-bootstrap.groovy is missing the default upstream YAS repository URL.'
+    }
+
     $ciPipeline = Get-Content 'jenkins\pipelines\ci.groovy' -Raw
     if ($ciPipeline -notmatch "if \(env\.PIPELINE_DISPATCH_MODE != 'true'\)") {
         throw 'ci.groovy no longer skips properties rewrites in dispatch mode.'
@@ -421,6 +442,14 @@ try {
 
     if ($ciPipeline -notmatch 'DOCKERHUB_NAMESPACE must be provided as a parameter or Jenkins job environment value\.') {
         throw 'ci.groovy no longer validates DOCKERHUB_NAMESPACE for direct-load execution.'
+    }
+
+    if ($ciPipeline -notmatch "name: 'SOURCE_REPO_URL'" -or $ciPipeline -notmatch "name: 'SOURCE_REPO_REF'") {
+        throw 'ci.groovy is missing the direct-load source bootstrap parameters.'
+    }
+
+    if ($ciPipeline -notmatch "load\('jenkins/pipelines/source-bootstrap\.groovy'\)") {
+        throw 'ci.groovy no longer loads the shared source-bootstrap helper.'
     }
 
     $developerBuildPipeline = Get-Content 'jenkins\pipelines\developer_build.groovy' -Raw
@@ -438,6 +467,14 @@ try {
 
     if ($developerBuildPipeline -notmatch "name: 'DOCKERHUB_NAMESPACE'") {
         throw 'developer_build.groovy is missing the direct-load DOCKERHUB_NAMESPACE parameter.'
+    }
+
+    if ($developerBuildPipeline -notmatch "name: 'SOURCE_REPO_URL'" -or $developerBuildPipeline -notmatch "name: 'SOURCE_REPO_REF'") {
+        throw 'developer_build.groovy is missing the direct-load source bootstrap parameters.'
+    }
+
+    if ($developerBuildPipeline -notmatch "load\('jenkins/pipelines/source-bootstrap\.groovy'\)") {
+        throw 'developer_build.groovy no longer loads the shared source-bootstrap helper.'
     }
 
     $developerBuildDryRunScript = Get-Content 'scripts\developer-build-dry-run.ps1' -Raw
@@ -540,12 +577,20 @@ try {
         throw 'dev_cd.groovy is missing the direct-load DOCKERHUB_NAMESPACE parameter.'
     }
 
+    if ($devCdPipeline -notmatch "name: 'SOURCE_REPO_URL'" -or $devCdPipeline -notmatch "name: 'SOURCE_REPO_REF'") {
+        throw 'dev_cd.groovy is missing the direct-load source bootstrap parameters.'
+    }
+
     if ($devCdPipeline -notmatch "stage\('Resolve Commit Metadata'\)") {
         throw 'dev_cd.groovy is missing the commit-metadata stage for main-tag traceability.'
     }
 
     if ($devCdPipeline -notmatch 'jenkins/scripts/write-commit-metadata\.sh') {
         throw 'dev_cd.groovy no longer records commit metadata before promoting the main tag.'
+    }
+
+    if ($devCdPipeline -notmatch "load\('jenkins/pipelines/source-bootstrap\.groovy'\)") {
+        throw 'dev_cd.groovy no longer loads the shared source-bootstrap helper.'
     }
 
     $devGitopsPipeline = Get-Content 'jenkins\pipelines\dev_gitops.groovy' -Raw
@@ -557,12 +602,20 @@ try {
         throw 'dev_gitops.groovy is missing the direct-load DOCKERHUB_NAMESPACE parameter.'
     }
 
+    if ($devGitopsPipeline -notmatch "name: 'SOURCE_REPO_URL'" -or $devGitopsPipeline -notmatch "name: 'SOURCE_REPO_REF'") {
+        throw 'dev_gitops.groovy is missing the direct-load source bootstrap parameters.'
+    }
+
     if ($devGitopsPipeline -notmatch "stage\('Resolve Commit Metadata'\)") {
         throw 'dev_gitops.groovy is missing the commit-metadata stage for main-tag traceability.'
     }
 
     if ($devGitopsPipeline -notmatch 'jenkins/scripts/write-commit-metadata\.sh') {
         throw 'dev_gitops.groovy no longer records commit metadata before updating dev GitOps values.'
+    }
+
+    if ($devGitopsPipeline -notmatch "load\('jenkins/pipelines/source-bootstrap\.groovy'\)") {
+        throw 'dev_gitops.groovy no longer loads the shared source-bootstrap helper.'
     }
 
     $stagingGitopsPipeline = Get-Content 'jenkins\pipelines\staging_gitops.groovy' -Raw
@@ -574,12 +627,20 @@ try {
         throw 'staging_gitops.groovy is missing the direct-load DOCKERHUB_NAMESPACE parameter.'
     }
 
+    if ($stagingGitopsPipeline -notmatch "name: 'SOURCE_REPO_URL'" -or $stagingGitopsPipeline -notmatch "name: 'SOURCE_REPO_REF'") {
+        throw 'staging_gitops.groovy is missing the direct-load source bootstrap parameters.'
+    }
+
     if ($stagingGitopsPipeline -notmatch "stage\('Resolve Commit Metadata'\)") {
         throw 'staging_gitops.groovy is missing the commit-metadata stage for release traceability.'
     }
 
     if ($stagingGitopsPipeline -notmatch 'jenkins/scripts/write-commit-metadata\.sh') {
         throw 'staging_gitops.groovy no longer records commit metadata before updating staging GitOps values.'
+    }
+
+    if ($stagingGitopsPipeline -notmatch "load\('jenkins/pipelines/source-bootstrap\.groovy'\)") {
+        throw 'staging_gitops.groovy no longer loads the shared source-bootstrap helper.'
     }
 
     $stagingReleasePipeline = Get-Content 'jenkins\pipelines\staging_release.groovy' -Raw
@@ -591,12 +652,20 @@ try {
         throw 'staging_release.groovy is missing the direct-load DOCKERHUB_NAMESPACE parameter.'
     }
 
+    if ($stagingReleasePipeline -notmatch "name: 'SOURCE_REPO_URL'" -or $stagingReleasePipeline -notmatch "name: 'SOURCE_REPO_REF'") {
+        throw 'staging_release.groovy is missing the direct-load source bootstrap parameters.'
+    }
+
     if ($stagingReleasePipeline -notmatch "stage\('Resolve Commit Metadata'\)") {
         throw 'staging_release.groovy is missing the commit-metadata stage for release traceability.'
     }
 
     if ($stagingReleasePipeline -notmatch 'jenkins/scripts/write-commit-metadata\.sh') {
         throw 'staging_release.groovy no longer records commit metadata before promoting a release.'
+    }
+
+    if ($stagingReleasePipeline -notmatch "load\('jenkins/pipelines/source-bootstrap\.groovy'\)") {
+        throw 'staging_release.groovy no longer loads the shared source-bootstrap helper.'
     }
 
     $jenkinsCommonScript = Get-Content 'jenkins\scripts\common.sh' -Raw

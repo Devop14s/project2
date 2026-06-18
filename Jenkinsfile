@@ -29,6 +29,16 @@ pipeline {
       description: 'Optional separate Git checkout used for branch and commit resolution'
     )
     string(
+      name: 'SOURCE_REPO_URL',
+      defaultValue: 'https://github.com/nashtech-garage/yas.git',
+      description: 'Source repository URL used when the Jenkins workspace must clone YAS on demand'
+    )
+    string(
+      name: 'SOURCE_REPO_REF',
+      defaultValue: 'main',
+      description: 'Source branch, tag, or ref used when the Jenkins workspace must clone YAS on demand'
+    )
+    string(
       name: 'DOCKERHUB_NAMESPACE',
       defaultValue: '',
       description: 'Docker registry namespace, for example docker.io/your-org'
@@ -104,6 +114,7 @@ pipeline {
     stage('Dispatch') {
       steps {
         script {
+          def sourceBootstrap = load('jenkins/pipelines/source-bootstrap.groovy')
           def developerBuildTarget = params.PIPELINE_TARGET == 'developer_build'
           def developerCleanupTarget = params.PIPELINE_TARGET == 'developer_cleanup'
           def stagingReleaseTarget = params.PIPELINE_TARGET == 'staging_release'
@@ -131,31 +142,16 @@ pipeline {
           }
           env.PIPELINE_DISPATCH_MODE = 'true'
           env.SERVICE_CATALOG = params.SERVICE_CATALOG
-          def sourceRootParam = params.SOURCE_ROOT?.trim()
-          if (!sourceRootParam) {
-            sourceRootParam = 'yas-source-upstream'
-          }
-
-          def sourceRootPath = sourceRootParam
-          if (!sourceRootParam.startsWith('/')) {
-            sourceRootPath = "${pwd()}/${sourceRootParam}"
-          }
-
-          if (!fileExists("${sourceRootPath}/.git")) {
-            dir(sourceRootPath) {
-              checkout([
-                $class: 'GitSCM',
-                branches: [[name: '*/main']],
-                userRemoteConfigs: [[url: 'https://github.com/nashtech-garage/yas.git']]
-              ])
-            }
-          }
-
-          env.SOURCE_ROOT = sourceRootPath
-          env.SOURCE_GIT_ROOT = params.SOURCE_GIT_ROOT?.trim()
-          if (!env.SOURCE_GIT_ROOT) {
-            env.SOURCE_GIT_ROOT = sourceRootPath
-          }
+          env.SOURCE_REPO_URL = params.SOURCE_REPO_URL?.trim() ?: 'https://github.com/nashtech-garage/yas.git'
+          env.SOURCE_REPO_REF = params.SOURCE_REPO_REF?.trim() ?: 'main'
+          def sourceContext = sourceBootstrap.ensureSourceCheckout(
+            sourceRootParam: params.SOURCE_ROOT,
+            sourceGitRootParam: params.SOURCE_GIT_ROOT,
+            sourceRepoUrl: env.SOURCE_REPO_URL,
+            sourceRepoRef: env.SOURCE_REPO_REF
+          )
+          env.SOURCE_ROOT = sourceContext.sourceRoot
+          env.SOURCE_GIT_ROOT = sourceContext.sourceGitRoot
 
           env.RELEASE_VERSION = stagingTarget ? (params.RELEASE_VERSION?.trim() ?: 'v1.0.0') : ''
           env.DEPLOYER_ID = (developerBuildTarget || developerCleanupTarget) ? (params.DEPLOYER_ID?.trim() ?: 'dev1') : ''

@@ -10,6 +10,7 @@ Move this repository from a source-verified delivery scaffold to a working YAS d
 
 - Service catalog is source-verified against the local `yas-source-upstream` clone.
 - Jenkins should fetch that source checkout into `yas-source-upstream/` per workspace instead of relying on a nested Git repository committed inside this delivery repo.
+- If the real environment uses a mirror, private fork, or release branch, wire it through `SOURCE_REPO_URL` and `SOURCE_REPO_REF` rather than editing the pipeline code.
 - Helm chart and GitOps overlays are generated from the shared catalog.
 - Local build evidence already exists for:
   - UI: `storefront`, `backoffice`
