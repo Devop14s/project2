@@ -1,6 +1,6 @@
 # Status Report
 
-Last updated: June 16, 2026
+Last updated: June 24, 2026
 
 ## Completed in this repository
 
@@ -66,9 +66,29 @@ Last updated: June 16, 2026
 
 ## Known blockers and gaps
 
-- No real registry push has been verified yet for any service image.
+- Real registry push is now verified on the project-specific Jenkins instance at `http://20.2.66.240:8081/`.
+- Jenkins job `project2-yas-ci #12` completed successfully on June 24, 2026 using:
+  - `SERVICE_CATALOG=release-baseline`
+  - `DOCKERHUB_NAMESPACE=luongtrz`
+  - `SOURCE_ROOT=/var/jenkins_home/prebuilt/yas-source-upstream`
+  - `SOURCE_GIT_ROOT=/var/jenkins_home/prebuilt/yas-source-upstream`
+- The successful real CI run built and pushed the baseline services:
+  - `storefront`
+  - `backoffice`
+  - `storefront-bff`
+  - `backoffice-bff`
+  - `product`
+  - `cart`
+  - `customer`
+  - `rating`
+  - `location`
+  - `order`
+  - `inventory`
+  - `tax`
 - No Kubernetes cluster deployment has been verified yet for `dev`, `staging`, or developer namespaces.
-- Jenkins webhook, Jenkins credentials, registry credentials, and kubeconfig wiring have not been exercised end to end.
+- Jenkins and registry credentials have now been exercised end to end on the project-specific Jenkins instance.
+- Kubernetes kubeconfig wiring, shared-environment deploy flows, and runtime evidence capture on a real cluster are still unverified.
+- The first successful real CI run on Jenkins relied on a prebuilt YAS source tree for baseline Java artifacts rather than on a clean workspace that compiles those backend artifacts inside the CI pipeline itself.
 - `sampledata` does not currently have a clean full upstream-style test pass in this workspace because `common-library` test compilation blocks the reactor build.
 - `search` does not currently have a clean full upstream-style test pass in this workspace because Elasticsearch Testcontainers does not become ready for `ProductCdcConsumerTest`.
 - `cart` does not currently have a clean full upstream-style test pass in this workspace because the integration path fails while waiting for the Keycloak Testcontainers health endpoint.
@@ -82,10 +102,11 @@ Last updated: June 16, 2026
 
 ## Current recommendation
 
-- Treat the repo as a strong, source-verified delivery scaffold rather than a finished deployment repo.
-- Use the services already verified locally as the first deployment subset.
+- Treat the repo as a strong, source-verified delivery scaffold with one successful real CI registry push already proven on Jenkins `8081`.
+- Use the release-baseline subset as the first deployment subset because that is the exact group already proven in a real CI push.
 - Keep `sampledata` and `search` outside the first end-to-end release until their workspace-specific test blockers are understood or intentionally bypassed.
 - Treat `cart`, `customer`, `location`, `media`, `promotion`, `rating`, `tax`, and `webhook` as deployable from a package-and-image perspective, but still not fully upstream-style verified on this host because their integration paths currently depend on unstable Keycloak Testcontainers startup.
+- Move next to cluster setup and deploy verification only after providing a real Kubernetes path for Jenkins.
 
 ## Detailed remaining plan
 
@@ -97,5 +118,12 @@ Last updated: June 16, 2026
 
 ## Inputs still required
 
-- Real registry namespace and Jenkins credential IDs.
-- Reachable Jenkins host and Kubernetes cluster with kubeconfig access.
+- Real Kubernetes cluster path with kubeconfig access for Jenkins.
+- Final decision on whether the cluster will be:
+  - local lab
+  - managed Kubernetes
+  - on-prem
+- Enough RAM for the intended cluster strategy if Jenkins and Kubernetes share the same machine:
+  - about `4GB` for wiring-only checks
+  - about `16GB` for limited local deployment trials
+  - about `32GB` for a realistic all-in-one lab host

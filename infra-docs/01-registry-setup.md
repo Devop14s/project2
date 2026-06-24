@@ -48,6 +48,39 @@ jenkins/scripts/docker-login.sh
 - Pushing a test image to `yas-product` works
 - Pulling the same pushed image from a second environment works
 
+## Verified status on June 24, 2026
+
+- Registry step was verified successfully on the project-specific Jenkins instance at `http://20.2.66.240:8081/`.
+- Jenkins job used:
+  - `project2-yas-ci`
+- Verified registry namespace:
+  - `luongtrz`
+- Verified credential contract:
+  - Jenkins credential id `dockerhub-creds` was bound successfully during the real run.
+- Verified result:
+  - CI build `#12` completed with `SUCCESS`.
+  - Baseline images were built and pushed successfully for:
+    - `storefront`
+    - `backoffice`
+    - `storefront-bff`
+    - `backoffice-bff`
+    - `product`
+    - `cart`
+    - `customer`
+    - `rating`
+    - `location`
+    - `order`
+    - `inventory`
+    - `tax`
+
+## Important runtime note
+
+- The first successful real CI run on this Jenkins host used:
+  - `SOURCE_ROOT=/var/jenkins_home/prebuilt/yas-source-upstream`
+  - `SOURCE_GIT_ROOT=/var/jenkins_home/prebuilt/yas-source-upstream`
+- That source tree had already been prebuilt for the baseline Java services so their `target/*.jar` artifacts existed before `jenkins/scripts/build-images.sh` started.
+- This means the registry wiring is now verified end to end, but it is verified through a prebuilt-source runtime contract rather than through a clean workspace that compiles all backend artifacts inside the CI pipeline itself.
+
 ## Common failures
 
 - Wrong credential id:
@@ -58,6 +91,12 @@ jenkins/scripts/docker-login.sh
   - build targets Docker Hub while the real target is GHCR or private OCI
 - Agent Docker daemon unavailable:
   - `docker version` fails before login logic is even reached
+- Source tree is clean but backend artifacts are missing:
+  - backend and BFF Dockerfiles expect prebuilt `target/*.jar` artifacts, so image build fails unless the source tree was packaged earlier or the pipeline is extended to build those artifacts first
+- Jenkins source tree ownership mismatch:
+  - Git can fail with `detected dubious ownership` if the prebuilt source checkout is not owned by the `jenkins` user or not marked as a safe Git directory
+- Jenkins node goes offline due to low disk:
+  - the controller can stay offline until Docker build cache or workspace data is cleaned and the node is brought back online
 
 ## Evidence to capture
 
@@ -66,3 +105,5 @@ jenkins/scripts/docker-login.sh
 - One successful login log
 - One pushed image reference
 - One image digest from `work/image-digests.txt`
+- Successful real-run example:
+  - `project2-yas-ci #12` on June 24, 2026
