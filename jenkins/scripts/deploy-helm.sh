@@ -26,6 +26,7 @@ trap 'capture_runtime_evidence_on_exit $?' EXIT
 
 helm upgrade --install "$RELEASE_NAME" helm/yas \
   --namespace "$NAMESPACE" \
+  --create-namespace \
   -f helm/yas/values.yaml \
   -f "$VALUES_FILE" \
   --wait \
