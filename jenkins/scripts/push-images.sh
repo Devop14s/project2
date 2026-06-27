@@ -60,8 +60,14 @@ while IFS='|' read -r service path dockerfile port expose node_port workload_typ
   image="${repo_name}:${TAG}"
   last_service="$service"
   last_image="$image"
-  log "Pushing ${image}"
-  docker push "$image"
+
+  # Image đã được push trong build-images.sh — chỉ ghi metadata
+  if docker image inspect "$image" > /dev/null 2>&1; then
+    log "Pushing ${image}"
+    docker push "$image"
+  else
+    log "Image ${image} already pushed in build stage — recording metadata only"
+  fi
   printf '%s\n' "$image" >> "$IMAGE_LIST_FILE"
   record_repo_digest "$repo_name" "$TAG"
 done < <(iter_services)

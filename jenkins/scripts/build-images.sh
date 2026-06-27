@@ -47,5 +47,11 @@ while IFS='|' read -r service path dockerfile port expose node_port workload_typ
     -f "$resolved_dockerfile" \
     "$resolved_path"
   printf '%s\n' "$last_image" >> "$BUILT_IMAGE_LIST_FILE"
+
+  # Push ngay sau khi build và xóa local để tiết kiệm disk
+  log "Pushing ${last_image}"
+  docker push "$last_image"
+  docker rmi "$last_image" || true
+  docker image prune -f || true
 done < <(iter_services)
 build_completed=true
