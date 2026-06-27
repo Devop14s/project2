@@ -27,6 +27,7 @@ Classify a failure quickly as:
 - Check `jenkins/scripts/docker-login.sh`.
 - Check whether the agent can run `docker version`.
 - If login fails before any service build starts, classify it as `registry/auth`.
+- If login succeeds but the first backend or BFF image fails on `COPY target/*.jar`, classify it first as a source-artifact/runtime contract issue, not as a registry failure.
 
 ## 3. Agent Tooling
 
@@ -39,6 +40,9 @@ Classify a failure quickly as:
   - `kubectl`
   - `helm`
 - If required readiness checks fail, classify it as `agent tooling`.
+- Also check for controller-level runtime blockers that can stop the queue before the build script even starts:
+  - built-in node is temporarily offline
+  - disk monitor forced the node offline because `/var/jenkins_home` dropped below the safety threshold
 
 ## 4. Cluster Access
 
@@ -78,6 +82,12 @@ If one of these reappears unchanged on a new host, classify it first as `deploy/
 - generated values are structurally wrong
 - runtime evidence is missing despite the documented success path
 - a flow needs code edits in this repository before the environment-specific failure can even be tested
+
+Recent real-run examples that are not repo issues by themselves:
+
+- Jenkins controller offline because free disk dropped below the node monitor threshold
+- Jenkins prebuilt source tree owned by `root`, causing Git `detected dubious ownership`
+- Real CI build requires `SOURCE_ROOT` to point at a prebuilt source tree because backend Dockerfiles expect `target/*.jar` artifacts
 
 ## Decision
 

@@ -27,6 +27,9 @@ If any required line fails, assume the repo is not yet fully accepted and record
 - `PASS` / `FAIL`: Built image names match the expected `yas-<service>` repository naming.
 - `PASS` / `FAIL`: Pushed image tags match the intended commit SHA or release version strategy.
 
+Current verified example:
+- `project2-yas-ci #12` on June 24, 2026 pushed the `release-baseline` images successfully to namespace `luongtrz` on the project-specific Jenkins instance at `http://20.2.66.240:8081/`.
+
 ## 3. Cluster Wiring
 
 - `PASS` / `FAIL`: Jenkins credential `kubeconfig-file` exists and is readable by the job.
@@ -43,6 +46,13 @@ If any required line fails, assume the repo is not yet fully accepted and record
 - `PASS` / `FAIL`: `work/built-image-list.txt`, `work/image-list.txt`, `work/image-digests.txt`, and `work/image-metadata.json` are produced.
 - `PASS` / `FAIL`: At least one baseline service such as `product` or `storefront-bff` builds and pushes successfully.
 - `PASS` / `FAIL`: No code change in this repo was required to make the first real CI build work.
+
+Current verified example:
+- `project2-yas-ci #12` on June 24, 2026 completed successfully with `SERVICE_CATALOG=release-baseline`.
+- The successful run did not require repository code edits, but it did require:
+  - a prebuilt source tree at `/var/jenkins_home/prebuilt/yas-source-upstream`
+  - the same path to be supplied through `SOURCE_ROOT` and `SOURCE_GIT_ROOT`
+  - the source checkout to be owned by the `jenkins` user
 
 ## 5. Developer Build Flow
 
