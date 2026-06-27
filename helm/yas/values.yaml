@@ -257,6 +257,21 @@ services:
       type: ClusterIP
       port: 80
 
+  swagger-ui:
+    enabled: true
+    workloadType: ui
+    image:
+      repository: docker.io/example/yas-swagger-ui
+      tag: main
+      pullPolicy: IfNotPresent
+    containerPort: 8080
+    service:
+      type: NodePort
+      port: 8080
+      nodePort: 32082
+    ingress:
+      enabled: false
+
   webhook:
     enabled: true
     workloadType: backend

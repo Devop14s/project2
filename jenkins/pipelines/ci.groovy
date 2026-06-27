@@ -47,6 +47,13 @@ return {
         }
       }
 
+      stage('Prepare Custom Dockerfiles') {
+        sh """
+          mkdir -p \${SOURCE_ROOT}/swagger-ui
+          cp docker/swagger-ui/Dockerfile \${SOURCE_ROOT}/swagger-ui/Dockerfile
+        """
+      }
+
       stage('Maven Build') {
         sh 'jenkins/scripts/maven-build.sh'
       }
