@@ -24,6 +24,8 @@ capture_runtime_evidence_on_exit() {
 
 trap 'capture_runtime_evidence_on_exit $?' EXIT
 
+kubectl create namespace "$NAMESPACE" --dry-run=client -o yaml | kubectl apply -f -
+
 helm upgrade --install "$RELEASE_NAME" helm/yas \
   --namespace "$NAMESPACE" \
   --create-namespace \
