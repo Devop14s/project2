@@ -69,7 +69,13 @@ while IFS='|' read -r service path dockerfile port expose node_port workload_typ
 
   log "Verifying remote image tag ${image_ref}"
   if [[ "$VERIFY_IMAGE_TAGS_DRY_RUN" != "1" ]]; then
-    docker manifest inspect "$image_ref" >/dev/null
+    # Use Docker Hub API (force IPv4 to avoid IPv6 unreachable errors)
+    dh_repo="${repo_name#*/}"
+    http_code=$(curl -s -o /dev/null -w '%{http_code}' --ipv4 --connect-timeout 10 \
+      "https://hub.docker.com/v2/repositories/${dh_repo}/tags/${tag_value}/")
+    if [[ "$http_code" != "200" ]]; then
+      fail "Image not found on registry (HTTP ${http_code}): ${image_ref}"
+    fi
   fi
   printf '%s\n' "$image_ref" >> "$VERIFIED_IMAGE_LIST_FILE"
 done < <(iter_services)
