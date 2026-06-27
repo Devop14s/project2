@@ -36,8 +36,8 @@ EOF
 
 trap 'write_verify_metadata $?' EXIT
 
-if [[ -n "${TAGS_FILE:-}" && ! -f "$TAGS_FILE" ]]; then
-  fail "Tags file not found: ${TAGS_FILE}"
+if [[ -n "${TAGS_FILE:-}" && ! -f "$TAGS_FILE" && -z "${RELEASE_VERSION:-}" ]]; then
+  fail "Tags file not found and RELEASE_VERSION not set: ${TAGS_FILE}"
 fi
 
 if [[ -f "$TAGS_FILE" ]]; then
