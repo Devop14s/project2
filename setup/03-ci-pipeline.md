@@ -7,6 +7,39 @@
   2. Tag image bằng **commit SHA ngắn** (7 ký tự) của commit cuối cùng trên branch đó.
   3. Push image lên Docker Hub.
 
+## File triển khai thực tế trong repo
+
+Ngoài phần mô tả bên dưới, pipeline CI đã được scaffold sẵn tại:
+
+- `jenkins/pipelines/ci.groovy`
+- `jenkins/scripts/build-images.sh`
+- `jenkins/scripts/push-images.sh`
+- `jenkins/scripts/write-commit-metadata.sh`
+- `jenkins/scripts/verify-image-tags.sh`
+
+## Cấu hình thực tế đang dùng
+
+Pipeline CI thực tế hiện tại:
+
+- resolve `commit_sha` và `commit_short_sha`
+- dùng `commit_short_sha` làm image tag cho branch build
+- tách stage `Build Images` và `Push Images`
+- verify remote tag ở stage `Verify Image Tags`
+- archive artifact dưới `work/`
+
+### Jenkins credential và parameter thực tế
+
+- Docker credential ID: `dockerhub-creds`
+- Parameter chính:
+  - `SERVICE_CATALOG`
+  - `DOCKERHUB_NAMESPACE`
+  - `SOURCE_ROOT`
+  - `SOURCE_GIT_ROOT`
+  - `SOURCE_REPO_URL`
+  - `SOURCE_REPO_REF`
+
+> Khi chạy thật, ưu tiên theo `jenkins/pipelines/ci.groovy` thay vì ví dụ Jenkinsfile cũ bên dưới.
+
 ---
 
 ## Luồng CI
@@ -62,13 +95,15 @@ Lưu metadata (commit sha, image list)
 
 ## Jenkinsfile — CI Pipeline
 
+> Khối ví dụ dưới đây chỉ mang tính minh họa luồng. Khi cấu hình Jenkins thật, ưu tiên code trong `jenkins/pipelines/ci.groovy`.
+
 ```groovy
 pipeline {
     agent any
 
     environment {
         DOCKERHUB_NS   = '<your-dockerhub-username>'
-        DOCKER_CREDS   = 'dockerhub-credentials'   // Jenkins credential ID
+        DOCKER_CREDS   = 'dockerhub-creds'   // Jenkins credential ID
         GITHUB_CREDS   = 'github-credentials'
         YAS_REPO       = 'https://github.com/<your-fork>/yas.git'
     }
@@ -221,8 +256,23 @@ work/built-image-list.txt:
 
 - [ ] Multibranch Pipeline job `yas-ci` đã tạo
 - [ ] Jenkins credential `github-credentials` đã cấu hình
-- [ ] Jenkins credential `dockerhub-credentials` đã cấu hình
+- [ ] Jenkins credential `dockerhub-creds` đã cấu hình
 - [ ] Webhook hoặc polling đã cấu hình để trigger khi có push
 - [ ] Tạo branch test, push 1 commit → pipeline chạy tự động
 - [ ] Image với tag `<short-sha>` xuất hiện trên Docker Hub
 - [ ] File `work/commit_short_sha.txt` được archive
+
+---
+
+## Việc có thể làm ngay lúc chờ Jenkins
+
+- Chốt `DOCKERHUB_NAMESPACE`
+- Chốt `SERVICE_CATALOG=release-baseline` cho lần chạy đầu
+- Chốt `SOURCE_REPO_URL` và `SOURCE_REPO_REF`
+- Ghi trước danh sách artifact cần giữ:
+  - `work/commit_sha.txt`
+  - `work/commit_short_sha.txt`
+  - `work/commit-metadata.json`
+  - `work/built-image-list.txt`
+  - `work/image-list.txt`
+  - `work/image-digests.txt`

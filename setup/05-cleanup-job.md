@@ -4,6 +4,27 @@
 
 Tạo Jenkins job để **xóa** (teardown) môi trường đã deploy bởi job `developer_build` ở yêu cầu 4.
 
+## File triển khai thực tế trong repo
+
+Job cleanup đã có scaffold sẵn tại:
+
+- `jenkins/pipelines/developer_cleanup.groovy`
+- `jenkins/scripts/cleanup-release.sh`
+
+## Cấu hình thực tế đang dùng
+
+Pipeline cleanup thực tế hiện tại dùng:
+
+- `DEPLOYER_ID`
+- `SERVICE_CATALOG`
+- `NAMESPACE`
+- `RELEASE_NAME`
+- `DELETE_NAMESPACE`
+- `ALLOW_SHARED_ENVIRONMENT_CLEANUP`
+- `ALLOW_SHARED_NAMESPACE_DELETE`
+
+> Pipeline hiện tại không còn dùng `CONFIRM_DELETE=true/false` như ví dụ cũ bên dưới. Khi chạy thật, ưu tiên theo `jenkins/pipelines/developer_cleanup.groovy`.
+
 ---
 
 ## Lý do cần job cleanup riêng
@@ -28,13 +49,28 @@ Tạo Jenkins job để **xóa** (teardown) môi trường đã deploy bởi job
 | Parameter name | Default | Mô tả |
 |---|---|---|
 | `DEPLOYER_ID` | `dev1` | ID của developer muốn cleanup |
-| `CONFIRM_DELETE` | `false` | Bắt buộc chuyển thành `true` để xóa (safety gate) |
+| `SERVICE_CATALOG` | `release-baseline` | Catalog liên quan tới release cần xóa |
+| `NAMESPACE` | *(trống)* | Override namespace nếu cần |
+| `RELEASE_NAME` | *(trống)* | Override release name nếu cần |
+| `DELETE_NAMESPACE` | `true` | Xóa namespace sau khi uninstall |
+| `ALLOW_SHARED_ENVIRONMENT_CLEANUP` | `false` | Chỉ bật nếu cleanup shared env |
+| `ALLOW_SHARED_NAMESPACE_DELETE` | `false` | Chỉ bật nếu xóa namespace shared env |
 
-> Tham số `CONFIRM_DELETE` là safety net: tránh chạy nhầm job mà xóa mất environment.
+> Safety net hiện tại là `ALLOW_SHARED_ENVIRONMENT_CLEANUP` và `ALLOW_SHARED_NAMESPACE_DELETE`.
+
+---
+
+## Việc có thể làm ngay lúc chờ Jenkins
+
+- Chốt naming cho `DEPLOYER_ID`
+- Ghi sẵn namespace/release sẽ cleanup khi demo
+- Quy ước rõ khi nào được cleanup shared environment
 
 ---
 
 ## Jenkinsfile — developer_cleanup
+
+> Khối ví dụ dưới đây là tham khảo cũ. Khi chạy Jenkins thật, ưu tiên parameter và logic trong `jenkins/pipelines/developer_cleanup.groovy`.
 
 ```groovy
 pipeline {
@@ -153,7 +189,9 @@ Developer test xong feature
 Mở Jenkins → job developer_cleanup
          ↓
 Nhập DEPLOYER_ID = dev1 (hoặc ID của mình)
-Đặt CONFIRM_DELETE = true
+Giữ `DELETE_NAMESPACE=true`
+và chỉ bật `ALLOW_SHARED_ENVIRONMENT_CLEANUP` / `ALLOW_SHARED_NAMESPACE_DELETE`
+nếu đang cleanup shared environment
          ↓
 Click Build
          ↓
@@ -211,7 +249,7 @@ stage('Schedule Auto Cleanup') {
         build job: 'developer_cleanup',
               parameters: [
                   string(name: 'DEPLOYER_ID', value: params.DEPLOYER_ID),
-                  booleanParam(name: 'CONFIRM_DELETE', value: true)
+                  booleanParam(name: 'DELETE_NAMESPACE', value: true)
               ],
               wait: false,
               quietPeriod: 14400   // 4 tiếng = 14400 giây
@@ -224,7 +262,7 @@ stage('Schedule Auto Cleanup') {
 ## Checklist xác nhận
 
 - [ ] Job `developer_cleanup` đã tạo trên Jenkins
-- [ ] Tham số `DEPLOYER_ID` và `CONFIRM_DELETE` đã cấu hình
+- [ ] Tham số `DEPLOYER_ID`, `DELETE_NAMESPACE`, `ALLOW_SHARED_ENVIRONMENT_CLEANUP`, `ALLOW_SHARED_NAMESPACE_DELETE` đã cấu hình
 - [ ] Test: deploy với `developer_build`, sau đó chạy `developer_cleanup` → namespace bị xóa
 - [ ] Verify: `kubectl get ns` không còn thấy `yas-user-<id>`
 - [ ] Link cleanup xuất hiện trong build description của `developer_build` (optional)

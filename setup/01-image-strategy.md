@@ -73,7 +73,7 @@ Dựa trên kiến trúc YAS, các service cần build image và push lên Docke
 2. Đặt tên token (ví dụ: `jenkins-ci`), quyền `Read & Write`.
 3. Lưu token vào Jenkins Credentials:
    - Kind: **Username with password**
-   - ID: `dockerhub-credentials`
+   - ID: `dockerhub-creds`
    - Username: Docker Hub username
    - Password: Access Token vừa tạo
 
@@ -133,8 +133,17 @@ services:
 ## Checklist xác nhận
 
 - [ ] Docker Hub namespace đã tạo
-- [ ] Jenkins credential `dockerhub-credentials` đã cấu hình
+- [ ] Jenkins credential `dockerhub-creds` đã cấu hình
 - [ ] Đã test `docker login` từ Jenkins agent thành công
 - [ ] Image `main` của ít nhất 1 service đã push lên Docker Hub
 - [ ] Helm values mặc định dùng tag `main`
 - [ ] Xác nhận KHÔNG có resource nào deploy Grafana / Prometheus trong Helm chart
+
+---
+
+## Việc có thể làm ngay lúc chờ Jenkins
+
+- Tạo sẵn Docker Hub Access Token `Read & Write`
+- Chốt `DOCKERHUB_NAMESPACE`
+- Chuẩn bị sẵn credential Jenkins với ID `dockerhub-creds`
+- Chọn trước 1 image/tag mẫu sẽ demo, ví dụ `yas-product:main`

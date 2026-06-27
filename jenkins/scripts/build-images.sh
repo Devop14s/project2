@@ -3,7 +3,7 @@ set -euo pipefail
 source jenkins/scripts/common.sh
 
 mkdir -p work
-TAG="${RELEASE_VERSION:-$(git -C "$SOURCE_GIT_ROOT" rev-parse HEAD)}"
+TAG="$(resolve_image_tag)"
 BUILT_IMAGE_LIST_FILE="${BUILT_IMAGE_LIST_FILE:-work/built-image-list.txt}"
 BUILD_METADATA_FILE="${BUILD_METADATA_FILE:-work/build-metadata.json}"
 build_completed=false
@@ -48,10 +48,5 @@ while IFS='|' read -r service path dockerfile port expose node_port workload_typ
     "$resolved_path"
   printf '%s\n' "$last_image" >> "$BUILT_IMAGE_LIST_FILE"
 
-  # Push ngay sau khi build và xóa local để tiết kiệm disk
-  log "Pushing ${last_image}"
-  docker push "$last_image"
-  docker rmi "$last_image" || true
-  docker image prune -f || true
 done < <(iter_services)
 build_completed=true

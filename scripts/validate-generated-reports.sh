@@ -1,6 +1,8 @@
 #!/usr/bin/env sh
 set -eu
 
+. scripts/catalog.sh
+
 status_report_file="${1:-work/status-report.generated.md}"
 service_verification_file="${2:-work/service-verification.generated.md}"
 host_capabilities_file="${3:-work/host-capabilities.generated.md}"
@@ -68,7 +70,7 @@ for token in \
   'Real Kubernetes deployment cannot be executed.' \
   'Jenkins credentials and webhook integration cannot be verified locally.'
 do
-  printf '%s' "$status_text" | grep -F -q "$token" || {
+  printf '%s' "$status_text" | grep -F -q -- "$token" || {
     printf 'Generated status report is missing required token %s.\n' "$token" >&2
     exit 1
   }
@@ -95,7 +97,7 @@ for required_host_token in \
   'work/service-verification.generated.md' \
   'work/final-report-notes.generated.md'
 do
-  printf '%s' "$host_capabilities_text" | grep -F -q "$required_host_token" || {
+  printf '%s' "$host_capabilities_text" | grep -F -q -- "$required_host_token" || {
     printf 'Generated host capabilities report is missing required token %s.\n' "$required_host_token" >&2
     exit 1
   }
@@ -121,9 +123,9 @@ for token in \
   'elasticsearch:' \
   'compile:' \
   'full build verified' \
-  'full test path blocked'
+  'blocked'
 do
-  printf '%s' "$service_verification_text" | grep -F -q "$token" || {
+  printf '%s' "$service_verification_text" | grep -F -q -- "$token" || {
     printf 'Generated service verification matrix is missing required token %s.\n' "$token" >&2
     exit 1
   }

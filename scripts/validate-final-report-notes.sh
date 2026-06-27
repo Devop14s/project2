@@ -21,7 +21,7 @@ for token in \
   'Current host capability evidence:' \
   'Verified end to end on real infrastructure:'
 do
-  printf '%s' "$notes_text" | grep -F -q "$token" || {
+  printf '%s' "$notes_text" | grep -F -q -- "$token" || {
     printf 'Generated final report notes are missing required token %s.\n' "$token" >&2
     exit 1
   }
@@ -34,7 +34,7 @@ while IFS='|' read -r service path dockerfile port expose node_port workload_typ
       ;;
   esac
 
-  printf '%s' "$notes_text" | grep -F -q "- \`${service}\`" || {
+  printf '%s' "$notes_text" | grep -F -q -- "- \`${service}\`" || {
     printf 'Generated final report notes are missing baseline service `%s`.\n' "$service" >&2
     exit 1
   }

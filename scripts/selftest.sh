@@ -6,10 +6,13 @@ temp_dir="${TMPDIR:-/tmp}/yas-scaffold-selftest.$$"
 repo_root="$(pwd)"
 if [ -d "yas-source-upstream" ]; then
   selftest_source_root="yas-source-upstream"
+  selftest_has_external_source=1
 elif [ -d "yas-source" ]; then
   selftest_source_root="yas-source"
+  selftest_has_external_source=1
 else
   selftest_source_root="."
+  selftest_has_external_source=0
 fi
 
 mkdir -p "$temp_dir"
@@ -96,7 +99,6 @@ sh scripts/validate-argocd-readme.sh >/dev/null
 sh scripts/validate-argocd-apps.sh >/dev/null
 sh scripts/validate-handover-checklist.sh >/dev/null
 sh scripts/validate-chart-values.sh >/dev/null
-sh scripts/validate-final-report-notes.sh >/dev/null
 sh scripts/validate-final-report-template.sh >/dev/null
 sh scripts/validate-jenkins-readme.sh >/dev/null
 sh scripts/validate-image-matrix.sh >/dev/null
@@ -108,11 +110,17 @@ sh scripts/validate-service-inventory.sh >/dev/null
 sh scripts/validate-troubleshooting.sh >/dev/null
 sh scripts/validate-remaining-work-plan.sh >/dev/null
 sh scripts/validate-gitops-values.sh >/dev/null
-sh scripts/validate-source-alignment.sh >/dev/null
+if [ "$selftest_has_external_source" -eq 1 ]; then
+  sh scripts/validate-source-alignment.sh >/dev/null
+fi
 sh scripts/validate-source-build-runtime-matrix.sh >/dev/null
 sh scripts/validate-status-report.sh >/dev/null
 sh scripts/summarize-failsafe-blockers.sh "$failsafe_blockers_file" >/dev/null
-powershell -ExecutionPolicy Bypass -File scripts/generate-service-verification-matrix.ps1 -OutputFile "$service_verification_matrix_file" >/dev/null
+if command -v powershell >/dev/null 2>&1; then
+  powershell -ExecutionPolicy Bypass -File scripts/generate-service-verification-matrix.ps1 -OutputFile "$service_verification_matrix_file" >/dev/null
+else
+  sh scripts/generate-service-verification-matrix.sh "$service_verification_matrix_file" >/dev/null
+fi
 OUTPUT_FILE="$branch_tags_file" BRANCH_TAG_METADATA_FILE="$branch_tag_metadata_file" sh scripts/resolve-branch-tags.sh >/dev/null
 DOCKERHUB_NAMESPACE="$dockerhub_namespace" \
 TAGS_FILE="$branch_tags_file" \
@@ -134,7 +142,9 @@ sh scripts/generate-gitops-values.sh >/dev/null
 OUTPUT_FILE="$chart_values_file" \
 sh scripts/generate-chart-values.sh >/dev/null
 sh scripts/update-manifest-values.sh "$manifest_values_file" test-tag >/dev/null
-powershell -ExecutionPolicy Bypass -File scripts/preflight.ps1 -AsJson -SkipCommandChecks >/dev/null
+if command -v powershell >/dev/null 2>&1; then
+  powershell -ExecutionPolicy Bypass -File scripts/preflight.ps1 -AsJson -SkipCommandChecks >/dev/null
+fi
 SERVICE_VERIFICATION_FILE="$service_verification_matrix_file" FINAL_REPORT_NOTES_FILE="$final_report_notes_file" HOST_CAPABILITIES_FILE="$host_capabilities_file" sh scripts/refresh-evidence.sh "$status_report_file" --skip-command-checks >/dev/null
 sh scripts/validate-generated-reports.sh "$status_report_file" "$service_verification_matrix_file" "$host_capabilities_file" >/dev/null
 sh scripts/validate-final-report-notes.sh "$final_report_notes_file" >/dev/null
@@ -358,9 +368,11 @@ grep -q 'docker-daemon' scripts/agent-readiness.ps1
 grep -q 'cluster-connectivity' scripts/agent-readiness.ps1
 grep -q 'docker-daemon' scripts/agent-readiness.sh
 grep -q 'cluster-connectivity' scripts/agent-readiness.sh
-if (cd "$temp_dir" && powershell -ExecutionPolicy Bypass -File "${repo_root}/scripts/preflight.ps1" -AsJson >/dev/null 2>&1); then
-  printf 'preflight.ps1 -AsJson should fail outside the repo root when scaffold files are missing.\n' >&2
-  exit 1
+if command -v powershell >/dev/null 2>&1; then
+  if (cd "$temp_dir" && powershell -ExecutionPolicy Bypass -File "${repo_root}/scripts/preflight.ps1" -AsJson >/dev/null 2>&1); then
+    printf 'preflight.ps1 -AsJson should fail outside the repo root when scaffold files are missing.\n' >&2
+    exit 1
+  fi
 fi
 cat > "$verify_image_tags_file" <<'EOF'
 PRODUCT_TAG=test-product-tag

@@ -47,12 +47,12 @@ resolve_tag() {
   fi
 
   if git -C "$source_git_root" rev-parse --verify "origin/$branch" >/dev/null 2>&1; then
-    git -C "$source_git_root" rev-parse "origin/$branch"
+    git -C "$source_git_root" rev-parse --short=7 "origin/$branch"
     return
   fi
 
   if git -C "$source_git_root" rev-parse --verify "$branch" >/dev/null 2>&1; then
-    git -C "$source_git_root" rev-parse "$branch"
+    git -C "$source_git_root" rev-parse --short=7 "$branch"
     return
   fi
 

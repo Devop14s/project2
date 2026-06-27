@@ -6,6 +6,15 @@ Last updated: June 16, 2026
 
 Move this repository from a source-verified delivery scaffold to a working YAS delivery repo with real image push, real Kubernetes deployment, and reproducible CI/CD evidence.
 
+## Current cluster progress
+
+As of June 27, 2026, the local lab cluster has moved beyond planning:
+
+- A `k3s` control-plane node was brought up successfully on WSL2.
+- `kubectl get nodes -o wide` returned the master node in `Ready`.
+- Core cluster add-ons reached `Running`.
+- The next blocking step is no longer cluster installation itself; it is finishing the worker join and connecting Jenkins to the live kubeconfig.
+
 ## Current baseline
 
 - Service catalog is source-verified against the local `yas-source-upstream` clone.
@@ -112,10 +121,13 @@ Current status: the recommended subset is now frozen in [jenkins/services.releas
 
 ### Steps
 
-1. Deploy one service plus its dependencies into a disposable namespace.
-2. Validate generated values, rollout status, services, and ingress or `NodePort` exposure.
-3. Expand to the full chosen subset.
-4. Record namespace, release name, image tags, and resulting endpoints.
+1. Join the worker node to the already-running local `k3s` master and verify `kubectl get nodes` shows both nodes in `Ready`.
+2. Create the shared namespaces `yas-dev` and `yas-staging`.
+3. Upload the live kubeconfig to Jenkins as credential `kubeconfig-file`.
+4. Deploy one service plus its dependencies into a disposable namespace.
+5. Validate generated values, rollout status, services, and ingress or `NodePort` exposure.
+6. Expand to the full chosen subset.
+7. Record namespace, release name, image tags, and resulting endpoints.
 
 ### Deliverables
 
@@ -127,6 +139,7 @@ Current status: the recommended subset is now frozen in [jenkins/services.releas
 ### Exit criteria
 
 - The chosen subset reaches Ready state and the public UI paths are reachable through the expected cluster entrypoint.
+- Jenkins can target the same kubeconfig used for the local `k3s` master without manual kubectl fixes on every run.
 
 ## Phase 4: Exercise the Jenkins flows end to end
 

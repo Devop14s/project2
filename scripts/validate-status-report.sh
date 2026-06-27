@@ -2,6 +2,11 @@
 set -eu
 
 status_report="${1:-docs/status-report.md}"
+blockers_command='sh scripts/summarize-failsafe-blockers.sh'
+
+if command -v powershell >/dev/null 2>&1; then
+  blockers_command='powershell -ExecutionPolicy Bypass -File scripts/summarize-failsafe-blockers.ps1'
+fi
 
 required_full_build_services="
 storefront
@@ -32,7 +37,7 @@ while IFS='|' read -r service category suite message || [ -n "${service}${catego
     exit 1
   }
 done <<EOF
-$(powershell -ExecutionPolicy Bypass -File scripts/summarize-failsafe-blockers.ps1)
+$($blockers_command)
 EOF
 
 printf '%s' "$status_text" | grep -F -q 'work/service-verification.generated.md' || {

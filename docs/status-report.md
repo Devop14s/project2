@@ -85,7 +85,14 @@ Last updated: June 24, 2026
   - `order`
   - `inventory`
   - `tax`
-- No Kubernetes cluster deployment has been verified yet for `dev`, `staging`, or developer namespaces.
+- Local Kubernetes cluster is now fully operational on two WSL2 nodes as of June 27, 2026:
+  - `k3s-master` Ready — 192.168.11.26 (current machine, Jenkins will run here)
+  - `k3s-worker` Ready — 192.168.11.223
+  - core add-ons `coredns`, `metrics-server`, `local-path-provisioner`, and `traefik` all `Running`
+  - `yas-dev` and `yas-staging` namespaces created
+- Jenkins is being set up locally on the k3s-master node. The previous Jenkins instance at `20.2.66.240:8081` will not be used for cluster operations.
+- kubeconfig `server` address is `0.0.0.0:6443` and must be changed to `127.0.0.1:6443` before uploading to local Jenkins as `kubeconfig-file`.
+- Jenkins wiring, helm installation on master, and real namespace deployment evidence are still pending.
 - Jenkins and registry credentials have now been exercised end to end on the project-specific Jenkins instance.
 - Kubernetes kubeconfig wiring, shared-environment deploy flows, and runtime evidence capture on a real cluster are still unverified.
 - The first successful real CI run on Jenkins relied on a prebuilt YAS source tree for baseline Java artifacts rather than on a clean workspace that compiles those backend artifacts inside the CI pipeline itself.
@@ -104,6 +111,12 @@ Last updated: June 24, 2026
 
 - Treat the repo as a strong, source-verified delivery scaffold with one successful real CI registry push already proven on Jenkins `8081`.
 - Use the release-baseline subset as the first deployment subset because that is the exact group already proven in a real CI push.
+- Treat the local `k3s` master verification as the handoff point from scaffold-only work to live cluster execution.
+- Finish the cluster path in this order:
+  - join the worker to the existing `k3s` master
+  - create `yas-dev` and `yas-staging`
+  - upload kubeconfig to Jenkins as `kubeconfig-file`
+  - run `developer_build`, `developer_cleanup`, and one shared-environment deploy flow with evidence capture
 - Keep `sampledata` and `search` outside the first end-to-end release until their workspace-specific test blockers are understood or intentionally bypassed.
 - Treat `cart`, `customer`, `location`, `media`, `promotion`, `rating`, `tax`, and `webhook` as deployable from a package-and-image perspective, but still not fully upstream-style verified on this host because their integration paths currently depend on unstable Keycloak Testcontainers startup.
 - Move next to cluster setup and deploy verification only after providing a real Kubernetes path for Jenkins.
@@ -118,7 +131,7 @@ Last updated: June 24, 2026
 
 ## Inputs still required
 
-- Real Kubernetes cluster path with kubeconfig access for Jenkins.
+- Worker-node connectivity to the local `k3s` master and kubeconfig access for Jenkins.
 - Final decision on whether the cluster will be:
   - local lab
   - managed Kubernetes

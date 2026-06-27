@@ -43,7 +43,14 @@ while IFS='|' read -r service path dockerfile port expose node_port workload_typ
     errors=1
   else
     printf '%s\n' "$service" >> "$tmp_names"
-    printf '%s|%s\n' "$service" "$line" >> "$tmp_service_lines"
+    printf '%s|%s|%s|%s|%s|%s|%s\n' \
+      "$service" \
+      "$path" \
+      "$dockerfile" \
+      "$port" \
+      "$expose" \
+      "$node_port" \
+      "$workload_type" >> "$tmp_service_lines"
   fi
 
   [ -n "$path" ] || {
@@ -103,30 +110,17 @@ if [ "$errors" -eq 0 ] && [ -n "$reference_services_file" ]; then
     exit 1
   }
 
-  : > "$tmp_reference_lines"
   iter_catalog_services "$reference_services_file" > "$tmp_normalized_reference"
-  while IFS='|' read -r reference_service reference_path reference_dockerfile reference_port reference_expose reference_node_port reference_workload_type; do
-    printf '%s|%s|%s|%s|%s|%s|%s|%s\n' \
-      "$reference_service" \
-      "$reference_service" \
-      "$reference_path" \
-      "$reference_dockerfile" \
-      "$reference_port" \
-      "$reference_expose" \
-      "$reference_node_port" \
-      "$reference_workload_type" >> "$tmp_reference_lines"
-  done < "$tmp_normalized_reference"
-
-  while IFS='|' read -r service service_line; do
-    reference_entry="$(grep "^${service}|" "$tmp_reference_lines" || true)"
+  while IFS= read -r service_line; do
+    service="${service_line%%|*}"
+    reference_entry="$(grep "^${service}|" "$tmp_normalized_reference" || true)"
     if [ -z "$reference_entry" ]; then
       printf 'Service %s does not exist in reference catalog: %s\n' "$service" "$reference_services_file" >&2
       errors=1
       continue
     fi
 
-    reference_line="${reference_entry#*|}"
-    if [ "$reference_line" != "$service_line" ]; then
+    if [ "$reference_entry" != "$service_line" ]; then
       printf 'Service %s differs from the reference catalog entry\n' "$service" >&2
       errors=1
     fi

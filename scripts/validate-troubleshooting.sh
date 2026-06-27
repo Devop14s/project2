@@ -3,6 +3,11 @@ set -eu
 
 troubleshooting_file="${1:-docs/troubleshooting.md}"
 troubleshooting_text="$(cat "$troubleshooting_file")"
+blockers_command='sh scripts/summarize-failsafe-blockers.sh'
+
+if command -v powershell >/dev/null 2>&1; then
+  blockers_command='powershell -ExecutionPolicy Bypass -File scripts/summarize-failsafe-blockers.ps1'
+fi
 
 while IFS='|' read -r service category suite message || [ -n "${service}${category}${suite}${message}" ]; do
   [ -n "${service:-}" ] || continue
@@ -11,7 +16,7 @@ while IFS='|' read -r service category suite message || [ -n "${service}${catego
     exit 1
   }
 done <<EOF
-$(powershell -ExecutionPolicy Bypass -File scripts/summarize-failsafe-blockers.ps1)
+$($blockers_command)
 EOF
 
 for required_topic in \

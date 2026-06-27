@@ -7,6 +7,42 @@ Tạo Jenkins job tên **`developer_build`** cho phép developer:
 2. Deploy toàn bộ hệ thống lên K8S: service đang test dùng image từ branch đó (tag = commit SHA), các service còn lại dùng tag `main`.
 3. Nhận về `domain:port` (dạng NodePort) để truy cập và test.
 
+## File triển khai thực tế trong repo
+
+Job `developer_build` đã có scaffold sẵn tại:
+
+- `jenkins/pipelines/developer_build.groovy`
+- `jenkins/scripts/resolve-branch-tags.sh`
+- `jenkins/scripts/deploy-helm.sh`
+- `jenkins/scripts/capture-runtime-evidence.sh`
+- `jenkins/scripts/smoke-test.sh`
+
+## Cấu hình thực tế đang dùng
+
+Pipeline thực tế hiện tại dùng:
+
+- Docker credential ID: `dockerhub-creds`
+- Kubernetes credential ID: `kubeconfig-file`
+- Parameter quan trọng:
+  - `DEPLOYER_ID`
+  - `SERVICE_CATALOG`
+  - `DOCKERHUB_NAMESPACE`
+  - `DOMAIN_NAME`
+  - `BACKOFFICE_DOMAIN_NAME`
+  - `STOREFRONT_BRANCH`
+  - `BACKOFFICE_BRANCH`
+  - `STOREFRONT_BFF_BRANCH`
+  - `BACKOFFICE_BFF_BRANCH`
+  - `PRODUCT_BRANCH`
+  - `CART_BRANCH`
+  - `CUSTOMER_BRANCH`
+  - `ORDER_BRANCH`
+  - `INVENTORY_BRANCH`
+  - `TAX_BRANCH`
+  - ...
+
+> Khi chạy thật, ưu tiên parameter theo `jenkins/pipelines/developer_build.groovy`.
+
 ---
 
 ## Luồng hoạt động
@@ -14,11 +50,11 @@ Tạo Jenkins job tên **`developer_build`** cho phép developer:
 ```
 Developer mở job developer_build
          ↓
-Chọn parameter: tax-service = dev_tax_service
+Chọn parameter branch override cho service cần test
                 (các service khác = main)
          ↓
 Jenkins resolve tag:
-  - tax-service: đọc commit SHA mới nhất của branch dev_tax_service
+  - service được override: đọc commit SHA mới nhất của branch đó
   - các service khác: dùng tag "main"
          ↓
 Jenkins deploy lên namespace yas-user-<deployer-id> bằng Helm
@@ -48,25 +84,39 @@ Vào **This project is parameterized** → thêm các String Parameter:
 | Parameter name | Default value | Mô tả |
 |---|---|---|
 | `DEPLOYER_ID` | `dev1` | ID định danh của developer (dùng đặt namespace) |
-| `BRANCH_PRODUCT` | `main` | Branch của product-service |
-| `BRANCH_CART` | `main` | Branch của cart-service |
-| `BRANCH_ORDER` | `main` | Branch của order-service |
-| `BRANCH_CUSTOMER` | `main` | Branch của customer-service |
-| `BRANCH_INVENTORY` | `main` | Branch của inventory-service |
-| `BRANCH_TAX` | `main` | Branch của tax-service |
-| `BRANCH_MEDIA` | `main` | Branch của media-service |
-| `BRANCH_SEARCH` | `main` | Branch của search-service |
-| `BRANCH_STOREFRONT_BFF` | `main` | Branch của storefront-bff |
-| `BRANCH_STOREFRONT_UI` | `main` | Branch của storefront-ui |
-| `BRANCH_BACKOFFICE_BFF` | `main` | Branch của backoffice-bff |
-| `BRANCH_BACKOFFICE_UI` | `main` | Branch của backoffice-ui |
-| `BRANCH_SWAGGER` | `main` | Branch của swagger-ui |
+| `SERVICE_CATALOG` | `release-baseline` | Catalog deploy lần đầu |
+| `DOCKERHUB_NAMESPACE` | `<namespace>` | Docker namespace |
+| `DOMAIN_NAME` | `storefront-dev1.yas.local` | Domain storefront |
+| `BACKOFFICE_DOMAIN_NAME` | `backoffice-dev1.yas.local` | Domain backoffice |
+| `STOREFRONT_BRANCH` | `main` | Branch của storefront |
+| `BACKOFFICE_BRANCH` | `main` | Branch của backoffice |
+| `STOREFRONT_BFF_BRANCH` | `main` | Branch của storefront-bff |
+| `BACKOFFICE_BFF_BRANCH` | `main` | Branch của backoffice-bff |
+| `PRODUCT_BRANCH` | `main` | Branch của product |
+| `CART_BRANCH` | `main` | Branch của cart |
+| `CUSTOMER_BRANCH` | `main` | Branch của customer |
+| `ORDER_BRANCH` | `main` | Branch của order |
+| `INVENTORY_BRANCH` | `main` | Branch của inventory |
+| `TAX_BRANCH` | `main` | Branch của tax |
 
 > Tất cả default = `main`. Developer chỉ thay đổi service mình đang làm việc.
 
 ---
 
+## Việc có thể làm ngay lúc chờ Jenkins
+
+- Chốt `DEPLOYER_ID` dùng khi demo
+- Chốt `DOMAIN_NAME` và `BACKOFFICE_DOMAIN_NAME`
+- Chuẩn bị branch override nào sẽ test đầu tiên
+- Ghi sẵn lệnh kiểm tra sau deploy:
+  - `kubectl get pods -n yas-user-<deployer-id>`
+  - `kubectl get svc -n yas-user-<deployer-id>`
+
+---
+
 ## Jenkinsfile — developer_build
+
+> Khối ví dụ dưới đây là mô tả luồng cũ. Khi chạy Jenkins thật, ưu tiên parameter và stage theo `jenkins/pipelines/developer_build.groovy`.
 
 ```groovy
 pipeline {

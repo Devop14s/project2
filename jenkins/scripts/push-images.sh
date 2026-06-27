@@ -3,7 +3,7 @@ set -euo pipefail
 source jenkins/scripts/common.sh
 
 mkdir -p work
-TAG="${RELEASE_VERSION:-$(git -C "$SOURCE_GIT_ROOT" rev-parse HEAD)}"
+TAG="$(resolve_image_tag)"
 IMAGE_LIST_FILE="${IMAGE_LIST_FILE:-work/image-list.txt}"
 IMAGE_DIGESTS_FILE="${IMAGE_DIGESTS_FILE:-work/image-digests.txt}"
 METADATA_FILE="${METADATA_FILE:-work/image-metadata.json}"
@@ -61,14 +61,12 @@ while IFS='|' read -r service path dockerfile port expose node_port workload_typ
   last_service="$service"
   last_image="$image"
 
-  # Image đã được push trong build-images.sh — chỉ ghi metadata
-  if docker image inspect "$image" > /dev/null 2>&1; then
-    log "Pushing ${image}"
-    docker push "$image"
-  else
-    log "Image ${image} already pushed in build stage — recording metadata only"
-  fi
+  docker image inspect "$image" > /dev/null 2>&1 || fail "Local image not found for push: ${image}"
+  log "Pushing ${image}"
+  docker push "$image"
   printf '%s\n' "$image" >> "$IMAGE_LIST_FILE"
   record_repo_digest "$repo_name" "$TAG"
+  docker rmi "$image" >/dev/null 2>&1 || true
 done < <(iter_services)
+docker image prune -f >/dev/null 2>&1 || true
 push_completed=true

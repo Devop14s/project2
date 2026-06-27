@@ -12,7 +12,7 @@ mkdir -p "$(dirname "$COMMIT_SHORT_SHA_FILE")"
 mkdir -p "$(dirname "$COMMIT_METADATA_FILE")"
 
 commit_sha="$(git -C "$SOURCE_GIT_ROOT" rev-parse HEAD)"
-commit_short_sha="$(git -C "$SOURCE_GIT_ROOT" rev-parse --short HEAD)"
+commit_short_sha="$(git -C "$SOURCE_GIT_ROOT" rev-parse --short=7 HEAD)"
 printf '%s\n' "$commit_sha" > "$COMMIT_SHA_FILE"
 printf '%s\n' "$commit_short_sha" > "$COMMIT_SHORT_SHA_FILE"
 

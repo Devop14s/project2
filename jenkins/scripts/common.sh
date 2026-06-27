@@ -119,3 +119,17 @@ resolve_manifest_branch_ref() {
 iter_services() {
   iter_catalog_services "$SERVICES_FILE"
 }
+
+resolve_image_tag() {
+  if [[ -n "${RELEASE_VERSION:-}" ]]; then
+    printf '%s' "$RELEASE_VERSION"
+    return
+  fi
+
+  if [[ -f work/commit_short_sha.txt ]]; then
+    tr -d '\r\n' < work/commit_short_sha.txt
+    return
+  fi
+
+  git -C "$SOURCE_GIT_ROOT" rev-parse --short=7 HEAD
+}

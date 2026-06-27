@@ -6,6 +6,11 @@ set -eu
 matrix_file="${1:-docs/source-build-runtime-matrix.md}"
 matrix_text="$(cat "$matrix_file")"
 services_file="$(resolve_services_file)"
+blockers_command='sh scripts/summarize-failsafe-blockers.sh'
+
+if command -v powershell >/dev/null 2>&1; then
+  blockers_command='powershell -ExecutionPolicy Bypass -File scripts/summarize-failsafe-blockers.ps1'
+fi
 
 iter_catalog_services "$services_file" | while IFS='|' read -r service path dockerfile port expose node_port workload_type; do
   printf '%s' "$matrix_text" | grep -F -q "\`$service\`" || {
@@ -21,7 +26,7 @@ while IFS='|' read -r service category suite message || [ -n "${service}${catego
     exit 1
   }
 done <<EOF
-$(powershell -ExecutionPolicy Bypass -File scripts/summarize-failsafe-blockers.ps1)
+$($blockers_command)
 EOF
 
 printf '%s' "$matrix_text" | grep -F -q '`helm lint helm/yas`' || {

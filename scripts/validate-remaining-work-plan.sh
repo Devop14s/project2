@@ -4,6 +4,11 @@ set -eu
 plan_file="${1:-docs/remaining-work-plan.md}"
 plan_text="$(cat "$plan_file")"
 baseline_services_file="jenkins/services.release-baseline.env"
+blockers_command='sh scripts/summarize-failsafe-blockers.sh'
+
+if command -v powershell >/dev/null 2>&1; then
+  blockers_command='powershell -ExecutionPolicy Bypass -File scripts/summarize-failsafe-blockers.ps1'
+fi
 
 while IFS='|' read -r service path dockerfile port expose node_port workload_type || [ -n "${service}${path}${dockerfile}${port}${expose}${node_port}${workload_type}" ]; do
   case "${service:-}" in
@@ -25,7 +30,7 @@ while IFS='|' read -r service category suite message || [ -n "${service}${catego
     exit 1
   }
 done <<EOF
-$(powershell -ExecutionPolicy Bypass -File scripts/summarize-failsafe-blockers.ps1)
+$($blockers_command)
 EOF
 
 for required_reference in \

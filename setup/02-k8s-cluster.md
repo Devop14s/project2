@@ -17,6 +17,19 @@ Với điều kiện hiện tại là **2 máy Windows, mỗi máy chạy 1 WSL2
 
 > Kết luận: với môi trường lab chạy trên WSL, **ưu tiên `k3s`** thay vì `kubeadm`. `Minikube` chỉ nên dùng khi không thể dựng cluster 2 node.
 
+## Trạng thái hiện tại của cluster
+
+Khi đã thấy:
+
+- `k3s-master` = `Ready`
+- `k3s-worker` = `Ready`
+
+thì phần cluster core đã xong. Lúc đó việc tiếp theo nên tập trung vào:
+
+- chuẩn hóa `kubeconfig`
+- upload `kubeconfig-file` vào Jenkins
+- chuyển sang chạy P3, P4, P5
+
 ---
 
 ## Vì sao chọn k3s thay vì kubeadm
@@ -466,18 +479,27 @@ Có thể dùng mẫu mô tả ngắn sau:
 
 ## Checklist hoàn thành
 
-- [ ] Có **2 máy Windows** khác nhau
-- [ ] Mỗi máy có **1 WSL2 Ubuntu**
-- [ ] `systemd` đã bật trên cả 2 WSL
-- [ ] `k3s server` chạy trên master
-- [ ] `k3s agent` join thành công trên worker
-- [ ] `kubectl get nodes` hiển thị đủ **master + worker**
-- [ ] Cả 2 node đều `Ready`
-- [ ] Đã tạo `yas-dev`
-- [ ] Đã tạo `yas-staging`
-- [ ] Jenkins đã có credential `kubeconfig-file`
-- [ ] Jenkins agent chạy được `kubectl get ns`
+- [x] Có **2 máy Windows** khác nhau
+- [x] Mỗi máy có **1 WSL2 Ubuntu**
+- [x] `systemd` đã bật trên cả 2 WSL
+- [x] `k3s server` chạy trên master — `k3s-master` Ready (192.168.11.26)
+- [x] `k3s agent` join thành công trên worker — `k3s-worker` Ready (192.168.11.223)
+- [x] `kubectl get nodes` hiển thị đủ **master + worker**
+- [x] Cả 2 node đều `Ready`
+- [x] Đã tạo `yas-dev`
+- [x] Đã tạo `yas-staging`
+- [x] Jenkins đã có credential `kubeconfig-file` (server: `host.docker.internal:6443`)
+- [x] Jenkins agent chạy được `kubectl get ns` — xác nhận qua pipeline `test-kubectl` (SUCCESS)
 - [ ] Đã chụp đủ ảnh màn hình / log để nộp bài
+
+---
+
+## Việc có thể làm ngay lúc chờ Jenkins
+
+- Chạy `kubectl get nodes -o wide`
+- Chạy `kubectl get pods -A`
+- Xác nhận `~/.kube/config` đang trỏ tới IP thật của master
+- Copy `~/.kube/config` ra file tạm để upload Jenkins
 
 ---
 
