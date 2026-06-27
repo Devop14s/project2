@@ -44,6 +44,10 @@ return {
       }
     }
 
+    stage('Maven Build') {
+      sh 'jenkins/scripts/maven-build.sh'
+    }
+
     stage('Build Images') {
       sh 'jenkins/scripts/build-images.sh'
     }
