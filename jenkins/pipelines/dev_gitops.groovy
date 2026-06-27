@@ -2,12 +2,8 @@ return {
   if (env.PIPELINE_DISPATCH_MODE != 'true') {
     properties([
       parameters([
-        choice(name: 'SERVICE_CATALOG', choices: ['release-baseline', 'full'], description: 'Service catalog to build, push, and publish into GitOps values'),
-        string(name: 'DOCKERHUB_NAMESPACE', defaultValue: '', description: 'Docker registry namespace, for example docker.io/your-org'),
-        string(name: 'SOURCE_ROOT', defaultValue: '', description: 'Optional relative path to the YAS source tree; leave blank to clone or reuse yas-source-upstream/ automatically'),
-        string(name: 'SOURCE_GIT_ROOT', defaultValue: '', description: 'Optional separate Git checkout used for commit resolution'),
-        string(name: 'SOURCE_REPO_URL', defaultValue: 'https://github.com/nashtech-garage/yas.git', description: 'Source repository URL used when the job must clone YAS on demand'),
-        string(name: 'SOURCE_REPO_REF', defaultValue: 'main', description: 'Source branch, tag, or ref used when the job must clone YAS on demand')
+        choice(name: 'SERVICE_CATALOG', choices: ['release-baseline', 'full'], description: 'Service catalog to publish into GitOps values'),
+        string(name: 'DOCKERHUB_NAMESPACE', defaultValue: 'luongtrz', description: 'Docker registry namespace (images already built and pushed by CI)'),
       ])
     ])
   }
@@ -16,42 +12,28 @@ return {
     stage('Checkout') {
       checkout scm
       sh 'mkdir -p work'
-      def sourceBootstrap = load('jenkins/pipelines/source-bootstrap.groovy')
-      env.SERVICE_CATALOG = env.SERVICE_CATALOG?.trim() ?: 'full'
-      env.DOCKERHUB_NAMESPACE = env.DOCKERHUB_NAMESPACE?.trim() ?: params.DOCKERHUB_NAMESPACE?.trim()
-      env.SOURCE_REPO_URL = env.SOURCE_REPO_URL?.trim() ?: params.SOURCE_REPO_URL?.trim() ?: 'https://github.com/nashtech-garage/yas.git'
-      env.SOURCE_REPO_REF = env.SOURCE_REPO_REF?.trim() ?: params.SOURCE_REPO_REF?.trim() ?: 'main'
-      def sourceContext = sourceBootstrap.ensureSourceCheckout(
-        sourceRootParam: env.SOURCE_ROOT?.trim() ?: params.SOURCE_ROOT?.trim(),
-        sourceGitRootParam: env.SOURCE_GIT_ROOT?.trim() ?: params.SOURCE_GIT_ROOT?.trim(),
-        sourceRepoUrl: env.SOURCE_REPO_URL,
-        sourceRepoRef: env.SOURCE_REPO_REF
-      )
-      env.SOURCE_ROOT = sourceContext.sourceRoot
-      env.SOURCE_GIT_ROOT = sourceContext.sourceGitRoot
-      if (!env.DOCKERHUB_NAMESPACE) {
-        error('DOCKERHUB_NAMESPACE must be provided as a parameter or Jenkins job environment value.')
-      }
-    }
-
-    stage('Docker Login') {
-      withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
-        sh 'jenkins/scripts/docker-login.sh'
-      }
-    }
-
-    stage('Resolve Commit Metadata') {
-      sh 'jenkins/scripts/write-commit-metadata.sh'
-    }
-
-    stage('Build And Push Main Images') {
-      sh 'export RELEASE_VERSION=main; jenkins/scripts/build-images.sh'
-      sh 'export RELEASE_VERSION=main; jenkins/scripts/push-images.sh'
+      env.SERVICE_CATALOG = env.SERVICE_CATALOG?.trim() ?: params.SERVICE_CATALOG?.trim() ?: 'release-baseline'
+      env.DOCKERHUB_NAMESPACE = env.DOCKERHUB_NAMESPACE?.trim() ?: params.DOCKERHUB_NAMESPACE?.trim() ?: 'luongtrz'
     }
 
     stage('Update GitOps Values') {
-      sh 'export ENVIRONMENT=dev; export VALUES_FILE=argocd/values/dev-values.yaml; jenkins/scripts/update-manifest-repo.sh'
+      withCredentials([usernamePassword(
+        credentialsId: 'github-pat-yas',
+        usernameVariable: 'GIT_USER',
+        passwordVariable: 'GIT_TOKEN'
+      )]) {
+        sh """
+          git remote set-url origin https://\${GIT_USER}:\${GIT_TOKEN}@github.com/Devop14s/project2.git
+          export SOURCE_ROOT=""
+          export SOURCE_GIT_ROOT=""
+          export ENVIRONMENT=dev
+          export RELEASE_VERSION=main
+          export DOCKERHUB_NAMESPACE=\${DOCKERHUB_NAMESPACE}
+          export VALUES_FILE=argocd/values/dev-values.yaml
+          export SERVICE_CATALOG=\${SERVICE_CATALOG}
+          jenkins/scripts/update-manifest-repo.sh
+        """
+      }
     }
   }
 }
-

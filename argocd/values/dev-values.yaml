@@ -7,72 +7,97 @@ services:
   storefront:
     enabled: true
     image:
-      repository: docker.io/example/yas-storefront
+      repository: docker.io/luongtrz/yas-storefront
       tag: main
     ingress:
       enabled: true
       host: storefront-dev.yas.local
+
   backoffice:
     enabled: true
     image:
-      repository: docker.io/example/yas-backoffice
+      repository: docker.io/luongtrz/yas-backoffice
       tag: main
     ingress:
       enabled: true
       host: backoffice-dev.yas.local
+
   storefront-bff:
     enabled: true
     image:
-      repository: docker.io/example/yas-storefront-bff
+      repository: docker.io/luongtrz/yas-storefront-bff
       tag: main
+
   backoffice-bff:
     enabled: true
     image:
-      repository: docker.io/example/yas-backoffice-bff
+      repository: docker.io/luongtrz/yas-backoffice-bff
       tag: main
+
   product:
     enabled: true
     image:
-      repository: docker.io/example/yas-product
+      repository: docker.io/luongtrz/yas-product
       tag: main
+
   media:
-    enabled: false
+    enabled: true
+    image:
+      repository: docker.io/luongtrz/yas-media
+      tag: main
+
   cart:
     enabled: true
     image:
-      repository: docker.io/example/yas-cart
+      repository: docker.io/luongtrz/yas-cart
       tag: main
-  customer:
-    enabled: true
-    image:
-      repository: docker.io/example/yas-customer
-      tag: main
-  rating:
-    enabled: true
-    image:
-      repository: docker.io/example/yas-rating
-      tag: main
-  location:
-    enabled: true
-    image:
-      repository: docker.io/example/yas-location
-      tag: main
+
   order:
     enabled: true
     image:
-      repository: docker.io/example/yas-order
+      repository: docker.io/luongtrz/yas-order
       tag: main
+
+  customer:
+    enabled: true
+    image:
+      repository: docker.io/luongtrz/yas-customer
+      tag: main
+
   inventory:
     enabled: true
     image:
-      repository: docker.io/example/yas-inventory
+      repository: docker.io/luongtrz/yas-inventory
       tag: main
+
   tax:
     enabled: true
     image:
-      repository: docker.io/example/yas-tax
+      repository: docker.io/luongtrz/yas-tax
       tag: main
+
   search:
+    enabled: true
+    image:
+      repository: docker.io/luongtrz/yas-search
+      tag: main
+
+  sampledata:
+    enabled: true
+    image:
+      repository: docker.io/luongtrz/yas-sampledata
+      tag: main
+
+  swagger-ui:
+    enabled: true
+    image:
+      repository: docker.io/luongtrz/yas-swagger-ui
+      tag: main
+
+  # Non-baseline services — disabled
+  rating:
+    enabled: false
+  location:
     enabled: false
   promotion:
     enabled: false
@@ -81,8 +106,6 @@ services:
   payment-paypal:
     enabled: false
   recommendation:
-    enabled: false
-  sampledata:
     enabled: false
   webhook:
     enabled: false
