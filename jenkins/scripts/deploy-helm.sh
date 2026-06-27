@@ -29,14 +29,8 @@ helm upgrade --install "$RELEASE_NAME" helm/yas \
   --create-namespace \
   -f helm/yas/values.yaml \
   -f "$VALUES_FILE" \
-  --wait \
   --timeout "$HELM_TIMEOUT"
 
-while IFS='|' read -r service path dockerfile port expose node_port workload_type; do
-  if kubectl get deployment -n "$NAMESPACE" "${RELEASE_NAME}-${service}" >/dev/null 2>&1; then
-    kubectl rollout status -n "$NAMESPACE" "deployment/${RELEASE_NAME}-${service}" --timeout="$HELM_TIMEOUT"
-  fi
-done < <(iter_services)
-
+log "Helm install complete. Showing deployed resources:"
 kubectl get pods -n "$NAMESPACE"
 kubectl get svc -n "$NAMESPACE"
