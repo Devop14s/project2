@@ -1,0 +1,33 @@
+---
+apiVersion: networking.istio.io/v1
+kind: DestinationRule
+metadata:
+  name: postgres-no-mtls
+  namespace: yas-dev
+spec:
+  host: postgres.yas-dev.svc.cluster.local
+  trafficPolicy:
+    tls:
+      mode: DISABLE
+---
+apiVersion: networking.istio.io/v1
+kind: DestinationRule
+metadata:
+  name: kafka-no-mtls
+  namespace: yas-dev
+spec:
+  host: kafka.yas-dev.svc.cluster.local
+  trafficPolicy:
+    tls:
+      mode: DISABLE
+---
+apiVersion: networking.istio.io/v1
+kind: DestinationRule
+metadata:
+  name: elasticsearch-no-mtls
+  namespace: yas-dev
+spec:
+  host: elasticsearch.yas-dev.svc.cluster.local
+  trafficPolicy:
+    tls:
+      mode: DISABLE

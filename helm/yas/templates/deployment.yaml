@@ -44,10 +44,16 @@ spec:
             httpGet:
               path: /actuator/health/liveness
               port: metric
+            initialDelaySeconds: 90
+            periodSeconds: 10
+            failureThreshold: 5
           readinessProbe:
             httpGet:
               path: /actuator/health/readiness
               port: metric
+            initialDelaySeconds: 90
+            periodSeconds: 10
+            failureThreshold: 5
 {{- end }}
 {{- if $svc.env }}
           env:
