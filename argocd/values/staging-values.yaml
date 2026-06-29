@@ -9,6 +9,8 @@ services:
     image:
       repository: luongtrz/yas-storefront
       tag: v1.0.0
+    service:
+      nodePort: 32083
     ingress:
       enabled: true
       host: storefront-staging.yas.local
@@ -17,6 +19,8 @@ services:
     image:
       repository: luongtrz/yas-backoffice
       tag: v1.0.0
+    service:
+      nodePort: 32084
     ingress:
       enabled: true
       host: backoffice-staging.yas.local
@@ -92,6 +96,8 @@ services:
     image:
       repository: luongtrz/yas-swagger-ui
       tag: v1.0.0
+    service:
+      nodePort: 32085
     ingress:
       enabled: true
       host: swagger-ui-staging.yas.local
