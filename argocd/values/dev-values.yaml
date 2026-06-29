@@ -37,7 +37,7 @@ services:
       tag: main
     env:
       - name: JAVA_TOOL_OPTIONS
-        value: "-Xmx256m -Xms128m"
+        value: "-Xmx192m -Xms64m -XX:MaxMetaspaceSize=128m -XX:ReservedCodeCacheSize=32m"
       - name: SPRING_DATASOURCE_URL
         value: jdbc:postgresql://postgres.yas-dev.svc.cluster.local:5432/product
       - name: SPRING_DATASOURCE_USERNAME
@@ -51,7 +51,7 @@ services:
       tag: main
     env:
       - name: JAVA_TOOL_OPTIONS
-        value: "-Xmx256m -Xms128m"
+        value: "-Xmx192m -Xms64m -XX:MaxMetaspaceSize=128m -XX:ReservedCodeCacheSize=32m"
       - name: SPRING_DATASOURCE_URL
         value: jdbc:postgresql://postgres.yas-dev.svc.cluster.local:5432/media
       - name: SPRING_DATASOURCE_USERNAME
@@ -65,7 +65,7 @@ services:
       tag: main
     env:
       - name: JAVA_TOOL_OPTIONS
-        value: "-Xmx256m -Xms128m"
+        value: "-Xmx192m -Xms64m -XX:MaxMetaspaceSize=128m -XX:ReservedCodeCacheSize=32m"
       - name: SPRING_DATASOURCE_URL
         value: jdbc:postgresql://postgres.yas-dev.svc.cluster.local:5432/cart
       - name: SPRING_DATASOURCE_USERNAME
@@ -79,7 +79,7 @@ services:
       tag: main
     env:
       - name: JAVA_TOOL_OPTIONS
-        value: "-Xmx256m -Xms128m"
+        value: "-Xmx192m -Xms64m -XX:MaxMetaspaceSize=128m -XX:ReservedCodeCacheSize=32m"
       - name: SPRING_DATASOURCE_URL
         value: jdbc:postgresql://postgres.yas-dev.svc.cluster.local:5432/customer
       - name: SPRING_DATASOURCE_USERNAME
@@ -97,7 +97,7 @@ services:
       tag: main
     env:
       - name: JAVA_TOOL_OPTIONS
-        value: "-Xmx256m -Xms128m"
+        value: "-Xmx192m -Xms64m -XX:MaxMetaspaceSize=128m -XX:ReservedCodeCacheSize=32m"
       - name: SPRING_DATASOURCE_URL
         value: jdbc:postgresql://postgres.yas-dev.svc.cluster.local:5432/order
       - name: SPRING_DATASOURCE_USERNAME
@@ -111,7 +111,7 @@ services:
       tag: main
     env:
       - name: JAVA_TOOL_OPTIONS
-        value: "-Xmx256m -Xms128m"
+        value: "-Xmx192m -Xms64m -XX:MaxMetaspaceSize=128m -XX:ReservedCodeCacheSize=32m"
       - name: SPRING_DATASOURCE_URL
         value: jdbc:postgresql://postgres.yas-dev.svc.cluster.local:5432/inventory
       - name: SPRING_DATASOURCE_USERNAME
@@ -125,7 +125,7 @@ services:
       tag: main
     env:
       - name: JAVA_TOOL_OPTIONS
-        value: "-Xmx256m -Xms128m"
+        value: "-Xmx192m -Xms64m -XX:MaxMetaspaceSize=128m -XX:ReservedCodeCacheSize=32m"
       - name: SPRING_DATASOURCE_URL
         value: jdbc:postgresql://postgres.yas-dev.svc.cluster.local:5432/tax
       - name: SPRING_DATASOURCE_USERNAME
@@ -139,7 +139,7 @@ services:
       tag: main
     env:
       - name: JAVA_TOOL_OPTIONS
-        value: "-Xmx256m -Xms128m"
+        value: "-Xmx192m -Xms64m -XX:MaxMetaspaceSize=128m -XX:ReservedCodeCacheSize=32m"
       - name: SPRING_KAFKA_CONSUMER_BOOTSTRAP_SERVERS
         value: kafka.yas-dev.svc.cluster.local:9092
       - name: SPRING_KAFKA_PRODUCER_BOOTSTRAP_SERVERS
