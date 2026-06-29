@@ -1,0 +1,66 @@
+=== VirtualService retry config ===
+apiVersion: v1
+items:
+- apiVersion: networking.istio.io/v1
+  kind: VirtualService
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"networking.istio.io/v1","kind":"VirtualService","metadata":{"annotations":{},"name":"tax-retry","namespace":"yas-dev"},"spec":{"hosts":["yas-dev-tax.yas-dev.svc.cluster.local"],"http":[{"retries":{"attempts":3,"perTryTimeout":"2s","retryOn":"5xx,connect-failure,refused-stream"},"route":[{"destination":{"host":"yas-dev-tax.yas-dev.svc.cluster.local","port":{"number":80}}}]}]}}
+    creationTimestamp: "2026-06-28T17:18:53Z"
+    generation: 2
+    name: tax-retry
+    namespace: yas-dev
+    resourceVersion: "73062"
+    uid: 84209518-7de3-481e-a7f4-63219c5a09d8
+  spec:
+    hosts:
+    - yas-dev-tax.yas-dev.svc.cluster.local
+    http:
+    - retries:
+        attempts: 3
+        perTryTimeout: 2s
+        retryOn: 5xx,connect-failure,refused-stream
+      route:
+      - destination:
+          host: yas-dev-tax.yas-dev.svc.cluster.local
+          port:
+            number: 80
+- apiVersion: networking.istio.io/v1
+  kind: VirtualService
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"networking.istio.io/v1","kind":"VirtualService","metadata":{"annotations":{},"name":"order-retry","namespace":"yas-dev"},"spec":{"hosts":["yas-dev-order.yas-dev.svc.cluster.local"],"http":[{"retries":{"attempts":3,"perTryTimeout":"2s","retryOn":"5xx,connect-failure,refused-stream"},"route":[{"destination":{"host":"yas-dev-order.yas-dev.svc.cluster.local","port":{"number":80}}}]}]}}
+    creationTimestamp: "2026-06-28T17:18:52Z"
+    generation: 2
+    name: order-retry
+    namespace: yas-dev
+    resourceVersion: "73061"
+    uid: d2f15d7f-b919-44d3-8127-69d14e829c4f
+  spec:
+    hosts:
+    - yas-dev-order.yas-dev.svc.cluster.local
+    http:
+    - retries:
+        attempts: 3
+        perTryTimeout: 2s
+        retryOn: 5xx,connect-failure,refused-stream
+      route:
+      - destination:
+          host: yas-dev-order.yas-dev.svc.cluster.local
+          port:
+            number: 80
+kind: List
+metadata:
+  resourceVersion: ""
+
+=== Envoy route retry policy (istioctl proxy-config routes) ===
+Host: yas-dev-order.yas-dev.svc.cluster.local:80
+  retryOn: 5xx,connect-failure,refused-stream
+  numRetries: 3
+  perTryTimeout: 2s
+Host: yas-dev-tax.yas-dev.svc.cluster.local:80
+  retryOn: 5xx,connect-failure,refused-stream
+  numRetries: 3
+  perTryTimeout: 2s

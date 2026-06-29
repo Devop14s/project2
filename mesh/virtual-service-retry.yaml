@@ -1,11 +1,12 @@
+---
 apiVersion: networking.istio.io/v1
 kind: VirtualService
 metadata:
-  name: product-retry
+  name: order-retry
   namespace: yas-dev
 spec:
   hosts:
-    - product.yas-dev.svc.cluster.local
+    - yas-dev-order.yas-dev.svc.cluster.local
   http:
     - retries:
         attempts: 3
@@ -13,7 +14,25 @@ spec:
         retryOn: 5xx,connect-failure,refused-stream
       route:
         - destination:
-            host: product.yas-dev.svc.cluster.local
+            host: yas-dev-order.yas-dev.svc.cluster.local
             port:
-              number: 8080
-
+              number: 80
+---
+apiVersion: networking.istio.io/v1
+kind: VirtualService
+metadata:
+  name: tax-retry
+  namespace: yas-dev
+spec:
+  hosts:
+    - yas-dev-tax.yas-dev.svc.cluster.local
+  http:
+    - retries:
+        attempts: 3
+        perTryTimeout: 2s
+        retryOn: 5xx,connect-failure,refused-stream
+      route:
+        - destination:
+            host: yas-dev-tax.yas-dev.svc.cluster.local
+            port:
+              number: 80
