@@ -130,7 +130,7 @@ services:
     metricPort: 8087
     image:
       repository: luongtrz/yas-storefront-bff
-      tag: 20260705-step2fix
+      tag: 20260705-step2fix2
     service:
       aliases:
         - storefront-bff
@@ -155,7 +155,7 @@ services:
     metricPort: 8087
     image:
       repository: luongtrz/yas-backoffice-bff
-      tag: 20260705-step2fix
+      tag: 20260705-step2fix2
     service:
       aliases:
         - backoffice-bff
@@ -175,7 +175,7 @@ services:
 
   product:
     enabled: true
-    schedulingProfile: worker-small
+    schedulingProfile: worker-large
     containerPort: 8080
     metricPort: 8080
     image:
@@ -206,7 +206,7 @@ services:
 
   cart:
     enabled: true
-    schedulingProfile: worker-small
+    schedulingProfile: worker-large
     containerPort: 8084
     metricPort: 8084
     image:
@@ -237,7 +237,7 @@ services:
 
   customer:
     enabled: true
-    schedulingProfile: worker-small
+    schedulingProfile: worker-large
     containerPort: 8088
     metricPort: 8088
     image:
@@ -268,7 +268,7 @@ services:
 
   order:
     enabled: true
-    schedulingProfile: worker-small
+    schedulingProfile: worker-large
     containerPort: 8085
     metricPort: 8085
     image:
@@ -299,7 +299,7 @@ services:
 
   inventory:
     enabled: true
-    schedulingProfile: worker-small
+    schedulingProfile: worker-large
     containerPort: 8090
     metricPort: 8090
     image:
@@ -330,7 +330,7 @@ services:
 
   tax:
     enabled: true
-    schedulingProfile: worker-small
+    schedulingProfile: worker-large
     containerPort: 8091
     metricPort: 8091
     image:

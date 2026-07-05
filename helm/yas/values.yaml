@@ -15,7 +15,7 @@ global:
                       operator: DoesNotExist
       worker-small:
         nodeSelector:
-          node.yas.io/tier: "small"
+          node.yas.io/tier: "large"
       worker-large:
         nodeSelector:
           node.yas.io/tier: "large"
