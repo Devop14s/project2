@@ -75,12 +75,12 @@ Quy trình làm việc chuẩn của họ sẽ diễn ra qua các bước dướ
     *   Jenkins dùng **Helm** triển khai toàn bộ các dịch vụ vào namespace này.
     *   *Đặc biệt:* Dịch vụ `tax-service` sẽ chạy bản sửa lỗi (tag `c7ec134`), các dịch vụ còn lại sẽ chạy bản ổn định chung trên nhánh `main`.
 4.  **Truy cập kiểm thử:**
-    *   Jenkins hoàn thành và thông báo cổng dịch vụ (NodePort), ví dụ: `http://yas.local:30080`.
+    *   Jenkins hoàn thành và thông báo cổng dịch vụ (NodePort), ví dụ: `http://storefront-dev-a.yas.local:32080`.
     *   Anh A cấu hình file `hosts` trên máy cá nhân:
         ```text
-        127.0.0.1   yas.local
+        <worker-node-ip>   storefront-dev-a.yas.local
         ```
-    *   Mở trình duyệt truy cập `http://yas.local:30080` để test thử kịch bản mua hàng tính thuế mới.
+    *   Mở trình duyệt truy cập `http://storefront-dev-a.yas.local:32080` để test thử kịch bản mua hàng tính thuế mới.
 
 ---
 

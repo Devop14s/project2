@@ -1,0 +1,235 @@
+global:
+  environment: dev
+  namespace: yas-dev
+  domainName: storefront-dev.yas.local
+
+services:
+  storefront:
+    enabled: true
+    schedulingProfile: ui-on-master
+    podAnnotations:
+      sidecar.istio.io/inject: "false"
+    image:
+      repository: luongtrz/yas-storefront
+      tag: main
+    ingress:
+      enabled: true
+      host: storefront-dev.yas.local
+
+  backoffice:
+    enabled: true
+    schedulingProfile: ui-on-master
+    podAnnotations:
+      sidecar.istio.io/inject: "false"
+    image:
+      repository: luongtrz/yas-backoffice
+      tag: main
+    ingress:
+      enabled: true
+      host: backoffice-dev.yas.local
+
+  swagger-ui:
+    enabled: true
+    schedulingProfile: ui-on-master
+    podAnnotations:
+      sidecar.istio.io/inject: "false"
+    image:
+      repository: luongtrz/yas-swagger-ui
+      tag: main
+    ingress:
+      enabled: true
+      host: swagger-ui-dev.yas.local
+
+  storefront-bff:
+    enabled: true
+    image:
+      repository: luongtrz/yas-storefront-bff
+      tag: main
+    resources:
+      requests:
+        cpu: 100m
+        memory: 192Mi
+      limits:
+        cpu: 750m
+        memory: 768Mi
+    env:
+      - name: JAVA_TOOL_OPTIONS
+        value: "-Xmx192m -Xms64m -XX:MaxMetaspaceSize=128m -XX:ReservedCodeCacheSize=32m"
+
+  backoffice-bff:
+    enabled: true
+    image:
+      repository: luongtrz/yas-backoffice-bff
+      tag: main
+    resources:
+      requests:
+        cpu: 100m
+        memory: 192Mi
+      limits:
+        cpu: 750m
+        memory: 768Mi
+    env:
+      - name: JAVA_TOOL_OPTIONS
+        value: "-Xmx192m -Xms64m -XX:MaxMetaspaceSize=128m -XX:ReservedCodeCacheSize=32m"
+
+  product:
+    enabled: true
+    image:
+      repository: luongtrz/yas-product
+      tag: main
+    resources:
+      requests:
+        cpu: 100m
+        memory: 192Mi
+      limits:
+        cpu: 750m
+        memory: 768Mi
+    env:
+      - name: JAVA_TOOL_OPTIONS
+        value: "-Xmx192m -Xms64m -XX:MaxMetaspaceSize=128m -XX:ReservedCodeCacheSize=32m"
+      - name: SPRING_DATASOURCE_URL
+        value: jdbc:postgresql://postgres.yas-dev.svc.cluster.local:5432/product
+      - name: SPRING_DATASOURCE_USERNAME
+        value: admin
+      - name: SPRING_DATASOURCE_PASSWORD
+        value: admin
+
+  cart:
+    enabled: true
+    image:
+      repository: luongtrz/yas-cart
+      tag: main
+    resources:
+      requests:
+        cpu: 100m
+        memory: 192Mi
+      limits:
+        cpu: 750m
+        memory: 768Mi
+    env:
+      - name: JAVA_TOOL_OPTIONS
+        value: "-Xmx192m -Xms64m -XX:MaxMetaspaceSize=128m -XX:ReservedCodeCacheSize=32m"
+      - name: SPRING_DATASOURCE_URL
+        value: jdbc:postgresql://postgres.yas-dev.svc.cluster.local:5432/cart
+      - name: SPRING_DATASOURCE_USERNAME
+        value: admin
+      - name: SPRING_DATASOURCE_PASSWORD
+        value: admin
+
+  customer:
+    enabled: true
+    image:
+      repository: luongtrz/yas-customer
+      tag: main
+    resources:
+      requests:
+        cpu: 100m
+        memory: 192Mi
+      limits:
+        cpu: 750m
+        memory: 768Mi
+    env:
+      - name: JAVA_TOOL_OPTIONS
+        value: "-Xmx192m -Xms64m -XX:MaxMetaspaceSize=128m -XX:ReservedCodeCacheSize=32m"
+      - name: SPRING_DATASOURCE_URL
+        value: jdbc:postgresql://postgres.yas-dev.svc.cluster.local:5432/customer
+      - name: SPRING_DATASOURCE_USERNAME
+        value: admin
+      - name: SPRING_DATASOURCE_PASSWORD
+        value: admin
+
+  order:
+    enabled: true
+    image:
+      repository: luongtrz/yas-order
+      tag: main
+    resources:
+      requests:
+        cpu: 100m
+        memory: 192Mi
+      limits:
+        cpu: 750m
+        memory: 768Mi
+    env:
+      - name: JAVA_TOOL_OPTIONS
+        value: "-Xmx192m -Xms64m -XX:MaxMetaspaceSize=128m -XX:ReservedCodeCacheSize=32m"
+      - name: SPRING_DATASOURCE_URL
+        value: jdbc:postgresql://postgres.yas-dev.svc.cluster.local:5432/order
+      - name: SPRING_DATASOURCE_USERNAME
+        value: admin
+      - name: SPRING_DATASOURCE_PASSWORD
+        value: admin
+
+  inventory:
+    enabled: true
+    image:
+      repository: luongtrz/yas-inventory
+      tag: main
+    resources:
+      requests:
+        cpu: 100m
+        memory: 192Mi
+      limits:
+        cpu: 750m
+        memory: 768Mi
+    env:
+      - name: JAVA_TOOL_OPTIONS
+        value: "-Xmx192m -Xms64m -XX:MaxMetaspaceSize=128m -XX:ReservedCodeCacheSize=32m"
+      - name: SPRING_DATASOURCE_URL
+        value: jdbc:postgresql://postgres.yas-dev.svc.cluster.local:5432/inventory
+      - name: SPRING_DATASOURCE_USERNAME
+        value: admin
+      - name: SPRING_DATASOURCE_PASSWORD
+        value: admin
+
+  tax:
+    enabled: true
+    image:
+      repository: luongtrz/yas-tax
+      tag: main
+    resources:
+      requests:
+        cpu: 100m
+        memory: 192Mi
+      limits:
+        cpu: 750m
+        memory: 768Mi
+    env:
+      - name: JAVA_TOOL_OPTIONS
+        value: "-Xmx192m -Xms64m -XX:MaxMetaspaceSize=128m -XX:ReservedCodeCacheSize=32m"
+      - name: SPRING_DATASOURCE_URL
+        value: jdbc:postgresql://postgres.yas-dev.svc.cluster.local:5432/tax
+      - name: SPRING_DATASOURCE_USERNAME
+        value: admin
+      - name: SPRING_DATASOURCE_PASSWORD
+        value: admin
+
+  media:
+    enabled: false
+
+  search:
+    enabled: false
+
+  rating:
+    enabled: false
+
+  location:
+    enabled: false
+
+  promotion:
+    enabled: false
+
+  payment:
+    enabled: false
+
+  payment-paypal:
+    enabled: false
+
+  recommendation:
+    enabled: false
+
+  webhook:
+    enabled: false
+
+  sampledata:
+    enabled: false

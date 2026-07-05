@@ -6,6 +6,7 @@ global:
 services:
   storefront:
     enabled: true
+    schedulingProfile: ui-on-master
     image:
       repository: luongtrz/yas-storefront
       tag: main
@@ -14,6 +15,7 @@ services:
       host: storefront-dev.yas.local
   backoffice:
     enabled: true
+    schedulingProfile: ui-on-master
     image:
       repository: luongtrz/yas-backoffice
       tag: main
@@ -156,11 +158,13 @@ services:
     enabled: false
   sampledata:
     enabled: true
+    replicaCount: 0
     image:
       repository: luongtrz/yas-sampledata
       tag: main
   swagger-ui:
     enabled: true
+    schedulingProfile: ui-on-master
     image:
       repository: luongtrz/yas-swagger-ui
       tag: main

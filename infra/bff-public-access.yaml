@@ -1,0 +1,77 @@
+apiVersion: security.istio.io/v1
+kind: PeerAuthentication
+metadata:
+  name: storefront-bff-public
+  namespace: yas-dev
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: storefront-bff
+  mtls:
+    mode: PERMISSIVE
+---
+apiVersion: security.istio.io/v1
+kind: PeerAuthentication
+metadata:
+  name: backoffice-bff-public
+  namespace: yas-dev
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: backoffice-bff
+  mtls:
+    mode: PERMISSIVE
+---
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: storefront-bff-public
+  namespace: yas-dev
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: storefront-bff
+  action: ALLOW
+  rules:
+    - to:
+        - operation:
+            paths:
+              - /oauth2/*
+              - /login*
+              - /logout*
+              - /api/*
+              - /actuator/health
+              - /actuator/health/liveness
+              - /actuator/health/readiness
+---
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: backoffice-bff-public
+  namespace: yas-dev
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: backoffice-bff
+  action: ALLOW
+  rules:
+    - to:
+        - operation:
+            paths:
+              - /oauth2/*
+              - /login*
+              - /logout*
+              - /profile*
+              - /api/*
+              - /catalog/*
+              - /customers*
+              - /sales/*
+              - /location/*
+              - /inventory/*
+              - /promotion/*
+              - /tax/*
+              - /system/*
+              - /webhook*
+              - /actuator/health
+              - /actuator/health/liveness
+              - /actuator/health/readiness

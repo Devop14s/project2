@@ -21,6 +21,7 @@ Use [host-capabilities.generated.md](</D:/App/project2/work/host-capabilities.ge
 | inventory | `docker.io/<namespace>/yas-inventory` | `main` | latest commit SHA of selected branch | semantic version tag | verified |
 | tax | `docker.io/<namespace>/yas-tax` | `main` | latest commit SHA of selected branch | semantic version tag | verified |
 | search | `docker.io/<namespace>/yas-search` | `main` | latest commit SHA of selected branch | semantic version tag | verified, but full test path still blocked |
+| swagger-ui | `docker.io/<namespace>/yas-swagger-ui` | `main` | latest commit SHA of selected branch | semantic version tag | verified |
 | promotion | `docker.io/<namespace>/yas-promotion` | `main` | latest commit SHA of selected branch | semantic version tag | verified |
 | payment | `docker.io/<namespace>/yas-payment` | `main` | latest commit SHA of selected branch | semantic version tag | verified |
 | payment-paypal | `docker.io/<namespace>/yas-payment-paypal` | `main` | latest commit SHA of selected branch | semantic version tag | verified |

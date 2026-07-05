@@ -20,6 +20,7 @@ Checked directly in the cloned source:
 - `backoffice`: `npm ci` passed.
 - `backoffice`: `npm run build` passed and produced `.next`, but the build log still printed `quill` SSR `document is not defined` traces after route generation.
 - `backoffice`: `npm run lint` passed.
+- `swagger-ui`: local image naming and runtime exposure are scaffold-verified from this delivery repo, even though it is not built from the upstream YAS source tree in the same way as the Next.js and Spring services.
 - `storefront-bff`: `mvn clean install -pl storefront-bff -am` passed using local Temurin 25 and Maven 3.9.11, and produced `storefront-bff/target/storefront-bff-1.0-SNAPSHOT.jar`.
 - `backoffice-bff`: upstream-style `mvn clean verify -f backoffice-bff` passed using local Temurin 25 and Maven 3.9.11, and produced `backoffice-bff/target/backoffice-bff-1.0-SNAPSHOT.jar`.
 - `product`: `mvn clean install -pl product -am` passed using local Temurin 25 and Maven 3.9.11, and produced `product/target/product-1.0-SNAPSHOT.jar`.
@@ -68,6 +69,7 @@ Checked directly in the cloned source:
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | storefront | `yas-source-upstream/storefront` | `npm ci`, `npm run build`, `npm run lint`, `npx prettier --check .` | `./storefront` | `ghcr.io/nashtech-garage/yas-storefront:latest` | `3000` | `node server.js` | Real build and lint were verified locally; prettier check failed upstream. |
 | backoffice | `yas-source-upstream/backoffice` | `npm ci`, `npm run build`, `npm run lint`, `npx prettier --check .` | `./backoffice` | `ghcr.io/nashtech-garage/yas-backoffice:latest` | `3000` | `node server.js` | Real build and lint were verified locally; Docker image build also passed. Build logs still show post-build `quill` SSR traces. |
+| swagger-ui | `swagger-ui` | scaffold-only from this delivery repo | `./swagger-ui` | `docker.io/<namespace>/yas-swagger-ui` | `8080` | static Nginx-served UI | This service is part of the delivery repo catalog and deploy chart, not a module cloned from the upstream YAS source tree. |
 
 ## BFF services
 

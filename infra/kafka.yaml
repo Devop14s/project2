@@ -16,6 +16,16 @@ spec:
       annotations:
         sidecar.istio.io/inject: "false"
     spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: node-role.kubernetes.io/control-plane
+                    operator: DoesNotExist
+                  - key: node.yas.io/tier
+                    operator: In
+                    values: ["large"]
       containers:
         - name: kafka
           image: docker.io/confluentinc/cp-kafka:7.7.1

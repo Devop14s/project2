@@ -1,5 +1,18 @@
 {{- range $name, $svc := .Values.services }}
 {{- if $svc.enabled }}
+{{- $workloadType := $svc.workloadType | default "backend" }}
+{{- $defaultProfileName := $.Values.global.scheduling.defaultProfile | default "worker" }}
+{{- $profileName := $svc.schedulingProfile | default $defaultProfileName }}
+{{- $schedulingProfile := get $.Values.global.scheduling.profiles $profileName | default dict }}
+{{- $nodeSelector := $svc.nodeSelector | default $schedulingProfile.nodeSelector }}
+{{- $affinity := $svc.affinity | default $schedulingProfile.affinity }}
+{{- $tolerations := $svc.tolerations | default $schedulingProfile.tolerations }}
+{{- $resourceProfile := get $.Values.global.resourceProfiles $workloadType | default dict }}
+{{- $resources := $svc.resources | default $resourceProfile }}
+{{- $probes := $svc.probes | default dict }}
+{{- $probeMode := get $probes "mode" | default "" }}
+{{- $probePort := get $probes "port" | default "http" }}
+{{- $replicaCount := ternary $svc.replicaCount 1 (hasKey $svc "replicaCount") }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -8,7 +21,7 @@ metadata:
     app.kubernetes.io/name: {{ $name }}
     app.kubernetes.io/instance: {{ $.Release.Name }}
 spec:
-  replicas: 1
+  replicas: {{ $replicaCount }}
   selector:
     matchLabels:
       app.kubernetes.io/name: {{ $name }}
@@ -18,7 +31,24 @@ spec:
       labels:
         app.kubernetes.io/name: {{ $name }}
         app.kubernetes.io/instance: {{ $.Release.Name }}
+{{- if $svc.podAnnotations }}
+      annotations:
+{{ toYaml $svc.podAnnotations | indent 8 }}
+{{- end }}
     spec:
+      serviceAccountName: {{ $name }}
+{{- if $nodeSelector }}
+      nodeSelector:
+{{ toYaml $nodeSelector | indent 8 }}
+{{- end }}
+{{- if $affinity }}
+      affinity:
+{{ toYaml $affinity | indent 8 }}
+{{- end }}
+{{- if $tolerations }}
+      tolerations:
+{{ toYaml $tolerations | indent 8 }}
+{{- end }}
       containers:
         - name: {{ $name }}
           image: "{{ $svc.image.repository }}:{{ $svc.image.tag }}"
@@ -26,11 +56,11 @@ spec:
           ports:
             - name: http
               containerPort: {{ $svc.containerPort }}
-{{- if eq ($svc.workloadType | default "backend") "backend" }}
+{{- if eq $workloadType "backend" }}
             - name: metric
               containerPort: {{ $svc.metricPort | default 8090 }}
 {{- end }}
-{{- if eq ($svc.workloadType | default "backend") "ui" }}
+{{- if eq $workloadType "ui" }}
           livenessProbe:
             httpGet:
               path: /
@@ -39,6 +69,19 @@ spec:
             httpGet:
               path: /
               port: http
+{{- else if eq $probeMode "tcp" }}
+          livenessProbe:
+            tcpSocket:
+              port: {{ $probePort }}
+            initialDelaySeconds: 90
+            periodSeconds: 10
+            failureThreshold: 5
+          readinessProbe:
+            tcpSocket:
+              port: {{ $probePort }}
+            initialDelaySeconds: 90
+            periodSeconds: 10
+            failureThreshold: 5
 {{- else }}
           livenessProbe:
             httpGet:
@@ -58,6 +101,10 @@ spec:
 {{- if $svc.env }}
           env:
 {{ toYaml $svc.env | indent 12 }}
+{{- end }}
+{{- if $resources }}
+          resources:
+{{ toYaml $resources | indent 12 }}
 {{- end }}
 ---
 {{- end }}

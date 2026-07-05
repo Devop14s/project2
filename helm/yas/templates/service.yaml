@@ -22,5 +22,26 @@ spec:
       targetPort: {{ $svc.metricPort | default 8090 }}
 {{- end }}
 ---
+{{- range $alias := $svc.service.aliases | default list }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ $alias }}
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: {{ $name }}
+    app.kubernetes.io/instance: {{ $.Release.Name }}
+  ports:
+    - name: http
+      port: {{ $svc.service.port }}
+      targetPort: {{ $svc.containerPort }}
+{{- if eq ($svc.workloadType | default "backend") "backend" }}
+    - name: metric
+      port: {{ $svc.metricPort | default 8090 }}
+      targetPort: {{ $svc.metricPort | default 8090 }}
+{{- end }}
+---
+{{- end }}
 {{- end }}
 {{- end }}

@@ -12,7 +12,7 @@ namespace_name="${NAMESPACE:-yas-${environment_name}}"
 domain_name="${DOMAIN_NAME:-storefront-${environment_name}.yas.local}"
 backoffice_domain_name="${BACKOFFICE_DOMAIN_NAME:-backoffice-${environment_name}.yas.local}"
 release_version="${RELEASE_VERSION:-main}"
-dockerhub_namespace="${DOCKERHUB_NAMESPACE:-docker.io/example}"
+dockerhub_namespace="${DOCKERHUB_NAMESPACE:-luongtrz}"
 
 [ -f "$services_file" ] || {
   printf 'Services file not found: %s\n' "$services_file" >&2
@@ -57,6 +57,63 @@ tag_var_name() {
   printf '%s_TAG' "$(printf '%s' "$1" | tr '[:lower:]-' '[:upper:]_')"
 }
 
+node_port_override() {
+  service="$1"
+
+  if [ "$environment_name" = "staging" ]; then
+    case "$service" in
+      storefront)
+        printf '32083'
+        return
+        ;;
+      backoffice)
+        printf '32084'
+        return
+        ;;
+      swagger-ui)
+        printf '32085'
+        return
+        ;;
+    esac
+  fi
+
+  printf ''
+}
+
+emit_dev_env_overrides() {
+  service="$1"
+
+  case "$service" in
+    product|media|cart|customer|order|inventory|tax)
+      db_name="$service"
+      cat <<EOF
+    env:
+      - name: JAVA_TOOL_OPTIONS
+        value: "-Xmx192m -Xms64m -XX:MaxMetaspaceSize=128m -XX:ReservedCodeCacheSize=32m"
+      - name: SPRING_DATASOURCE_URL
+        value: jdbc:postgresql://postgres.${namespace_name}.svc.cluster.local:5432/${db_name}
+      - name: SPRING_DATASOURCE_USERNAME
+        value: admin
+      - name: SPRING_DATASOURCE_PASSWORD
+        value: admin
+EOF
+      ;;
+    search)
+      cat <<EOF
+    env:
+      - name: JAVA_TOOL_OPTIONS
+        value: "-Xmx192m -Xms64m -XX:MaxMetaspaceSize=128m -XX:ReservedCodeCacheSize=32m"
+      - name: SPRING_KAFKA_CONSUMER_BOOTSTRAP_SERVERS
+        value: kafka.${namespace_name}.svc.cluster.local:9092
+      - name: SPRING_KAFKA_PRODUCER_BOOTSTRAP_SERVERS
+        value: kafka.${namespace_name}.svc.cluster.local:9092
+      - name: ELASTICSEARCH_URL
+        value: http://elasticsearch.${namespace_name}.svc.cluster.local:9200
+EOF
+      ;;
+  esac
+}
+
 ingress_host_for() {
   service="$1"
 
@@ -89,12 +146,40 @@ EOF
   cat >> "$output_file" <<EOF
   ${service}:
     enabled: true
+EOF
+
+  case "$service" in
+    storefront|backoffice|swagger-ui)
+      cat >> "$output_file" <<EOF
+    schedulingProfile: ui-on-master
+EOF
+      ;;
+  esac
+
+  if [ "$service" = "sampledata" ]; then
+    cat >> "$output_file" <<EOF
+    replicaCount: 0
+EOF
+  fi
+
+  cat >> "$output_file" <<EOF
     image:
       repository: ${dockerhub_namespace}/yas-${service}
       tag: ${tag_value}
 EOF
 
+  if [ "$environment_name" = "dev" ]; then
+    emit_dev_env_overrides "$service" >> "$output_file"
+  fi
+
   if [ "$expose" = "true" ]; then
+    node_port_value="$(node_port_override "$service")"
+    if [ -n "$node_port_value" ]; then
+      cat >> "$output_file" <<EOF
+    service:
+      nodePort: ${node_port_value}
+EOF
+    fi
     cat >> "$output_file" <<EOF
     ingress:
       enabled: true

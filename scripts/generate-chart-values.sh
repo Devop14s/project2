@@ -38,6 +38,40 @@ global:
   environment: ${environment_name}
   namespace: ${namespace_name}
   domainName: ${domain_name}
+  scheduling:
+    defaultProfile: worker
+    profiles:
+      worker:
+        affinity:
+          nodeAffinity:
+            requiredDuringSchedulingIgnoredDuringExecution:
+              nodeSelectorTerms:
+                - matchExpressions:
+                    - key: node-role.kubernetes.io/control-plane
+                      operator: DoesNotExist
+      ui-on-master:
+        nodeSelector:
+          node-role.kubernetes.io/control-plane: "true"
+        tolerations:
+          - key: node-role.kubernetes.io/control-plane
+            operator: Equal
+            value: "true"
+            effect: NoSchedule
+  resourceProfiles:
+    ui:
+      requests:
+        cpu: 25m
+        memory: 64Mi
+      limits:
+        cpu: 500m
+        memory: 512Mi
+    backend:
+      requests:
+        cpu: 50m
+        memory: 128Mi
+      limits:
+        cpu: 500m
+        memory: 384Mi
 
 services:
 EOF
@@ -58,6 +92,15 @@ iter_catalog_services "$services_file" | while IFS='|' read -r service path dock
   ${service}:
     enabled: true
     workloadType: ${workload_type}
+EOF
+
+  if [ "${workload_type}" = "ui" ]; then
+    cat >> "$output_file" <<EOF
+    schedulingProfile: ui-on-master
+EOF
+  fi
+
+  cat >> "$output_file" <<EOF
     image:
       repository: ${image_registry_namespace}/yas-${service}
       tag: main

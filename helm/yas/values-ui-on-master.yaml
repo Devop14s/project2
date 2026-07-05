@@ -1,0 +1,7 @@
+services:
+  storefront:
+    schedulingProfile: ui-on-master
+  backoffice:
+    schedulingProfile: ui-on-master
+  swagger-ui:
+    schedulingProfile: ui-on-master

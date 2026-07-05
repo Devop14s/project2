@@ -2,11 +2,52 @@ global:
   environment: default
   namespace: default
   domainName: yas.local
+  scheduling:
+    defaultProfile: worker
+    profiles:
+      worker:
+        affinity:
+          nodeAffinity:
+            requiredDuringSchedulingIgnoredDuringExecution:
+              nodeSelectorTerms:
+                - matchExpressions:
+                    - key: node-role.kubernetes.io/control-plane
+                      operator: DoesNotExist
+      worker-small:
+        nodeSelector:
+          node.yas.io/tier: "small"
+      worker-large:
+        nodeSelector:
+          node.yas.io/tier: "large"
+      ui-on-master:
+        nodeSelector:
+          node-role.kubernetes.io/control-plane: "true"
+        tolerations:
+          - key: node-role.kubernetes.io/control-plane
+            operator: Equal
+            value: "true"
+            effect: NoSchedule
+  resourceProfiles:
+    ui:
+      requests:
+        cpu: 25m
+        memory: 64Mi
+      limits:
+        cpu: 500m
+        memory: 512Mi
+    backend:
+      requests:
+        cpu: 50m
+        memory: 128Mi
+      limits:
+        cpu: 500m
+        memory: 384Mi
 
 services:
   storefront:
     enabled: true
     workloadType: ui
+    schedulingProfile: ui-on-master
     image:
       repository: docker.io/example/yas-storefront
       tag: main
@@ -23,6 +64,7 @@ services:
   backoffice:
     enabled: true
     workloadType: ui
+    schedulingProfile: ui-on-master
     image:
       repository: docker.io/example/yas-backoffice
       tag: main
@@ -260,6 +302,7 @@ services:
   swagger-ui:
     enabled: true
     workloadType: ui
+    schedulingProfile: ui-on-master
     image:
       repository: docker.io/example/yas-swagger-ui
       tag: main
@@ -270,7 +313,8 @@ services:
       port: 8080
       nodePort: 32082
     ingress:
-      enabled: false
+      enabled: true
+      host: swagger-ui.yas.local
 
   webhook:
     enabled: true

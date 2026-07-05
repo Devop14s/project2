@@ -72,6 +72,8 @@ The shared-environment deploy jobs should follow the same pattern as the develop
 
 - `yas-dev-cd` deploys to `yas-dev` and then runs `jenkins/scripts/smoke-test.sh`
 - `yas-staging-release` deploys to `yas-staging` and then runs `jenkins/scripts/smoke-test.sh`
+- The standard values files now pin `storefront`, `backoffice`, and `swagger-ui` to the master and leave backend workloads on worker nodes by default.
+- `EXTRA_VALUES_FILES=helm/yas/values-ui-on-master.yaml` remains available only as a redundant safety overlay for ad-hoc manual runs.
 
 `yas-dev-cd` and `yas-dev-gitops` intentionally keep `main` as the shared mutable baseline tag for `dev`, but they now also write `work/commit_sha.txt`, `work/commit_short_sha.txt`, and `work/commit-metadata.json` before the build/push step so each promotion can still be tied back to an exact source commit.
 `yas-staging-release` and `yas-staging-gitops` now do the same commit-metadata capture before building release-tagged images, so a staging promotion can always be traced back to the exact source commit behind that release input.
@@ -88,3 +90,4 @@ The same manifest-update helper now also writes `work/manifest-update-metadata.j
 ## Chart note
 
 `helm/yas/values.yaml` is no longer just a hand-maintained baseline. It can be regenerated from `jenkins/services.env` through `scripts/generate-chart-values.ps1` or `scripts/generate-chart-values.sh`.
+The base chart now also carries a default `worker` scheduling profile, a `ui-on-master` profile for the three public UIs, and workload-specific default resource requests and limits.

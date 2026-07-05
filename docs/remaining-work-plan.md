@@ -40,23 +40,26 @@ As of June 27, 2026, the local lab cluster has moved beyond planning:
 
 - `storefront`
 - `backoffice`
+- `swagger-ui`
 - `storefront-bff`
 - `backoffice-bff`
 - `product`
+- `media`
 - `cart`
 - `customer`
-- `location`
 - `order`
 - `inventory`
-- `rating`
 - `tax`
+- `search`
+- `sampledata`
 
 ## Why this subset
 
 - It keeps the public UI flows available.
-- It includes the main CRUD-style business services already represented in the source catalog.
-- It avoids introducing the known workspace-specific `search` and `sampledata` test blockers into the first release gate.
-- It postpones optional or more integration-heavy services such as `payment`, `payment-paypal`, `recommendation`, `promotion`, and `webhook` until the core path is stable.
+- It matches the currently frozen 14-service E-commerce demo baseline in `jenkins/services.release-baseline.env`.
+- It keeps the main storefront, backoffice, product, cart, order, inventory, tax, media, and search flows available for the assignment demo.
+- It still postpones optional or more integration-heavy services such as `rating`, `location`, `payment`, `payment-paypal`, `recommendation`, `promotion`, and `webhook` until the core path is stable.
+- `sampledata` is included for one-time seeding, but should still be scaled back down after data bootstrap.
 
 ## Phase 1: Freeze the first release subset
 
@@ -69,7 +72,7 @@ Current status: the recommended subset is now frozen in [jenkins/services.releas
 
 ### Steps
 
-1. Confirm the frozen baseline still matches the team demo scope, especially whether `payment` must be pulled into iteration 1.
+1. Confirm the frozen baseline still matches the team demo scope, especially whether `rating`, `location`, or `payment` must be pulled into iteration 1.
 2. Keep optional services outside `jenkins/services.release-baseline.env` unless the demo path proves they are required.
 3. Document any intentional exclusions in the final report.
 
@@ -135,6 +138,7 @@ Current status: the recommended subset is now frozen in [jenkins/services.releas
 - Pod and service evidence
 - One working public endpoint for `storefront`
 - One working public endpoint for `backoffice`
+- One working public endpoint for `swagger-ui`
 
 ### Exit criteria
 

@@ -14,7 +14,7 @@ Use [host-capabilities.generated.md](</D:/App/project2/work/host-capabilities.ge
 | storefront-bff | spring-cloud-gateway | `storefront-bff` | `storefront-bff/Dockerfile` | `80` | no |  | `backend` | yes | Backend-for-frontend service. |
 | backoffice-bff | spring-cloud-gateway | `backoffice-bff` | `backoffice-bff/Dockerfile` | `80` | no |  | `backend` | yes | Backend-for-frontend service. |
 | product | spring-boot | `product` | `product/Dockerfile` | `80` | no |  | `backend` | yes | Core business service. |
-| media | spring-boot | `media` | `media/Dockerfile` | `80` | no |  | `backend` | no | Keep for later unless the chosen demo flow proves it is required. |
+| media | spring-boot | `media` | `media/Dockerfile` | `80` | no |  | `backend` | yes | Core business service in the current frozen demo baseline. |
 | cart | spring-boot | `cart` | `cart/Dockerfile` | `80` | no |  | `backend` | yes | Core business service. |
 | customer | spring-boot | `customer` | `customer/Dockerfile` | `80` | no |  | `backend` | yes | Core business service. |
 | rating | spring-boot | `rating` | `rating/Dockerfile` | `80` | no |  | `backend` | yes | Core business service. |
@@ -22,12 +22,13 @@ Use [host-capabilities.generated.md](</D:/App/project2/work/host-capabilities.ge
 | order | spring-boot | `order` | `order/Dockerfile` | `80` | no |  | `backend` | yes | Core business service. |
 | inventory | spring-boot | `inventory` | `inventory/Dockerfile` | `80` | no |  | `backend` | yes | Core business service. |
 | tax | spring-boot | `tax` | `tax/Dockerfile` | `80` | no |  | `backend` | yes | Core business service. |
-| search | spring-boot | `search` | `search/Dockerfile` | `80` | no |  | `backend` | no | Search is a separate compose profile upstream and also has a current workspace-specific test blocker. |
+| search | spring-boot | `search` | `search/Dockerfile` | `80` | no |  | `backend` | yes | Included in the current frozen demo baseline even though its full test path is still workspace-blocked. |
 | promotion | spring-boot | `promotion` | `promotion/Dockerfile` | `80` | no |  | `backend` | no | Extra business capability; keep for a later increment unless the demo flow needs it. |
 | payment | spring-boot | `payment` | `payment/Dockerfile` | `80` | no |  | `backend` | no | Payment orchestration service; add after the core CRUD baseline is stable. |
 | payment-paypal | spring-boot | `payment-paypal` | `payment-paypal/Dockerfile` | `80` | no |  | `backend` | no | Payment provider plugin service; depends on the payment path being in scope. |
 | recommendation | spring-boot | `recommendation` | `recommendation/Dockerfile` | `80` | no |  | `backend` | no | Source and CI are real, but it is a later increment for the first release plan. |
-| sampledata | spring-boot | `sampledata` | `sampledata/Dockerfile` | `80` | no |  | `backend` | no | Exclude from the first release until the full test path is either fixed or intentionally bypassed. |
+| sampledata | spring-boot | `sampledata` | `sampledata/Dockerfile` | `80` | no |  | `backend` | yes | Included in the current frozen demo baseline, but intended for one-time seeding rather than steady-state runtime. |
+| swagger-ui | swagger-ui | `swagger-ui` | `swagger-ui/Dockerfile` | `8080` | yes | `32082` | `ui` | yes | Public API documentation UI used in the current frozen demo baseline. |
 | webhook | spring-boot | `webhook` | `webhook/Dockerfile` | `80` | no |  | `backend` | no | Integration service evidenced by upstream CI badge. |
 
 ## Notes

@@ -21,3 +21,5 @@ This directory contains GitOps-oriented manifests that can be used if the team c
 - The local `validate-argocd-apps` helpers now verify that both manifests keep the expected repo URL, `main` target revision, Helm path, environment values file, `CreateNamespace=true` sync option, and the intended dev-vs-staging sync policy.
 - `argocd/values/*.yaml` can be regenerated from either `jenkins/services.release-baseline.env` or `jenkins/services.env` with the local `generate-gitops-values` helpers, and `SERVICE_CATALOG=release-baseline` now selects the smaller iteration-1 subset automatically.
 - `jenkins/scripts/update-manifest-repo.sh` now regenerates the full overlay file and writes `work/manifest-update-metadata.json` for every attempt, including no-op runs.
+- The environment values files now pin `storefront`, `backoffice`, and `swagger-ui` to the master with the `ui-on-master` profile, while the remaining workloads continue to inherit the worker-first default scheduling profile.
+- `sampledata` stays at `replicaCount: 0` until a one-time seed run is needed.

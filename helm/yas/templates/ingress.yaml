@@ -9,6 +9,15 @@ spec:
     - host: {{ $svc.ingress.host | quote }}
       http:
         paths:
+{{- range $path := ($svc.ingress.extraPaths | default list) }}
+          - path: {{ $path.path | quote }}
+            pathType: {{ $path.pathType | default "Prefix" }}
+            backend:
+              service:
+                name: {{ $path.serviceName | quote }}
+                port:
+                  number: {{ $path.servicePort }}
+{{- end }}
           - path: /
             pathType: Prefix
             backend:
@@ -19,4 +28,3 @@ spec:
 ---
 {{- end }}
 {{- end }}
-

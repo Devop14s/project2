@@ -1,0 +1,18 @@
+services:
+  product:
+    replicaCount: 0
+
+  cart:
+    replicaCount: 0
+
+  customer:
+    replicaCount: 0
+
+  order:
+    replicaCount: 0
+
+  inventory:
+    replicaCount: 0
+
+  tax:
+    replicaCount: 0

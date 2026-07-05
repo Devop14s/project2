@@ -27,6 +27,16 @@ spec:
       annotations:
         sidecar.istio.io/inject: "false"
     spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: node-role.kubernetes.io/control-plane
+                    operator: DoesNotExist
+                  - key: node.yas.io/tier
+                    operator: In
+                    values: ["large"]
       initContainers:
         - name: sysctl
           image: docker.io/library/postgres:15

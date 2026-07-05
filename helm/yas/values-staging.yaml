@@ -5,11 +5,16 @@ global:
 
 services:
   storefront:
+    schedulingProfile: ui-on-master
     ingress:
       enabled: true
       host: storefront-staging.yas.local
   backoffice:
+    schedulingProfile: ui-on-master
     ingress:
       enabled: true
       host: backoffice-staging.yas.local
-
+  sampledata:
+    replicaCount: 0
+  swagger-ui:
+    schedulingProfile: ui-on-master

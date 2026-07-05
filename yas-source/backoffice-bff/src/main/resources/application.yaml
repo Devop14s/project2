@@ -1,0 +1,54 @@
+server:
+  port: 8087
+spring:
+  application:
+    name: backoffice-bff
+  threads:
+    virtual:
+      enabled: true
+  profiles:
+    active: dev
+  security:
+    oauth2:
+      client:
+        provider:
+          keycloak:
+            authorization-uri: ${yas.identity.public-base-url}/realms/Yas/protocol/openid-connect/auth
+            token-uri: ${yas.identity.internal-base-url}/realms/Yas/protocol/openid-connect/token
+            user-info-uri: ${yas.identity.internal-base-url}/realms/Yas/protocol/openid-connect/userinfo
+            jwk-set-uri: ${yas.identity.internal-base-url}/realms/Yas/protocol/openid-connect/certs
+            user-name-attribute: preferred_username
+            configuration-metadata:
+              end_session_endpoint: ${yas.identity.public-base-url}/realms/Yas/protocol/openid-connect/logout
+        registration:
+          api-client:
+            provider: keycloak
+            authorization-grant-type: authorization_code
+            client-id: backoffice-bff
+            client-secret: TVacLC0cQ8tiiEKiTVerTb2YvwQ1TRJF #gitleaks:allow
+            scope: openid, profile, email, roles
+  data:
+    redis:
+      host: redis
+      port: 6379
+  session:
+    store-type: redis
+management:
+  tracing:
+    sampling:
+      probability: "1.0"
+  metrics:
+    distribution:
+      percentiles-histogram:
+        http:
+          server:
+            requests: true
+    tags:
+      application: ${spring.application.name}
+logging:
+  pattern:
+    level: "%5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}]"
+yas:
+  identity:
+    internal-base-url: ${YAS_IDENTITY_INTERNAL_BASE_URL:http://identity}
+    public-base-url: ${YAS_IDENTITY_PUBLIC_BASE_URL:http://identity-dev.yas.local}

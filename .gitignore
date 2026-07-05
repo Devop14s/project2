@@ -1,7 +1,5 @@
 # work/ - no longer ignored so evidence files can be committed
 *.tmp
-yas-source/
-yas-source-upstream/
 
 jenkins_project2_home.tar.gz
 jenkins_project2_home.tar
