@@ -42,6 +42,11 @@ services:
       tag: main
   product:
     enabled: true
+    containerPort: 8080
+    metricPort: 8080
+    probes:
+      mode: tcp
+      port: http
     image:
       repository: luongtrz/yas-product
       tag: main
@@ -56,6 +61,11 @@ services:
         value: admin
   media:
     enabled: true
+    containerPort: 8083
+    metricPort: 8083
+    probes:
+      mode: tcp
+      port: http
     image:
       repository: luongtrz/yas-media
       tag: main
@@ -70,6 +80,11 @@ services:
         value: admin
   cart:
     enabled: true
+    containerPort: 8084
+    metricPort: 8084
+    probes:
+      mode: tcp
+      port: http
     image:
       repository: luongtrz/yas-cart
       tag: main
@@ -84,6 +99,11 @@ services:
         value: admin
   customer:
     enabled: true
+    containerPort: 8088
+    metricPort: 8088
+    probes:
+      mode: tcp
+      port: http
     image:
       repository: luongtrz/yas-customer
       tag: main
@@ -102,6 +122,11 @@ services:
     enabled: false
   order:
     enabled: true
+    containerPort: 8085
+    metricPort: 8085
+    probes:
+      mode: tcp
+      port: http
     image:
       repository: luongtrz/yas-order
       tag: main
@@ -116,6 +141,11 @@ services:
         value: admin
   inventory:
     enabled: true
+    containerPort: 8090
+    metricPort: 8090
+    probes:
+      mode: tcp
+      port: http
     image:
       repository: luongtrz/yas-inventory
       tag: main
@@ -130,6 +160,11 @@ services:
         value: admin
   tax:
     enabled: true
+    containerPort: 8091
+    metricPort: 8091
+    probes:
+      mode: tcp
+      port: http
     image:
       repository: luongtrz/yas-tax
       tag: main
@@ -144,12 +179,19 @@ services:
         value: admin
   search:
     enabled: true
+    containerPort: 8092
+    metricPort: 8092
+    probes:
+      mode: tcp
+      port: http
     image:
       repository: luongtrz/yas-search
       tag: main
     env:
       - name: JAVA_TOOL_OPTIONS
         value: "-Xmx192m -Xms64m -XX:MaxMetaspaceSize=128m -XX:ReservedCodeCacheSize=32m"
+      - name: SPRING_KAFKA_BOOTSTRAP_SERVERS
+        value: kafka.yas-dev.svc.cluster.local:9092
       - name: SPRING_KAFKA_CONSUMER_BOOTSTRAP_SERVERS
         value: kafka.yas-dev.svc.cluster.local:9092
       - name: SPRING_KAFKA_PRODUCER_BOOTSTRAP_SERVERS
