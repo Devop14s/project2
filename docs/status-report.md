@@ -1,6 +1,6 @@
 # Status Report
 
-Last updated: June 24, 2026
+Last updated: July 7, 2026
 
 ## Completed in this repository
 
@@ -13,6 +13,11 @@ Last updated: June 24, 2026
 - Helm chart baseline is generated from the shared catalog and validates locally with `helm lint` and `helm template`.
 - GitOps overlays under `argocd/values/` are generated from the same shared catalog rather than maintained manually.
 - Local clone `yas-source-upstream/` is now used as the default evidence base for service paths, Dockerfiles, build commands, runtime ports, and upstream image naming, but it is expected to be cloned into the workspace rather than committed into this delivery repo.
+- Final runtime evidence now exists for:
+  - Kiali topology capture
+  - Keycloak `yas-admin` login
+  - product-to-media request chain
+  - Jenkins multibranch commit-tagged image push
 
 ## Verified locally on this host
 
@@ -66,46 +71,13 @@ Last updated: June 24, 2026
 
 ## Known blockers and gaps
 
-- Real registry push is now verified on the project-specific Jenkins instance at `http://20.2.66.240:8081/`.
-- Jenkins job `project2-yas-ci #12` completed successfully on June 24, 2026 using:
-  - `SERVICE_CATALOG=release-baseline`
-  - `DOCKERHUB_NAMESPACE=luongtrz`
-  - `SOURCE_ROOT=/var/jenkins_home/prebuilt/yas-source-upstream`
-  - `SOURCE_GIT_ROOT=/var/jenkins_home/prebuilt/yas-source-upstream`
-- The successful real CI run built and pushed the baseline services:
-  - `storefront`
-  - `backoffice`
-  - `storefront-bff`
-  - `backoffice-bff`
-  - `product`
-  - `cart`
-  - `customer`
-  - `rating`
-  - `location`
-  - `order`
-  - `inventory`
-  - `tax`
-- Local Kubernetes cluster is now fully operational on two WSL2 nodes as of June 27, 2026:
-  - `k3s-master` Ready — 192.168.11.26 (current machine, Jenkins will run here)
-  - `k3s-worker` Ready — 192.168.11.223
-  - core add-ons `coredns`, `metrics-server`, `local-path-provisioner`, and `traefik` all `Running`
-  - `yas-dev` and `yas-staging` namespaces created
-- Jenkins is being set up locally on the k3s-master node. The previous Jenkins instance at `20.2.66.240:8081` will not be used for cluster operations.
-- kubeconfig `server` address is `0.0.0.0:6443` and must be changed to `127.0.0.1:6443` before uploading to local Jenkins as `kubeconfig-file`.
-- Jenkins wiring, helm installation on master, and real namespace deployment evidence are still pending.
-- Jenkins and registry credentials have now been exercised end to end on the project-specific Jenkins instance.
-- Kubernetes kubeconfig wiring, shared-environment deploy flows, and runtime evidence capture on a real cluster are still unverified.
-- The first successful real CI run on Jenkins relied on a prebuilt YAS source tree for baseline Java artifacts rather than on a clean workspace that compiles those backend artifacts inside the CI pipeline itself.
-- `sampledata` does not currently have a clean full upstream-style test pass in this workspace because `common-library` test compilation blocks the reactor build.
-- `search` does not currently have a clean full upstream-style test pass in this workspace because Elasticsearch Testcontainers does not become ready for `ProductCdcConsumerTest`.
-- `cart` does not currently have a clean full upstream-style test pass in this workspace because the integration path fails while waiting for the Keycloak Testcontainers health endpoint.
-- `customer` does not currently have a clean full upstream-style test pass in this workspace because `UserAddressServiceIT` fails while Keycloak Testcontainers waits for the `/health/started` endpoint.
-- `location` does not currently have a clean full upstream-style test pass in this workspace because controller integration tests fail while Keycloak Testcontainers waits for the `/health/started` endpoint.
-- `media` does not currently have a clean full upstream-style test pass in this workspace because `MediaControllerIT` fails while Keycloak Testcontainers waits for the `/health/started` endpoint.
-- `promotion` does not currently have a clean full upstream-style test pass in this workspace because `PromotionServiceIT` fails while Keycloak Testcontainers waits for the `/health/started` endpoint.
-- `rating` does not currently have a clean full upstream-style test pass in this workspace because `RatingControllerIT` fails while Keycloak Testcontainers waits for the `/health/started` endpoint.
-- `tax` does not currently have a clean full upstream-style test pass in this workspace because the integration path fails while waiting for the Keycloak Testcontainers health endpoint.
-- `webhook` does not currently have a clean full upstream-style test pass in this workspace because `WebhookControllerIT` fails while Keycloak Testcontainers waits for the `/health/started` endpoint.
+- No repo-level blocker remains for the final handoff bundle.
+- The only remaining ambiguity is external rubric wording around whether CI evidence must show a literal GitHub webhook event or whether Jenkins multibranch automatic indexing plus commit-tagged image push is sufficient.
+- The runtime evidence bundle already covers the rest of the rubric:
+  - Kiali topology screenshot is captured.
+  - Keycloak login for `yas-admin` is validated.
+  - product -> media flow returns HTTP 200.
+  - ArgoCD `dev` and `staging` are reported as Synced + Healthy in the latest state.
 
 ## Current recommendation
 
