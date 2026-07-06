@@ -78,7 +78,8 @@ services:
       port: http
     image:
       repository: luongtrz/yas-media
-      tag: main
+      # Immutable build containing the public GET /medias/** security rule.
+      tag: f4617c4-mediaauth
     env:
       - name: JAVA_TOOL_OPTIONS
         value: "-Xmx192m -Xms64m -XX:MaxMetaspaceSize=128m -XX:ReservedCodeCacheSize=32m"
