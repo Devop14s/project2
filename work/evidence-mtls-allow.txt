@@ -1,13 +1,16 @@
-=== Test ALLOW: storefront-bff SA → product ===
-no healthy upstream
-=== mTLS cluster config (proxy-config cluster) ===
-yas-dev-cart.yas-dev.svc.cluster.local                               80        -          outbound      EDS              yas-default-mtls.yas-dev
-yas-dev-cart.yas-dev.svc.cluster.local                               8090      -          outbound      EDS              yas-default-mtls.yas-dev
-yas-dev-order.yas-dev.svc.cluster.local                              80        -          outbound      EDS              yas-default-mtls.yas-dev
-yas-dev-order.yas-dev.svc.cluster.local                              8090      -          outbound      EDS              yas-default-mtls.yas-dev
-yas-dev-product.yas-dev.svc.cluster.local                            80        -          outbound      EDS              yas-default-mtls.yas-dev
-yas-dev-product.yas-dev.svc.cluster.local                            8090      -          outbound      EDS              yas-default-mtls.yas-dev
-yas-dev-tax.yas-dev.svc.cluster.local                                80        -          outbound      EDS              yas-default-mtls.yas-dev
-yas-dev-tax.yas-dev.svc.cluster.local                                8090      -          outbound      EDS              yas-default-mtls.yas-dev
-yas-staging-cart.yas-staging.svc.cluster.local                       80        -          outbound      EDS              
-yas-staging-cart.yas-staging.svc.cluster.local                       8090      -          outbound      EDS              
+Authorization allow evidence
+Date: 2026-07-06
+
+Client:
+- pod/yas-dev-storefront-bff-5598c878fc-bz9j2
+
+Request:
+- GET http://yas-dev-product.yas-dev.svc.cluster.local/product/storefront/products?size=1
+
+Observed result:
+- HTTP/1.1 200 OK
+- response body contains product JSON
+
+Meaning:
+- storefront-bff principal is allowed to call product
+- traffic passes through live Istio sidecars under namespace mTLS policy

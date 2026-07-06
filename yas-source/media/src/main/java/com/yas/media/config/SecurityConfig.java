@@ -24,7 +24,9 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/actuator/prometheus", "/actuator/health/**",
                     "/swagger-ui", "/swagger-ui/**", "/error", "/v3/api-docs/**").permitAll()
-                .requestMatchers(HttpMethod.GET, "/medias/**").permitAll()
+                .requestMatchers(HttpMethod.GET,
+                    "/medias", "/medias/**",
+                    "/media/medias", "/media/medias/**").permitAll()
                 .requestMatchers("/medias").hasRole("ADMIN")
                 .anyRequest().authenticated())
             .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()))

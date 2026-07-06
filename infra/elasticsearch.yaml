@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: elasticsearch-pvc
+  name: elasticsearch-pvc-v3
   namespace: yas-dev
 spec:
   accessModes: [ReadWriteOnce]
@@ -45,7 +45,7 @@ spec:
             privileged: true
       containers:
         - name: elasticsearch
-          image: docker.elastic.co/elasticsearch/elasticsearch:8.13.4
+          image: elasticsearch:9.2.3
           ports:
             - containerPort: 9200
             - containerPort: 9300
@@ -68,7 +68,7 @@ spec:
       volumes:
         - name: data
           persistentVolumeClaim:
-            claimName: elasticsearch-pvc
+            claimName: elasticsearch-pvc-v3
 ---
 apiVersion: v1
 kind: Service

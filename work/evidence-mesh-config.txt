@@ -1,94 +1,28 @@
-=== AuthorizationPolicy list ===
-NAME              ACTION   AGE
-cart-allow        ALLOW    13m
-customer-allow    ALLOW    13m
-deny-all                   13m
-inventory-allow   ALLOW    13m
-media-allow       ALLOW    13m
-order-allow       ALLOW    13m
-product-allow     ALLOW    13m
-search-allow      ALLOW    13m
-tax-allow         ALLOW    13m
+Service mesh runtime snapshot
+Date: 2026-07-06
+Namespace: yas-dev
 
-=== PeerAuthentication (STRICT mTLS) ===
-apiVersion: v1
-items:
-- apiVersion: security.istio.io/v1
-  kind: PeerAuthentication
-  metadata:
-    annotations:
-      kubectl.kubernetes.io/last-applied-configuration: |
-        {"apiVersion":"security.istio.io/v1","kind":"PeerAuthentication","metadata":{"annotations":{},"name":"yas-strict-mtls","namespace":"yas-dev"},"spec":{"mtls":{"mode":"STRICT"}}}
-    creationTimestamp: "2026-06-28T17:18:52Z"
-    generation: 1
-    name: yas-strict-mtls
-    namespace: yas-dev
-    resourceVersion: "70466"
-    uid: affad5d2-481a-4223-b92c-8f4644827917
-  spec:
-    mtls:
-      mode: STRICT
-kind: List
-metadata:
-  resourceVersion: ""
+PeerAuthentication
+- yas-strict-mtls = STRICT
+- storefront-bff-public = PERMISSIVE
+- backoffice-bff-public = PERMISSIVE
+- api-router-public = PERMISSIVE
 
-=== DestinationRule (ISTIO_MUTUAL) ===
-apiVersion: v1
-items:
-- apiVersion: networking.istio.io/v1
-  kind: DestinationRule
-  metadata:
-    annotations:
-      kubectl.kubernetes.io/last-applied-configuration: |
-        {"apiVersion":"networking.istio.io/v1","kind":"DestinationRule","metadata":{"annotations":{},"name":"yas-default-mtls","namespace":"yas-dev"},"spec":{"host":"*.yas-dev.svc.cluster.local","trafficPolicy":{"tls":{"mode":"ISTIO_MUTUAL"}}}}
-    creationTimestamp: "2026-06-28T17:18:52Z"
-    generation: 1
-    name: yas-default-mtls
-    namespace: yas-dev
-    resourceVersion: "70473"
-    uid: 61b7ffae-d5b0-4b09-aec6-1b5ece233f51
-  spec:
-    host: '*.yas-dev.svc.cluster.local'
-    trafficPolicy:
-      tls:
-        mode: ISTIO_MUTUAL
-kind: List
-metadata:
-  resourceVersion: ""
+DestinationRule
+- yas-default-mtls => *.yas-dev.svc.cluster.local => ISTIO_MUTUAL
+- postgres-no-mtls
+- kafka-no-mtls
+- elasticsearch-no-mtls
+- redis-no-mtls
+- identity
+- identity-short
 
-=== Istio system pods ===
-NAME                                    READY   STATUS    RESTARTS   AGE
-istio-egressgateway-6bd69774c9-w88mx    1/1     Running   0          75m
-istio-ingressgateway-857b7cc6b9-p4dmz   1/1     Running   0          75m
-istiod-66b4487cfb-mwq99                 1/1     Running   0          80m
-kiali-6dfdcdd75d-v4bxr                  1/1     Running   0          15m
-prometheus-dcf6c6c89-pc24d              2/2     Running   0          15m
+Observability
+- istio-ingressgateway: Running
+- istiod: Running
+- prometheus: Running
+- kiali: Running
 
-=== yas-dev pods with sidecar (2/2) ===
-NAME                                      READY   STATUS             RESTARTS        AGE
-test-allow                                2/2     Running            0               3m
-yas-dev-backoffice-b687c95-chsw4          2/2     Running            0               14m
-yas-dev-backoffice-bff-7fff999b89-47vmv   1/2     CrashLoopBackOff   7 (3m19s ago)   14m
-yas-dev-backoffice-bff-84754c9d7c-w64gp   1/2     CrashLoopBackOff   7 (4m25s ago)   14m
-yas-dev-cart-766b94fb6c-8sxc7             1/2     CrashLoopBackOff   7 (4m ago)      14m
-yas-dev-cart-76bd69547f-kwzxs             1/2     CrashLoopBackOff   7 (3m21s ago)   14m
-yas-dev-customer-55c7c7f7-ckkjm           1/2     CrashLoopBackOff   7 (3m51s ago)   14m
-yas-dev-customer-b69d68bbf-m2xd6          1/2     CrashLoopBackOff   7 (4m6s ago)    14m
-yas-dev-inventory-678db8b9f7-c9dh9        1/2     CrashLoopBackOff   7 (3m15s ago)   14m
-yas-dev-inventory-9b786f85f-kf9vl         1/2     CrashLoopBackOff   7 (3m56s ago)   14m
-yas-dev-media-67664d7789-lspdl            1/2     CrashLoopBackOff   7 (3m53s ago)   14m
-yas-dev-media-7cf9889747-mcsxg            1/2     CrashLoopBackOff   7 (3m44s ago)   14m
-yas-dev-order-6c89b68887-hmsr4            1/2     CrashLoopBackOff   7 (4m32s ago)   14m
-yas-dev-order-7d9bc59c9c-f8dfk            1/2     CrashLoopBackOff   7 (5m3s ago)    14m
-yas-dev-product-5c84d5fd8-jwtsd           1/2     CrashLoopBackOff   7 (3m39s ago)   14m
-yas-dev-product-79b99bd9b8-c2dbb          1/2     CrashLoopBackOff   7 (4m9s ago)    14m
-yas-dev-sampledata-64c9f7f64c-5w7m7       1/2     CrashLoopBackOff   7 (3m18s ago)   14m
-yas-dev-sampledata-7f8d56d4f9-d729j       1/2     CrashLoopBackOff   7 (3m9s ago)    13m
-yas-dev-search-6558b64cb5-m6k6d           1/2     CrashLoopBackOff   7 (3m42s ago)   14m
-yas-dev-search-7d4f745c85-fdwj9           1/2     CrashLoopBackOff   7 (3m16s ago)   13m
-yas-dev-storefront-7c594fcfcb-d47d4       2/2     Running            0               14m
-yas-dev-storefront-bff-697675d59b-zhz6r   1/2     CrashLoopBackOff   7 (3m13s ago)   14m
-yas-dev-storefront-bff-77b9b89b84-94ks2   1/2     CrashLoopBackOff   7 (4m19s ago)   14m
-yas-dev-swagger-ui-797cfc6c8-kcmw4        2/2     Running            0               13m
-yas-dev-tax-5ddd75d6f4-pjbdl              1/2     CrashLoopBackOff   7 (3m45s ago)   14m
-yas-dev-tax-65c797cc4-n8k9k               1/2     CrashLoopBackOff   7 (3m42s ago)   14m
+Kiali service
+- NodePort 30001
+- Service port 9090 exposed on NodePort 32406

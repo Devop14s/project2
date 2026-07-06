@@ -1,16 +1,15 @@
-=== Test DENY: pod với default ServiceAccount → product ===
-Pod test-denied2 chạy với SA mặc định (không nằm trong whitelist AuthorizationPolicy)
+Authorization deny evidence
+Date: 2026-07-06
 
-Kết quả: "Connection refused" (TCP RST từ Envoy RBAC)
-→ Istio AuthorizationPolicy DENY-ALL hoạt động đúng
+Client:
+- pod/yas-dev-product-6979c59558-r2h7m
 
---- curl output ---
-* Host yas-dev-product.yas-dev.svc.cluster.local:80 was resolved.
-* IPv4: 10.43.9.119
-*   Trying 10.43.9.119:80...
-* connect to 10.43.9.119 port 80 from 10.42.0.204 port 38528 failed: Connection refused
-* Failed to connect to yas-dev-product.yas-dev.svc.cluster.local port 80: Could not connect to server
+Request:
+- GET http://search.yas-dev.svc.cluster.local/search/storefront/catalog-search?page=0&size=1
 
-So sánh:
-- test-allow (storefront-bff SA)  → HTTP 503 no healthy upstream (RBAC PASS, app down)
-- test-denied2 (default SA)       → Connection refused             (RBAC DENY, TCP RST)
+Observed result:
+- HTTP/1.1 403 Forbidden
+
+Meaning:
+- product principal is not in the allow-list for search
+- AuthorizationPolicy deny behavior is active at runtime

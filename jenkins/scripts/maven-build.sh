@@ -27,7 +27,7 @@ log "Running Maven package in ${SOURCE_ROOT}"
   package \
   -pl "common-library,${backend_modules}" \
   -am \
-  -Dmaven.test.skip=true \
+  -DskipTests \
   -Djava.version=21 \
   -Dmaven.compiler.source=21 \
   -Dmaven.compiler.target=21 \

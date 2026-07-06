@@ -36,11 +36,6 @@ spec:
     - name: http
       port: {{ $svc.service.port }}
       targetPort: {{ $svc.containerPort }}
-{{- if eq ($svc.workloadType | default "backend") "backend" }}
-    - name: metric
-      port: {{ $svc.metricPort | default 8090 }}
-      targetPort: {{ $svc.metricPort | default 8090 }}
-{{- end }}
 ---
 {{- end }}
 {{- end }}

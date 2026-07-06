@@ -1,0 +1,99 @@
+apiVersion: networking.istio.io/v1
+kind: Gateway
+metadata:
+  name: yas-api-gateway
+  namespace: yas-dev
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+    - port:
+        number: 80
+        name: http
+        protocol: HTTP
+      hosts:
+        - api.yas.local
+---
+apiVersion: networking.istio.io/v1
+kind: VirtualService
+metadata:
+  name: yas-api
+  namespace: yas-dev
+spec:
+  hosts:
+    - api.yas.local
+  gateways:
+    - yas-api-gateway
+  http:
+    - match:
+        - uri:
+            prefix: /product/
+      route:
+        - destination:
+            host: product.yas-dev.svc.cluster.local
+            port:
+              number: 80
+    - match:
+        - uri:
+            prefix: /media/
+      route:
+        - destination:
+            host: media.yas-dev.svc.cluster.local
+            port:
+              number: 80
+    - match:
+        - uri:
+            prefix: /customer/
+      route:
+        - destination:
+            host: customer.yas-dev.svc.cluster.local
+            port:
+              number: 80
+    - match:
+        - uri:
+            prefix: /cart/
+      route:
+        - destination:
+            host: cart.yas-dev.svc.cluster.local
+            port:
+              number: 80
+    - match:
+        - uri:
+            prefix: /order/
+      route:
+        - destination:
+            host: order.yas-dev.svc.cluster.local
+            port:
+              number: 80
+    - match:
+        - uri:
+            prefix: /inventory/
+      route:
+        - destination:
+            host: inventory.yas-dev.svc.cluster.local
+            port:
+              number: 80
+    - match:
+        - uri:
+            prefix: /tax/
+      route:
+        - destination:
+            host: tax.yas-dev.svc.cluster.local
+            port:
+              number: 80
+    - match:
+        - uri:
+            prefix: /search/
+      route:
+        - destination:
+            host: search.yas-dev.svc.cluster.local
+            port:
+              number: 80
+    - match:
+        - uri:
+            prefix: /sampledata/
+      route:
+        - destination:
+            host: sampledata.yas-dev.svc.cluster.local
+            port:
+              number: 80

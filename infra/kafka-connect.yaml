@@ -1,0 +1,168 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kafka-connect-connectors
+  namespace: yas-dev
+data:
+  product.json: |
+    {
+      "connector.class": "io.debezium.connector.postgresql.PostgresConnector",
+      "topic.prefix": "dbproduct",
+      "database.user": "admin",
+      "database.dbname": "product",
+      "database.hostname": "postgres.yas-dev.svc.cluster.local",
+      "database.password": "admin",
+      "database.port": "5432",
+      "plugin.name": "pgoutput",
+      "snapshot.mode": "initial",
+      "key.converter": "org.apache.kafka.connect.json.JsonConverter",
+      "key.converter.schemas.enable": "false",
+      "value.converter": "org.apache.kafka.connect.json.JsonConverter",
+      "value.converter.schemas.enable": "false",
+      "schema.include.list": "public",
+      "table.include.list": "public.product",
+      "slot.name": "product_slot",
+      "publication.name": "product_publication",
+      "publication.autocreate.mode": "filtered"
+    }
+  order.json: |
+    {
+      "connector.class": "io.debezium.connector.postgresql.PostgresConnector",
+      "topic.prefix": "dborder",
+      "database.user": "admin",
+      "database.dbname": "order",
+      "database.hostname": "postgres.yas-dev.svc.cluster.local",
+      "database.password": "admin",
+      "database.port": "5432",
+      "plugin.name": "pgoutput",
+      "snapshot.mode": "initial",
+      "key.converter": "org.apache.kafka.connect.json.JsonConverter",
+      "key.converter.schemas.enable": "false",
+      "value.converter": "org.apache.kafka.connect.json.JsonConverter",
+      "value.converter.schemas.enable": "false",
+      "schema.include.list": "public",
+      "table.include.list": "public.order",
+      "column.include.list": "public.order.order_status",
+      "slot.name": "order_slot",
+      "publication.name": "order_publication",
+      "publication.autocreate.mode": "filtered",
+      "skip.messages.without.change": "true"
+    }
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kafka-connect
+  namespace: yas-dev
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kafka-connect
+  template:
+    metadata:
+      labels:
+        app: kafka-connect
+      annotations:
+        sidecar.istio.io/inject: "false"
+    spec:
+      enableServiceLinks: false
+      nodeSelector:
+        kubernetes.io/hostname: k3s-worker
+      containers:
+        - name: kafka-connect
+          image: debezium/connect:2.7.3.Final
+          ports:
+            - name: http
+              containerPort: 8083
+          env:
+            - name: KAFKA_HEAP_OPTS
+              value: "-Xms128m -Xmx512m"
+            - name: BOOTSTRAP_SERVERS
+              value: kafka.yas-dev.svc.cluster.local:9092
+            - name: GROUP_ID
+              value: yas-connect
+            - name: CONFIG_STORAGE_TOPIC
+              value: yas_connect_configs_v2
+            - name: OFFSET_STORAGE_TOPIC
+              value: yas_connect_offsets_v2
+            - name: STATUS_STORAGE_TOPIC
+              value: yas_connect_statuses_v2
+            - name: CONFIG_STORAGE_REPLICATION_FACTOR
+              value: "1"
+            - name: OFFSET_STORAGE_REPLICATION_FACTOR
+              value: "1"
+            - name: STATUS_STORAGE_REPLICATION_FACTOR
+              value: "1"
+            # The demo cluster has a single Kafka broker. Keep Connect's
+            # internal topics single-partitioned so it never waits for
+            # non-existent status/offset partitions after a broker restart.
+            - name: OFFSET_STORAGE_PARTITIONS
+              value: "1"
+            - name: STATUS_STORAGE_PARTITIONS
+              value: "1"
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 5
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: 750m
+              memory: 768Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kafka-connect
+  namespace: yas-dev
+spec:
+  selector:
+    app: kafka-connect
+  ports:
+    - name: http
+      port: 8083
+      targetPort: http
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: kafka-connect-configure
+  namespace: yas-dev
+spec:
+  backoffLimit: 6
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "false"
+    spec:
+      restartPolicy: OnFailure
+      nodeSelector:
+        kubernetes.io/hostname: k3s-worker
+      containers:
+        - name: configure
+          image: curlimages/curl:8.12.1
+          command:
+            - /bin/sh
+            - -ec
+            - |
+              until curl -fsS http://kafka-connect:8083/connectors >/dev/null; do
+                sleep 5
+              done
+              curl -fsS -X PUT -H 'Content-Type: application/json' \
+                --data @/config/product.json \
+                http://kafka-connect:8083/connectors/product-connector/config
+              curl -fsS -X PUT -H 'Content-Type: application/json' \
+                --data @/config/order.json \
+                http://kafka-connect:8083/connectors/order-connector/config
+          volumeMounts:
+            - name: config
+              mountPath: /config
+      volumes:
+        - name: config
+          configMap:
+            name: kafka-connect-connectors

@@ -360,12 +360,70 @@ services:
         value: admin
 
   media:
-    enabled: false
+    enabled: true
     schedulingProfile: worker-large
+    containerPort: 8083
+    metricPort: 8083
+    image:
+      repository: luongtrz/yas-media
+      tag: 20260706-media-security-v2
+    service:
+      aliases:
+        - media
+    probes:
+      mode: tcp
+      port: http
+    resources:
+      requests:
+        cpu: 100m
+        memory: 192Mi
+      limits:
+        cpu: 750m
+        memory: 768Mi
+    env:
+      - name: JAVA_TOOL_OPTIONS
+        value: "-Xmx192m -Xms64m -XX:MaxMetaspaceSize=128m -XX:ReservedCodeCacheSize=32m"
+      - name: SPRING_DATASOURCE_URL
+        value: jdbc:postgresql://postgres.yas-dev.svc.cluster.local:5432/media
+      - name: SPRING_DATASOURCE_USERNAME
+        value: admin
+      - name: SPRING_DATASOURCE_PASSWORD
+        value: admin
+      - name: SERVER_SERVLET_CONTEXT_PATH
+        value: /media
+      - name: YAS_PUBLICURL
+        value: http://api.yas.local/media
 
   search:
-    enabled: false
+    enabled: true
     schedulingProfile: worker-large
+    containerPort: 8092
+    metricPort: 8092
+    image:
+      repository: luongtrz/yas-search
+      tag: main
+    service:
+      aliases:
+        - search
+    probes:
+      mode: tcp
+      port: http
+    resources:
+      requests:
+        cpu: 100m
+        memory: 192Mi
+      limits:
+        cpu: 750m
+        memory: 768Mi
+    env:
+      - name: JAVA_TOOL_OPTIONS
+        value: "-Xmx192m -Xms64m -XX:MaxMetaspaceSize=128m -XX:ReservedCodeCacheSize=32m"
+      - name: SPRING_KAFKA_CONSUMER_BOOTSTRAP_SERVERS
+        value: kafka.yas-dev.svc.cluster.local:9092
+      - name: SPRING_KAFKA_PRODUCER_BOOTSTRAP_SERVERS
+        value: kafka.yas-dev.svc.cluster.local:9092
+      - name: ELASTICSEARCH_URL
+        value: elasticsearch.yas-dev.svc.cluster.local:9200
 
   rating:
     enabled: false
@@ -396,5 +454,35 @@ services:
     schedulingProfile: worker-large
 
   sampledata:
-    enabled: false
+    enabled: true
     schedulingProfile: worker-large
+    replicaCount: 1
+    containerPort: 8094
+    metricPort: 8094
+    image:
+      repository: luongtrz/yas-sampledata
+      tag: main
+    service:
+      aliases:
+        - sampledata
+    probes:
+      mode: tcp
+      port: http
+    resources:
+      requests:
+        cpu: 100m
+        memory: 192Mi
+      limits:
+        cpu: 750m
+        memory: 768Mi
+    env:
+      - name: JAVA_TOOL_OPTIONS
+        value: "-Xmx192m -Xms64m -XX:MaxMetaspaceSize=128m -XX:ReservedCodeCacheSize=32m"
+      - name: SPRING_DATASOURCE_PRODUCT_URL
+        value: jdbc:postgresql://postgres.yas-dev.svc.cluster.local:5432/product
+      - name: SPRING_DATASOURCE_MEDIA_URL
+        value: jdbc:postgresql://postgres.yas-dev.svc.cluster.local:5432/media
+      - name: SPRING_DATASOURCE_USERNAME
+        value: admin
+      - name: SPRING_DATASOURCE_PASSWORD
+        value: admin

@@ -55,6 +55,16 @@ spec:
       containers:
         - name: postgres
           image: docker.io/library/postgres:15
+          args:
+            - postgres
+            - -c
+            - wal_level=logical
+            - -c
+            - max_replication_slots=10
+            - -c
+            - max_wal_senders=10
+            - -c
+            - max_connections=300
           ports:
             - containerPort: 5432
           env:

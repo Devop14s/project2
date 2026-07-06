@@ -3,107 +3,468 @@ global:
   namespace: yas-staging
   domainName: storefront-staging.yas.local
 
+externalServices:
+  identity:
+    externalName: identity.yas-dev.svc.cluster.local
+
 services:
   storefront:
     enabled: true
     schedulingProfile: ui-on-master
+    podAnnotations:
+      sidecar.istio.io/inject: "false"
     image:
       repository: luongtrz/yas-storefront
-      tag: v1.0.0
+      tag: main
     service:
+      aliases:
+        - storefront
       nodePort: 32083
     ingress:
       enabled: true
       host: storefront-staging.yas.local
+      extraPaths:
+        - path: /oauth2
+          serviceName: storefront-bff
+          servicePort: 80
+        - path: /login
+          serviceName: storefront-bff
+          servicePort: 80
+        - path: /logout
+          serviceName: storefront-bff
+          servicePort: 80
+        - path: /api
+          serviceName: storefront-bff
+          servicePort: 80
+        - path: /actuator/health
+          serviceName: storefront-bff
+          servicePort: 80
+        - path: /actuator/health/liveness
+          serviceName: storefront-bff
+          servicePort: 80
+        - path: /actuator/health/readiness
+          serviceName: storefront-bff
+          servicePort: 80
+
   backoffice:
     enabled: true
     schedulingProfile: ui-on-master
+    podAnnotations:
+      sidecar.istio.io/inject: "false"
     image:
       repository: luongtrz/yas-backoffice
-      tag: v1.0.0
+      tag: main
     service:
+      aliases:
+        - backoffice
       nodePort: 32084
     ingress:
       enabled: true
       host: backoffice-staging.yas.local
-  storefront-bff:
-    enabled: true
-    image:
-      repository: luongtrz/yas-storefront-bff
-      tag: v1.0.0
-  backoffice-bff:
-    enabled: true
-    image:
-      repository: luongtrz/yas-backoffice-bff
-      tag: v1.0.0
-  product:
-    enabled: true
-    image:
-      repository: luongtrz/yas-product
-      tag: v1.0.0
-  media:
-    enabled: true
-    image:
-      repository: luongtrz/yas-media
-      tag: v1.0.0
-  cart:
-    enabled: true
-    image:
-      repository: luongtrz/yas-cart
-      tag: v1.0.0
-  customer:
-    enabled: true
-    image:
-      repository: luongtrz/yas-customer
-      tag: v1.0.0
-  rating:
-    enabled: false
-  location:
-    enabled: false
-  order:
-    enabled: true
-    image:
-      repository: luongtrz/yas-order
-      tag: v1.0.0
-  inventory:
-    enabled: true
-    image:
-      repository: luongtrz/yas-inventory
-      tag: v1.0.0
-  tax:
-    enabled: true
-    image:
-      repository: luongtrz/yas-tax
-      tag: v1.0.0
-  search:
-    enabled: true
-    image:
-      repository: luongtrz/yas-search
-      tag: v1.0.0
-  promotion:
-    enabled: false
-  payment:
-    enabled: false
-  payment-paypal:
-    enabled: false
-  recommendation:
-    enabled: false
-  sampledata:
-    enabled: true
-    replicaCount: 0
-    image:
-      repository: luongtrz/yas-sampledata
-      tag: v1.0.0
+      extraPaths:
+        - path: /oauth2
+          serviceName: backoffice-bff
+          servicePort: 80
+        - path: /login
+          serviceName: backoffice-bff
+          servicePort: 80
+        - path: /logout
+          serviceName: backoffice-bff
+          servicePort: 80
+        - path: /api
+          serviceName: backoffice-bff
+          servicePort: 80
+        - path: /catalog
+          serviceName: backoffice-bff
+          servicePort: 80
+        - path: /customers
+          serviceName: backoffice-bff
+          servicePort: 80
+        - path: /sales
+          serviceName: backoffice-bff
+          servicePort: 80
+        - path: /location
+          serviceName: backoffice-bff
+          servicePort: 80
+        - path: /inventory
+          serviceName: backoffice-bff
+          servicePort: 80
+        - path: /promotion
+          serviceName: backoffice-bff
+          servicePort: 80
+        - path: /orders
+          serviceName: backoffice-bff
+          servicePort: 80
+
   swagger-ui:
     enabled: true
     schedulingProfile: ui-on-master
+    podAnnotations:
+      sidecar.istio.io/inject: "false"
     image:
       repository: luongtrz/yas-swagger-ui
-      tag: v1.0.0
+      tag: main
     service:
+      aliases:
+        - swagger-ui
       nodePort: 32085
     ingress:
       enabled: true
       host: swagger-ui-staging.yas.local
+
+  storefront-bff:
+    enabled: true
+    schedulingProfile: worker-large
+    containerPort: 8087
+    metricPort: 8087
+    image:
+      repository: luongtrz/yas-storefront-bff
+      tag: 20260705-step2fix2
+    service:
+      aliases:
+        - storefront-bff
+    probes:
+      mode: tcp
+      port: http
+    resources:
+      requests:
+        cpu: 100m
+        memory: 192Mi
+      limits:
+        cpu: 750m
+        memory: 768Mi
+    env:
+      - name: JAVA_TOOL_OPTIONS
+        value: "-Xmx192m -Xms64m -XX:MaxMetaspaceSize=128m -XX:ReservedCodeCacheSize=32m"
+
+  backoffice-bff:
+    enabled: true
+    schedulingProfile: worker-large
+    containerPort: 8087
+    metricPort: 8087
+    image:
+      repository: luongtrz/yas-backoffice-bff
+      tag: 20260705-step2fix2
+    service:
+      aliases:
+        - backoffice-bff
+    probes:
+      mode: tcp
+      port: http
+    resources:
+      requests:
+        cpu: 100m
+        memory: 192Mi
+      limits:
+        cpu: 750m
+        memory: 768Mi
+    env:
+      - name: JAVA_TOOL_OPTIONS
+        value: "-Xmx192m -Xms64m -XX:MaxMetaspaceSize=128m -XX:ReservedCodeCacheSize=32m"
+
+  product:
+    enabled: true
+    schedulingProfile: worker-large
+    containerPort: 8080
+    metricPort: 8080
+    image:
+      repository: luongtrz/yas-product
+      tag: main
+    service:
+      aliases:
+        - product
+    probes:
+      mode: tcp
+      port: http
+    resources:
+      requests:
+        cpu: 100m
+        memory: 192Mi
+      limits:
+        cpu: 750m
+        memory: 768Mi
+    env:
+      - name: JAVA_TOOL_OPTIONS
+        value: "-Xmx192m -Xms64m -XX:MaxMetaspaceSize=128m -XX:ReservedCodeCacheSize=32m"
+      - name: SPRING_DATASOURCE_URL
+        value: jdbc:postgresql://postgres.yas-dev.svc.cluster.local:5432/product
+      - name: SPRING_DATASOURCE_USERNAME
+        value: admin
+      - name: SPRING_DATASOURCE_PASSWORD
+        value: admin
+
+  cart:
+    enabled: true
+    schedulingProfile: worker-large
+    containerPort: 8084
+    metricPort: 8084
+    image:
+      repository: luongtrz/yas-cart
+      tag: main
+    service:
+      aliases:
+        - cart
+    probes:
+      mode: tcp
+      port: http
+    resources:
+      requests:
+        cpu: 100m
+        memory: 192Mi
+      limits:
+        cpu: 750m
+        memory: 768Mi
+    env:
+      - name: JAVA_TOOL_OPTIONS
+        value: "-Xmx192m -Xms64m -XX:MaxMetaspaceSize=128m -XX:ReservedCodeCacheSize=32m"
+      - name: SPRING_DATASOURCE_URL
+        value: jdbc:postgresql://postgres.yas-dev.svc.cluster.local:5432/cart
+      - name: SPRING_DATASOURCE_USERNAME
+        value: admin
+      - name: SPRING_DATASOURCE_PASSWORD
+        value: admin
+
+  customer:
+    enabled: true
+    schedulingProfile: worker-large
+    containerPort: 8088
+    metricPort: 8088
+    image:
+      repository: luongtrz/yas-customer
+      tag: main
+    service:
+      aliases:
+        - customer
+    probes:
+      mode: tcp
+      port: http
+    resources:
+      requests:
+        cpu: 100m
+        memory: 192Mi
+      limits:
+        cpu: 750m
+        memory: 768Mi
+    env:
+      - name: JAVA_TOOL_OPTIONS
+        value: "-Xmx192m -Xms64m -XX:MaxMetaspaceSize=128m -XX:ReservedCodeCacheSize=32m"
+      - name: SPRING_DATASOURCE_URL
+        value: jdbc:postgresql://postgres.yas-dev.svc.cluster.local:5432/customer
+      - name: SPRING_DATASOURCE_USERNAME
+        value: admin
+      - name: SPRING_DATASOURCE_PASSWORD
+        value: admin
+
+  order:
+    enabled: true
+    schedulingProfile: worker-large
+    containerPort: 8085
+    metricPort: 8085
+    image:
+      repository: luongtrz/yas-order
+      tag: main
+    service:
+      aliases:
+        - order
+    probes:
+      mode: tcp
+      port: http
+    resources:
+      requests:
+        cpu: 100m
+        memory: 192Mi
+      limits:
+        cpu: 750m
+        memory: 768Mi
+    env:
+      - name: JAVA_TOOL_OPTIONS
+        value: "-Xmx192m -Xms64m -XX:MaxMetaspaceSize=128m -XX:ReservedCodeCacheSize=32m"
+      - name: SPRING_DATASOURCE_URL
+        value: jdbc:postgresql://postgres.yas-dev.svc.cluster.local:5432/order
+      - name: SPRING_DATASOURCE_USERNAME
+        value: admin
+      - name: SPRING_DATASOURCE_PASSWORD
+        value: admin
+
+  inventory:
+    enabled: true
+    schedulingProfile: worker-large
+    containerPort: 8090
+    metricPort: 8090
+    image:
+      repository: luongtrz/yas-inventory
+      tag: main
+    service:
+      aliases:
+        - inventory
+    probes:
+      mode: tcp
+      port: http
+    resources:
+      requests:
+        cpu: 100m
+        memory: 192Mi
+      limits:
+        cpu: 750m
+        memory: 768Mi
+    env:
+      - name: JAVA_TOOL_OPTIONS
+        value: "-Xmx192m -Xms64m -XX:MaxMetaspaceSize=128m -XX:ReservedCodeCacheSize=32m"
+      - name: SPRING_DATASOURCE_URL
+        value: jdbc:postgresql://postgres.yas-dev.svc.cluster.local:5432/inventory
+      - name: SPRING_DATASOURCE_USERNAME
+        value: admin
+      - name: SPRING_DATASOURCE_PASSWORD
+        value: admin
+
+  tax:
+    enabled: true
+    schedulingProfile: worker-large
+    containerPort: 8091
+    metricPort: 8091
+    image:
+      repository: luongtrz/yas-tax
+      tag: main
+    service:
+      aliases:
+        - tax
+    probes:
+      mode: tcp
+      port: http
+    resources:
+      requests:
+        cpu: 100m
+        memory: 192Mi
+      limits:
+        cpu: 750m
+        memory: 768Mi
+    env:
+      - name: JAVA_TOOL_OPTIONS
+        value: "-Xmx192m -Xms64m -XX:MaxMetaspaceSize=128m -XX:ReservedCodeCacheSize=32m"
+      - name: SPRING_DATASOURCE_URL
+        value: jdbc:postgresql://postgres.yas-dev.svc.cluster.local:5432/tax
+      - name: SPRING_DATASOURCE_USERNAME
+        value: admin
+      - name: SPRING_DATASOURCE_PASSWORD
+        value: admin
+
+  media:
+    enabled: true
+    schedulingProfile: worker-large
+    containerPort: 8083
+    metricPort: 8083
+    image:
+      repository: luongtrz/yas-media
+      tag: 20260706-media-security-v2
+    service:
+      aliases:
+        - media
+    probes:
+      mode: tcp
+      port: http
+    resources:
+      requests:
+        cpu: 100m
+        memory: 192Mi
+      limits:
+        cpu: 750m
+        memory: 768Mi
+    env:
+      - name: JAVA_TOOL_OPTIONS
+        value: "-Xmx192m -Xms64m -XX:MaxMetaspaceSize=128m -XX:ReservedCodeCacheSize=32m"
+      - name: SPRING_DATASOURCE_URL
+        value: jdbc:postgresql://postgres.yas-dev.svc.cluster.local:5432/media
+      - name: SPRING_DATASOURCE_USERNAME
+        value: admin
+      - name: SPRING_DATASOURCE_PASSWORD
+        value: admin
+      - name: SERVER_SERVLET_CONTEXT_PATH
+        value: /media
+      - name: YAS_PUBLICURL
+        value: http://api-staging.yas.local/media
+
+  search:
+    enabled: true
+    schedulingProfile: worker-large
+    containerPort: 8092
+    metricPort: 8092
+    image:
+      repository: luongtrz/yas-search
+      tag: main
+    service:
+      aliases:
+        - search
+    probes:
+      mode: tcp
+      port: http
+    resources:
+      requests:
+        cpu: 100m
+        memory: 192Mi
+      limits:
+        cpu: 750m
+        memory: 768Mi
+    env:
+      - name: JAVA_TOOL_OPTIONS
+        value: "-Xmx192m -Xms64m -XX:MaxMetaspaceSize=128m -XX:ReservedCodeCacheSize=32m"
+      - name: SPRING_KAFKA_CONSUMER_BOOTSTRAP_SERVERS
+        value: kafka.yas-dev.svc.cluster.local:9092
+      - name: SPRING_KAFKA_PRODUCER_BOOTSTRAP_SERVERS
+        value: kafka.yas-dev.svc.cluster.local:9092
+      - name: ELASTICSEARCH_URL
+        value: elasticsearch.yas-dev.svc.cluster.local:9200
+
+  sampledata:
+    enabled: true
+    schedulingProfile: worker-large
+    replicaCount: 1
+    containerPort: 8094
+    metricPort: 8094
+    image:
+      repository: luongtrz/yas-sampledata
+      tag: main
+    service:
+      aliases:
+        - sampledata
+    probes:
+      mode: tcp
+      port: http
+    resources:
+      requests:
+        cpu: 100m
+        memory: 192Mi
+      limits:
+        cpu: 750m
+        memory: 768Mi
+    env:
+      - name: JAVA_TOOL_OPTIONS
+        value: "-Xmx192m -Xms64m -XX:MaxMetaspaceSize=128m -XX:ReservedCodeCacheSize=32m"
+      - name: SPRING_DATASOURCE_PRODUCT_URL
+        value: jdbc:postgresql://postgres.yas-dev.svc.cluster.local:5432/product
+      - name: SPRING_DATASOURCE_MEDIA_URL
+        value: jdbc:postgresql://postgres.yas-dev.svc.cluster.local:5432/media
+      - name: SPRING_DATASOURCE_USERNAME
+        value: admin
+      - name: SPRING_DATASOURCE_PASSWORD
+        value: admin
+
+  rating:
+    enabled: false
+
+  location:
+    enabled: false
+
+  promotion:
+    enabled: false
+
+  payment:
+    enabled: false
+
+  payment-paypal:
+    enabled: false
+
+  recommendation:
+    enabled: false
+
   webhook:
     enabled: false
