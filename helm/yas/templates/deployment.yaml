@@ -13,6 +13,7 @@
 {{- $probeMode := get $probes "mode" | default "" }}
 {{- $probePort := get $probes "port" | default "http" }}
 {{- $replicaCount := ternary $svc.replicaCount 1 (hasKey $svc "replicaCount") }}
+{{- $environmentName := $.Values.global.environment | default "default" }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -100,7 +101,15 @@ spec:
 {{- end }}
 {{- if $svc.env }}
           env:
+{{- if ne $workloadType "ui" }}
+            - name: SPRING_PROFILES_ACTIVE
+              value: {{ $environmentName | quote }}
+{{- end }}
 {{ toYaml $svc.env | indent 12 }}
+{{- else if ne $workloadType "ui" }}
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: {{ $environmentName | quote }}
 {{- end }}
 {{- if $resources }}
           resources:
