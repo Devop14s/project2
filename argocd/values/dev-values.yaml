@@ -2,6 +2,14 @@ global:
   environment: dev
   namespace: yas-dev
   domainName: storefront-dev.yas.local
+  resourceProfiles:
+    backend:
+      requests:
+        cpu: 50m
+        memory: 192Mi
+      limits:
+        cpu: 500m
+        memory: 768Mi
 
 services:
   storefront:
