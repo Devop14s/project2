@@ -1,0 +1,688 @@
+{
+  "timestamp": 1783366332,
+  "duration": 300,
+  "graphType": "versionedApp",
+  "elements": {
+    "nodes": [
+      {
+        "data": {
+          "id": "ef9ec940cca50c0f14c02090be46a9eb",
+          "nodeType": "service",
+          "cluster": "Kubernetes",
+          "namespace": "yas-dev",
+          "service": "media",
+          "destServices": [
+            {
+              "cluster": "Kubernetes",
+              "namespace": "yas-dev",
+              "name": "media"
+            }
+          ],
+          "traffic": [
+            {
+              "protocol": "http",
+              "rates": {
+                "httpIn": "0.10",
+                "httpOut": "0.10"
+              }
+            }
+          ],
+          "healthData": {
+            "requests": {
+              "inbound": {
+                "http": {
+                  "200": 0.102
+                }
+              },
+              "outbound": {
+                "http": {
+                  "200": 0.102
+                }
+              },
+              "healthAnnotations": {}
+            }
+          },
+          "hasRequestRouting": true,
+          "hasVS": {
+            "hostnames": [
+              "api.yas.local"
+            ]
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "7f646ebd903205bd60920bf0b986e6c6",
+          "nodeType": "service",
+          "cluster": "Kubernetes",
+          "namespace": "yas-dev",
+          "service": "postgres",
+          "destServices": [
+            {
+              "cluster": "Kubernetes",
+              "namespace": "yas-dev",
+              "name": "postgres"
+            }
+          ],
+          "traffic": [
+            {
+              "protocol": "tcp",
+              "rates": {
+                "tcpIn": "32.75",
+                "tcpOut": "32.75"
+              }
+            }
+          ],
+          "healthData": {
+            "requests": {
+              "inbound": {
+                "tcp": {
+                  "-": 32.752
+                }
+              },
+              "outbound": {
+                "tcp": {
+                  "-": 32.752
+                }
+              },
+              "healthAnnotations": {}
+            }
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "cffd1344d13f725c1ddbcff29b2b9b60",
+          "nodeType": "service",
+          "cluster": "Kubernetes",
+          "namespace": "yas-dev",
+          "service": "product",
+          "destServices": [
+            {
+              "cluster": "Kubernetes",
+              "namespace": "yas-dev",
+              "name": "product"
+            }
+          ],
+          "traffic": [
+            {
+              "protocol": "http",
+              "rates": {
+                "httpIn": "0.04",
+                "httpOut": "0.04"
+              }
+            }
+          ],
+          "healthData": {
+            "requests": {
+              "inbound": {
+                "http": {
+                  "200": 0.036
+                }
+              },
+              "outbound": {
+                "http": {
+                  "200": 0.036
+                }
+              },
+              "healthAnnotations": {}
+            }
+          },
+          "hasRequestRouting": true,
+          "hasVS": {
+            "hostnames": [
+              "api.yas.local"
+            ]
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "bfc8c8741dda777c940d6672aadf022b",
+          "nodeType": "app",
+          "cluster": "Kubernetes",
+          "namespace": "yas-dev",
+          "workload": "yas-dev-cart",
+          "app": "cart",
+          "version": "latest",
+          "traffic": [
+            {
+              "protocol": "tcp",
+              "rates": {
+                "tcpOut": "5.74"
+              }
+            }
+          ],
+          "healthData": {
+            "workloadStatuses": [],
+            "requests": {
+              "inbound": {},
+              "outbound": {
+                "tcp": {
+                  "-": 5.74
+                }
+              },
+              "healthAnnotations": {}
+            }
+          },
+          "isRoot": true
+        }
+      },
+      {
+        "data": {
+          "id": "bce8d6e83dcd95601ee04048d867fe42",
+          "nodeType": "app",
+          "cluster": "Kubernetes",
+          "namespace": "yas-dev",
+          "workload": "yas-dev-customer",
+          "app": "customer",
+          "version": "latest",
+          "traffic": [
+            {
+              "protocol": "tcp",
+              "rates": {
+                "tcpOut": "4.16"
+              }
+            }
+          ],
+          "healthData": {
+            "workloadStatuses": [],
+            "requests": {
+              "inbound": {},
+              "outbound": {
+                "tcp": {
+                  "-": 4.157
+                }
+              },
+              "healthAnnotations": {}
+            }
+          },
+          "isRoot": true
+        }
+      },
+      {
+        "data": {
+          "id": "166c162534810ff238bd54ac6cc2debf",
+          "nodeType": "app",
+          "cluster": "Kubernetes",
+          "namespace": "yas-dev",
+          "workload": "yas-dev-inventory",
+          "app": "inventory",
+          "version": "latest",
+          "traffic": [
+            {
+              "protocol": "tcp",
+              "rates": {
+                "tcpOut": "11.62"
+              }
+            }
+          ],
+          "healthData": {
+            "workloadStatuses": [],
+            "requests": {
+              "inbound": {},
+              "outbound": {
+                "tcp": {
+                  "-": 11.624
+                }
+              },
+              "healthAnnotations": {}
+            }
+          },
+          "isRoot": true
+        }
+      },
+      {
+        "data": {
+          "id": "d071c9c15f5a636800a1d9766e732c9d",
+          "nodeType": "app",
+          "cluster": "Kubernetes",
+          "namespace": "yas-dev",
+          "workload": "yas-dev-media",
+          "app": "media",
+          "version": "latest",
+          "destServices": [
+            {
+              "cluster": "Kubernetes",
+              "namespace": "yas-dev",
+              "name": "media"
+            }
+          ],
+          "traffic": [
+            {
+              "protocol": "http",
+              "rates": {
+                "httpIn": "0.10"
+              }
+            }
+          ],
+          "healthData": {
+            "workloadStatuses": [],
+            "requests": {
+              "inbound": {
+                "http": {
+                  "200": 0.102
+                }
+              },
+              "outbound": {},
+              "healthAnnotations": {}
+            }
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "6c6798ac7130137943e6484c4103481c",
+          "nodeType": "app",
+          "cluster": "Kubernetes",
+          "namespace": "yas-dev",
+          "workload": "yas-dev-order",
+          "app": "order",
+          "version": "latest",
+          "traffic": [
+            {
+              "protocol": "tcp",
+              "rates": {
+                "tcpOut": "5.44"
+              }
+            }
+          ],
+          "healthData": {
+            "workloadStatuses": [],
+            "requests": {
+              "inbound": {},
+              "outbound": {
+                "tcp": {
+                  "-": 5.44
+                }
+              },
+              "healthAnnotations": {}
+            }
+          },
+          "isRoot": true
+        }
+      },
+      {
+        "data": {
+          "id": "4fa8fcbf540ca6a354c34e0a0482381d",
+          "nodeType": "app",
+          "cluster": "Kubernetes",
+          "namespace": "yas-dev",
+          "workload": "postgres",
+          "app": "postgres",
+          "version": "latest",
+          "destServices": [
+            {
+              "cluster": "Kubernetes",
+              "namespace": "yas-dev",
+              "name": "postgres"
+            }
+          ],
+          "traffic": [
+            {
+              "protocol": "tcp",
+              "rates": {
+                "tcpIn": "32.75"
+              }
+            }
+          ],
+          "healthData": {
+            "workloadStatuses": [],
+            "requests": {
+              "inbound": {
+                "tcp": {
+                  "-": 32.752
+                }
+              },
+              "outbound": {},
+              "healthAnnotations": {}
+            }
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "3e850dd10ec07acabcd2d5e65ae56181",
+          "nodeType": "app",
+          "cluster": "Kubernetes",
+          "namespace": "yas-dev",
+          "workload": "yas-dev-product",
+          "app": "product",
+          "version": "latest",
+          "destServices": [
+            {
+              "cluster": "Kubernetes",
+              "namespace": "yas-dev",
+              "name": "product"
+            }
+          ],
+          "traffic": [
+            {
+              "protocol": "http",
+              "rates": {
+                "httpIn": "0.04",
+                "httpOut": "0.10"
+              }
+            }
+          ],
+          "healthData": {
+            "workloadStatuses": [],
+            "requests": {
+              "inbound": {
+                "http": {
+                  "200": 0.036
+                }
+              },
+              "outbound": {
+                "http": {
+                  "200": 0.102
+                }
+              },
+              "healthAnnotations": {}
+            }
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "02132211573100150435ee35a62984c6",
+          "nodeType": "app",
+          "cluster": "Kubernetes",
+          "namespace": "yas-dev",
+          "workload": "yas-dev-storefront-bff",
+          "app": "storefront-bff",
+          "version": "latest",
+          "traffic": [
+            {
+              "protocol": "http",
+              "rates": {
+                "httpOut": "0.04"
+              }
+            }
+          ],
+          "healthData": {
+            "workloadStatuses": [],
+            "requests": {
+              "inbound": {},
+              "outbound": {
+                "http": {
+                  "200": 0.036
+                }
+              },
+              "healthAnnotations": {}
+            }
+          },
+          "isRoot": true
+        }
+      },
+      {
+        "data": {
+          "id": "b33a716fa84e45328812891728608029",
+          "nodeType": "app",
+          "cluster": "Kubernetes",
+          "namespace": "yas-dev",
+          "workload": "yas-dev-tax",
+          "app": "tax",
+          "version": "latest",
+          "traffic": [
+            {
+              "protocol": "tcp",
+              "rates": {
+                "tcpOut": "5.79"
+              }
+            }
+          ],
+          "healthData": {
+            "workloadStatuses": [],
+            "requests": {
+              "inbound": {},
+              "outbound": {
+                "tcp": {
+                  "-": 5.791
+                }
+              },
+              "healthAnnotations": {}
+            }
+          },
+          "isRoot": true
+        }
+      }
+    ],
+    "edges": [
+      {
+        "data": {
+          "id": "9c1d8dfc1d4f266e4447df2b0002f325",
+          "source": "02132211573100150435ee35a62984c6",
+          "target": "cffd1344d13f725c1ddbcff29b2b9b60",
+          "traffic": {
+            "protocol": "http",
+            "rates": {
+              "http": "0.04",
+              "httpPercentReq": "100.0"
+            },
+            "responses": {
+              "200": {
+                "flags": {
+                  "-": "100.0"
+                },
+                "hosts": {
+                  "product.yas-dev.svc.cluster.local": "100.0"
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "3145fa34b22fc9a3645b9015b541238e",
+          "source": "166c162534810ff238bd54ac6cc2debf",
+          "target": "7f646ebd903205bd60920bf0b986e6c6",
+          "traffic": {
+            "protocol": "tcp",
+            "rates": {
+              "tcp": "11.62"
+            },
+            "responses": {
+              "-": {
+                "flags": {
+                  "-": "100.0"
+                },
+                "hosts": {
+                  "postgres.yas-dev.svc.cluster.local": "100.0"
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "59e75fdafcc45ae7d8a5e15620125092",
+          "source": "3e850dd10ec07acabcd2d5e65ae56181",
+          "target": "ef9ec940cca50c0f14c02090be46a9eb",
+          "traffic": {
+            "protocol": "http",
+            "rates": {
+              "http": "0.10",
+              "httpPercentReq": "100.0"
+            },
+            "responses": {
+              "200": {
+                "flags": {
+                  "-": "100.0"
+                },
+                "hosts": {
+                  "media.yas-dev.svc.cluster.local": "100.0"
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "f05d3ad726953c2c407ad786aae774ef",
+          "source": "6c6798ac7130137943e6484c4103481c",
+          "target": "7f646ebd903205bd60920bf0b986e6c6",
+          "traffic": {
+            "protocol": "tcp",
+            "rates": {
+              "tcp": "5.44"
+            },
+            "responses": {
+              "-": {
+                "flags": {
+                  "-": "100.0"
+                },
+                "hosts": {
+                  "postgres.yas-dev.svc.cluster.local": "100.0"
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "6322bb50cd063455f44a1e2bd212a338",
+          "source": "7f646ebd903205bd60920bf0b986e6c6",
+          "target": "4fa8fcbf540ca6a354c34e0a0482381d",
+          "traffic": {
+            "protocol": "tcp",
+            "rates": {
+              "tcp": "32.75"
+            },
+            "responses": {
+              "-": {
+                "flags": {
+                  "-": "100.0"
+                },
+                "hosts": {
+                  "postgres.yas-dev.svc.cluster.local": "100.0"
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "837added8023884dca1bf4d2a8502558",
+          "source": "b33a716fa84e45328812891728608029",
+          "target": "7f646ebd903205bd60920bf0b986e6c6",
+          "traffic": {
+            "protocol": "tcp",
+            "rates": {
+              "tcp": "5.79"
+            },
+            "responses": {
+              "-": {
+                "flags": {
+                  "-": "100.0"
+                },
+                "hosts": {
+                  "postgres.yas-dev.svc.cluster.local": "100.0"
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "db24a5ce14aa2c904dbc77052bbbc7a6",
+          "source": "bce8d6e83dcd95601ee04048d867fe42",
+          "target": "7f646ebd903205bd60920bf0b986e6c6",
+          "traffic": {
+            "protocol": "tcp",
+            "rates": {
+              "tcp": "4.16"
+            },
+            "responses": {
+              "-": {
+                "flags": {
+                  "-": "100.0"
+                },
+                "hosts": {
+                  "postgres.yas-dev.svc.cluster.local": "100.0"
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "c6b38ac6167d42776b37ebae40ca2679",
+          "source": "bfc8c8741dda777c940d6672aadf022b",
+          "target": "7f646ebd903205bd60920bf0b986e6c6",
+          "traffic": {
+            "protocol": "tcp",
+            "rates": {
+              "tcp": "5.74"
+            },
+            "responses": {
+              "-": {
+                "flags": {
+                  "-": "100.0"
+                },
+                "hosts": {
+                  "postgres.yas-dev.svc.cluster.local": "100.0"
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "33de630d2c637e93a56d637549fbe48e",
+          "source": "cffd1344d13f725c1ddbcff29b2b9b60",
+          "target": "3e850dd10ec07acabcd2d5e65ae56181",
+          "traffic": {
+            "protocol": "http",
+            "rates": {
+              "http": "0.04",
+              "httpPercentReq": "100.0"
+            },
+            "responses": {
+              "200": {
+                "flags": {
+                  "-": "100.0"
+                },
+                "hosts": {
+                  "product.yas-dev.svc.cluster.local": "100.0"
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "f165117f6aac69c5bf70f0f6a5c6502b",
+          "source": "ef9ec940cca50c0f14c02090be46a9eb",
+          "target": "d071c9c15f5a636800a1d9766e732c9d",
+          "traffic": {
+            "protocol": "http",
+            "rates": {
+              "http": "0.10",
+              "httpPercentReq": "100.0"
+            },
+            "responses": {
+              "200": {
+                "flags": {
+                  "-": "100.0"
+                },
+                "hosts": {
+                  "media.yas-dev.svc.cluster.local": "100.0"
+                }
+              }
+            }
+          }
+        }
+      }
+    ]
+  }
+}

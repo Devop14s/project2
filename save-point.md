@@ -1,35 +1,37 @@
 # Save Point
 
-Updated: 2026-07-04 18:40 +07
+Updated: 2026-07-07 21:30 +07
 
 ## Cluster state
 
 - `k3s-master` is `Ready`.
-- `k3s-master` runs on Tailscale-facing addresses:
+- `k3s-master` uses Tailscale-facing addresses:
   - `INTERNAL-IP = 100.96.101.91`
   - `EXTERNAL-IP = 100.96.101.91`
 - The Kubernetes API on the master is reachable on:
   - `https://100.96.101.91:6443`
-  - expected probe response without credentials: `401 Unauthorized`
-- Current workers:
+  - unauthenticated probe response: `401 Unauthorized`
+- Current worker of record:
   - `k3s-worker` is `Ready`
     - `INTERNAL-IP = 100.82.170.68`
     - `EXTERNAL-IP = 100.82.170.68`
-    - WSL memory configured to 18 GB class
+    - WSL memory class: 18 GB
     - observed Linux usable RAM: about `17.56 GiB`
-    - node label already applied:
+    - node label:
       - `node.yas.io/tier=large`
-  - `desktop-brprq5f` still exists but is currently `NotReady`
+- Legacy node:
+  - `desktop-brprq5f` still exists but is `NotReady`
     - `INTERNAL-IP = 100.93.138.20`
-    - intended role: 10 GB worker / `small` tier
-    - node label already applied:
+    - node label:
       - `node.yas.io/tier=small`
-- `k3s-master` has taint:
+- `k3s-master` taint:
   - `node-role.kubernetes.io/control-plane=true:NoSchedule`
-- `yas-dev` is partially redeployed:
-  - master UI pods are healthy
-  - backend pods have been rescheduled onto `k3s-worker`
-  - `postgres-0` and several old pods are still stuck around the 10 GB worker outage and need that node back or a deliberate stateful cleanup before the app becomes healthy again
+- `yas-dev` runtime status:
+  - public UI workloads are on the master
+  - backend workloads are on `k3s-worker`
+  - `keycloak` is deployed and reachable
+  - `product` E2E against `media` now passes
+  - `yas-dev` and `yas-staging` are Synced + Healthy in ArgoCD according to the latest cluster evidence
 
 ## What is running on master
 
@@ -84,10 +86,9 @@ sudo umount /Docker/host
   - `http://172.17.123.111:32080` → storefront
   - `http://172.17.123.111:32081` → backoffice
   - `http://172.17.123.111:32082` → swagger-ui
-- Current blockers are no longer Tailscale or k3s join.
-- Current blocker is runtime placement/state:
-  - `product` and other Java backends are on the new 18 GB worker but are not healthy yet
-  - the old `postgres-0` instance is still tied to the 10 GB worker outage
+- The UI-on-master split is active and stable.
+- Backend traffic now works through the direct `media` service route.
+- Kiali topology evidence and retry / authorization evidence are captured under `work/evidence/`.
 
 ## Configuration changes completed
 
@@ -207,6 +208,20 @@ The following checks passed after the changes:
 - `sh scripts/validate-mesh-readme.sh`
 - `sh scripts/validate-gitops-values.sh`
 - `helm template yas helm/yas -f helm/yas/values.yaml -f helm/yas/values-dev-dual-worker.yaml`
+- Kiali graph capture for `yas-dev`
+- Keycloak login token acquisition for `yas-admin`
+- Product API request chain through BFF to `product` and `media`
+- Jenkins multibranch CI evidence build with commit-tagged Docker Hub image
+
+## Final evidence locations
+
+- Kiali topology screenshot: `work/evidence/kiali-yas-dev-topology.png`
+- Kiali graph JSON: `work/evidence/kiali-yas-dev-graph.json`
+- Retry evidence: `work/evidence-retry.txt`
+- Authorization deny evidence: `work/evidence-mtls-deny.txt`
+- Mesh snapshot: `work/evidence-mesh-config.txt`
+- CI image evidence: `work/evidence/ci-image-evidence-build-5.txt`
+- Jenkins multibranch trigger config: `work/evidence/jenkins-multibranch-trigger-config.xml`
 
 ## Intended deploy modes after worker recovery
 
