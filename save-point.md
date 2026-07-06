@@ -313,3 +313,90 @@ Expected result at this save-point:
 - all `yas-dev` deployments show `1/1`
 - new pods on workers show `2/2 Running`
 - master UI pods show `1/1 Running`
+
+## 2026-07-07 ArgoCD YAML drift note
+
+Current cluster target is no longer the old 3-node split. The active runtime
+target is:
+
+- `k3s-master`: control-plane, UI, Istio, monitoring/light support
+- `k3s-worker`: the single worker for backend, Postgres, Kafka, Elasticsearch,
+  Keycloak, media/search and remaining business services
+
+Important warning: some YAML values files can be syntactically valid but still
+wrong for the current upstream images. The most recent blocker was caused by
+`argocd/values/dev-values.yaml` inheriting default backend ports from
+`helm/yas/values.yaml`:
+
+- default base chart backend port: `containerPort: 80`
+- default base chart metric/probe port: `metricPort: 8090`
+- generic HTTP probe path: `/actuator/health/liveness` and
+  `/actuator/health/readiness`
+
+That default does not match the actual service ports in the upstream source:
+
+- `product`: `server.port=8080`
+- `media`: `server.port=8083`
+- `cart`: `server.port=8084`
+- `order`: `server.port=8085`
+- `customer`: `server.port=8088`
+- `inventory`: `server.port=8090`
+- `tax`: `server.port=8091`
+- `search`: `server.port=8092`
+
+Because of that mismatch, ArgoCD could be `Synced` while Kubernetes remained
+`Degraded`: service `targetPort` and probes pointed at the wrong port. The fix
+committed in `139ea30` explicitly sets `containerPort`, `metricPort`, and TCP
+probes for the dev backend overrides in `argocd/values/dev-values.yaml`.
+
+The same class of drift also affected the two BFF services. The BFF images run
+on `server.port=8087`, and the previously verified images were:
+
+- `luongtrz/yas-storefront-bff:20260705-step2fix2`
+- `luongtrz/yas-backoffice-bff:20260705-step2fix2`
+
+If `argocd/values/dev-values.yaml` falls back to the base chart for these BFFs,
+ArgoCD renders `containerPort: 80`, `metricPort: 8090`, and image tag `main`.
+That renders valid Kubernetes YAML, but the pods crash or never become
+available because the runtime process listens on `8087`.
+
+Files that must be treated as potentially stale or wrong before any redeploy:
+
+- `argocd/values/dev-values.yaml`: active GitOps dev override; highest risk.
+- `argocd/values/staging-values.yaml`: staging override; compare with dev when
+  enabling the same service set.
+- `helm/yas/values.yaml`: base defaults; safe for shared defaults only, but
+  backend port defaults do not match every upstream service.
+- `helm/yas/values-dev-dual-worker.yaml`: old/manual overlay from the previous
+  two-worker layout; do not assume it matches the current master + one-worker
+  topology.
+- `helm/yas/values-dev.yaml` and any generated values file: check before use,
+  because older generated files may not include the runtime port/probe fixes.
+
+Before trusting a YAML file, verify these points:
+
+```bash
+rg -n "server.port=|management.server.port" yas-source/*/src/main/resources/application.properties
+helm template yas helm/yas -f helm/yas/values.yaml -f argocd/values/dev-values.yaml | rg -n "name: yas-dev-(product|media|cart|customer|order|inventory|tax|search)|containerPort:|targetPort:|SPRING_KAFKA|ELASTICSEARCH_URL|livenessProbe|readinessProbe"
+```
+
+Also verify BFF image/ports explicitly:
+
+```bash
+helm template yas helm/yas -f helm/yas/values.yaml -f argocd/values/dev-values.yaml | rg -n "name: yas-dev-(storefront-bff|backoffice-bff)|image: luongtrz/yas-(storefront-bff|backoffice-bff)|containerPort: 8087|targetPort: http|tcpSocket"
+```
+
+For `search`, do not only set consumer/producer bootstrap servers. Keep all of
+these aligned unless the source code changes:
+
+- `SPRING_KAFKA_BOOTSTRAP_SERVERS`
+- `SPRING_KAFKA_CONSUMER_BOOTSTRAP_SERVERS`
+- `SPRING_KAFKA_PRODUCER_BOOTSTRAP_SERVERS`
+- `ELASTICSEARCH_URL=elasticsearch.yas-dev.svc.cluster.local:9200`
+
+Operational interpretation:
+
+- `Synced` only means ArgoCD applied the manifests from Git.
+- `Healthy` requires the rendered manifests to match real runtime behavior.
+- If rollout is stuck with old replicas pending termination, read the new pod
+  first. Old replicas usually remain because the new pod is not Ready.

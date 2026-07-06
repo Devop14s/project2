@@ -32,14 +32,24 @@ services:
       host: backoffice-dev.yas.local
   storefront-bff:
     enabled: true
+    containerPort: 8087
+    metricPort: 8087
     image:
       repository: luongtrz/yas-storefront-bff
-      tag: main
+      tag: 20260705-step2fix2
+    probes:
+      mode: tcp
+      port: http
   backoffice-bff:
     enabled: true
+    containerPort: 8087
+    metricPort: 8087
     image:
       repository: luongtrz/yas-backoffice-bff
-      tag: main
+      tag: 20260705-step2fix2
+    probes:
+      mode: tcp
+      port: http
   product:
     enabled: true
     containerPort: 8080
