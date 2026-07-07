@@ -20,25 +20,25 @@ services:
       host: storefront-dev.yas.local
       extraPaths:
         - path: /oauth2
-          serviceName: storefront-bff
+          serviceName: yas-dev-storefront-bff
           servicePort: 80
         - path: /login
-          serviceName: storefront-bff
+          serviceName: yas-dev-storefront-bff
           servicePort: 80
         - path: /logout
-          serviceName: storefront-bff
+          serviceName: yas-dev-storefront-bff
           servicePort: 80
         - path: /api
-          serviceName: storefront-bff
+          serviceName: yas-dev-storefront-bff
           servicePort: 80
         - path: /actuator/health
-          serviceName: storefront-bff
+          serviceName: yas-dev-storefront-bff
           servicePort: 80
         - path: /actuator/health/liveness
-          serviceName: storefront-bff
+          serviceName: yas-dev-storefront-bff
           servicePort: 80
         - path: /actuator/health/readiness
-          serviceName: storefront-bff
+          serviceName: yas-dev-storefront-bff
           servicePort: 80
 
   backoffice:
@@ -57,55 +57,55 @@ services:
       host: backoffice-dev.yas.local
       extraPaths:
         - path: /oauth2
-          serviceName: backoffice-bff
+          serviceName: yas-dev-backoffice-bff
           servicePort: 80
         - path: /login
-          serviceName: backoffice-bff
+          serviceName: yas-dev-backoffice-bff
           servicePort: 80
         - path: /logout
-          serviceName: backoffice-bff
+          serviceName: yas-dev-backoffice-bff
           servicePort: 80
         - path: /api
-          serviceName: backoffice-bff
+          serviceName: yas-dev-backoffice-bff
           servicePort: 80
         - path: /catalog
-          serviceName: backoffice-bff
+          serviceName: yas-dev-backoffice-bff
           servicePort: 80
         - path: /customers
-          serviceName: backoffice-bff
+          serviceName: yas-dev-backoffice-bff
           servicePort: 80
         - path: /sales
-          serviceName: backoffice-bff
+          serviceName: yas-dev-backoffice-bff
           servicePort: 80
         - path: /location
-          serviceName: backoffice-bff
+          serviceName: yas-dev-backoffice-bff
           servicePort: 80
         - path: /inventory
-          serviceName: backoffice-bff
+          serviceName: yas-dev-backoffice-bff
           servicePort: 80
         - path: /promotion
-          serviceName: backoffice-bff
+          serviceName: yas-dev-backoffice-bff
           servicePort: 80
         - path: /tax
-          serviceName: backoffice-bff
+          serviceName: yas-dev-backoffice-bff
           servicePort: 80
         - path: /system
-          serviceName: backoffice-bff
+          serviceName: yas-dev-backoffice-bff
           servicePort: 80
         - path: /webhook
-          serviceName: backoffice-bff
+          serviceName: yas-dev-backoffice-bff
           servicePort: 80
         - path: /profile
-          serviceName: backoffice-bff
+          serviceName: yas-dev-backoffice-bff
           servicePort: 80
         - path: /actuator/health
-          serviceName: backoffice-bff
+          serviceName: yas-dev-backoffice-bff
           servicePort: 80
         - path: /actuator/health/liveness
-          serviceName: backoffice-bff
+          serviceName: yas-dev-backoffice-bff
           servicePort: 80
         - path: /actuator/health/readiness
-          serviceName: backoffice-bff
+          serviceName: yas-dev-backoffice-bff
           servicePort: 80
 
   swagger-ui:

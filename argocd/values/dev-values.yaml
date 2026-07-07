@@ -15,21 +15,99 @@ services:
   storefront:
     enabled: true
     schedulingProfile: ui-on-master
+    podAnnotations:
+      sidecar.istio.io/inject: "false"
     image:
       repository: luongtrz/yas-storefront
       tag: main
     ingress:
       enabled: true
       host: storefront-dev.yas.local
+      extraPaths:
+        - path: /oauth2
+          serviceName: yas-dev-storefront-bff
+          servicePort: 80
+        - path: /login
+          serviceName: yas-dev-storefront-bff
+          servicePort: 80
+        - path: /logout
+          serviceName: yas-dev-storefront-bff
+          servicePort: 80
+        - path: /api
+          serviceName: yas-dev-storefront-bff
+          servicePort: 80
+        - path: /actuator/health
+          serviceName: yas-dev-storefront-bff
+          servicePort: 80
+        - path: /actuator/health/liveness
+          serviceName: yas-dev-storefront-bff
+          servicePort: 80
+        - path: /actuator/health/readiness
+          serviceName: yas-dev-storefront-bff
+          servicePort: 80
   backoffice:
     enabled: true
     schedulingProfile: ui-on-master
+    podAnnotations:
+      sidecar.istio.io/inject: "false"
     image:
       repository: luongtrz/yas-backoffice
       tag: main
     ingress:
       enabled: true
       host: backoffice-dev.yas.local
+      extraPaths:
+        - path: /oauth2
+          serviceName: yas-dev-backoffice-bff
+          servicePort: 80
+        - path: /login
+          serviceName: yas-dev-backoffice-bff
+          servicePort: 80
+        - path: /logout
+          serviceName: yas-dev-backoffice-bff
+          servicePort: 80
+        - path: /api
+          serviceName: yas-dev-backoffice-bff
+          servicePort: 80
+        - path: /catalog
+          serviceName: yas-dev-backoffice-bff
+          servicePort: 80
+        - path: /customers
+          serviceName: yas-dev-backoffice-bff
+          servicePort: 80
+        - path: /sales
+          serviceName: yas-dev-backoffice-bff
+          servicePort: 80
+        - path: /location
+          serviceName: yas-dev-backoffice-bff
+          servicePort: 80
+        - path: /inventory
+          serviceName: yas-dev-backoffice-bff
+          servicePort: 80
+        - path: /promotion
+          serviceName: yas-dev-backoffice-bff
+          servicePort: 80
+        - path: /tax
+          serviceName: yas-dev-backoffice-bff
+          servicePort: 80
+        - path: /system
+          serviceName: yas-dev-backoffice-bff
+          servicePort: 80
+        - path: /webhook
+          serviceName: yas-dev-backoffice-bff
+          servicePort: 80
+        - path: /profile
+          serviceName: yas-dev-backoffice-bff
+          servicePort: 80
+        - path: /actuator/health
+          serviceName: yas-dev-backoffice-bff
+          servicePort: 80
+        - path: /actuator/health/liveness
+          serviceName: yas-dev-backoffice-bff
+          servicePort: 80
+        - path: /actuator/health/readiness
+          serviceName: yas-dev-backoffice-bff
+          servicePort: 80
   storefront-bff:
     enabled: true
     containerPort: 8087
@@ -230,6 +308,8 @@ services:
   swagger-ui:
     enabled: true
     schedulingProfile: ui-on-master
+    podAnnotations:
+      sidecar.istio.io/inject: "false"
     image:
       repository: luongtrz/yas-swagger-ui
       tag: main
