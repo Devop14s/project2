@@ -138,6 +138,9 @@ services:
     image:
       repository: luongtrz/yas-product
       tag: main
+    service:
+      aliases:
+        - product
     env:
       - name: JAVA_TOOL_OPTIONS
         value: "-Xmx192m -Xms64m -XX:MaxMetaspaceSize=128m -XX:ReservedCodeCacheSize=32m"
@@ -162,6 +165,9 @@ services:
       repository: luongtrz/yas-media
       # Immutable build containing the public GET /medias/** security rule.
       tag: f4617c4-mediaauth
+    service:
+      aliases:
+        - media
     env:
       - name: JAVA_TOOL_OPTIONS
         value: "-Xmx192m -Xms64m -XX:MaxMetaspaceSize=128m -XX:ReservedCodeCacheSize=32m"
@@ -181,6 +187,9 @@ services:
     image:
       repository: luongtrz/yas-cart
       tag: main
+    service:
+      aliases:
+        - cart
     env:
       - name: JAVA_TOOL_OPTIONS
         value: "-Xmx192m -Xms64m -XX:MaxMetaspaceSize=128m -XX:ReservedCodeCacheSize=32m"
@@ -200,6 +209,9 @@ services:
     image:
       repository: luongtrz/yas-customer
       tag: main
+    service:
+      aliases:
+        - customer
     env:
       - name: JAVA_TOOL_OPTIONS
         value: "-Xmx192m -Xms64m -XX:MaxMetaspaceSize=128m -XX:ReservedCodeCacheSize=32m"
@@ -223,6 +235,9 @@ services:
     image:
       repository: luongtrz/yas-order
       tag: main
+    service:
+      aliases:
+        - order
     env:
       - name: JAVA_TOOL_OPTIONS
         value: "-Xmx192m -Xms64m -XX:MaxMetaspaceSize=128m -XX:ReservedCodeCacheSize=32m"
@@ -242,6 +257,9 @@ services:
     image:
       repository: luongtrz/yas-inventory
       tag: main
+    service:
+      aliases:
+        - inventory
     env:
       - name: JAVA_TOOL_OPTIONS
         value: "-Xmx192m -Xms64m -XX:MaxMetaspaceSize=128m -XX:ReservedCodeCacheSize=32m"
@@ -261,6 +279,9 @@ services:
     image:
       repository: luongtrz/yas-tax
       tag: main
+    service:
+      aliases:
+        - tax
     env:
       - name: JAVA_TOOL_OPTIONS
         value: "-Xmx192m -Xms64m -XX:MaxMetaspaceSize=128m -XX:ReservedCodeCacheSize=32m"
@@ -280,6 +301,9 @@ services:
     image:
       repository: luongtrz/yas-search
       tag: main
+    service:
+      aliases:
+        - search
     env:
       - name: JAVA_TOOL_OPTIONS
         value: "-Xmx192m -Xms64m -XX:MaxMetaspaceSize=128m -XX:ReservedCodeCacheSize=32m"
@@ -305,6 +329,9 @@ services:
     image:
       repository: luongtrz/yas-sampledata
       tag: main
+    service:
+      aliases:
+        - sampledata
   swagger-ui:
     enabled: true
     schedulingProfile: ui-on-master
