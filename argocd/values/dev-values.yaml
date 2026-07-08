@@ -150,10 +150,8 @@ services:
         value: admin
       - name: SPRING_DATASOURCE_PASSWORD
         value: admin
-      # Bypass the external API prefix: product expects the media root URL and
-      # appends /medias itself. Service-to-service traffic remains inside Istio.
       - name: YAS_SERVICES_MEDIA
-        value: http://media.yas-dev.svc.cluster.local
+        value: http://media.yas-dev.svc.cluster.local/media
   media:
     enabled: true
     schedulingProfile: ui-on-master

@@ -203,6 +203,8 @@ services:
         value: admin
       - name: SPRING_DATASOURCE_PASSWORD
         value: admin
+      - name: YAS_SERVICES_MEDIA
+        value: http://media.yas-dev.svc.cluster.local/media
 
   cart:
     enabled: true
