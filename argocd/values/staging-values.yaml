@@ -350,7 +350,8 @@ services:
 
   media:
     enabled: true
-    schedulingProfile: worker-large
+    nodeSelector:
+      kubernetes.io/hostname: k3s-master
     containerPort: 8083
     metricPort: 8083
     image:
@@ -359,6 +360,15 @@ services:
     service:
       aliases:
         - media
+    extraVolumes:
+      - name: media-sample-images
+        hostPath:
+          path: /home/luong/project2/yas-source/sampledata/images
+          type: Directory
+    extraVolumeMounts:
+      - name: media-sample-images
+        mountPath: /images
+        readOnly: true
     probes:
       mode: tcp
       port: http

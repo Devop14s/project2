@@ -156,6 +156,8 @@ services:
         value: http://media.yas-dev.svc.cluster.local
   media:
     enabled: true
+    nodeSelector:
+      kubernetes.io/hostname: k3s-master
     containerPort: 8083
     metricPort: 8083
     probes:
@@ -168,6 +170,15 @@ services:
     service:
       aliases:
         - media
+    extraVolumes:
+      - name: media-sample-images
+        hostPath:
+          path: /home/luong/project2/yas-source/sampledata/images
+          type: Directory
+    extraVolumeMounts:
+      - name: media-sample-images
+        mountPath: /images
+        readOnly: true
     env:
       - name: JAVA_TOOL_OPTIONS
         value: "-Xmx192m -Xms64m -XX:MaxMetaspaceSize=128m -XX:ReservedCodeCacheSize=32m"
@@ -177,6 +188,10 @@ services:
         value: admin
       - name: SPRING_DATASOURCE_PASSWORD
         value: admin
+      - name: SERVER_SERVLET_CONTEXT_PATH
+        value: /media
+      - name: YAS_PUBLICURL
+        value: http://api.yas.local/media
   cart:
     enabled: true
     containerPort: 8084

@@ -53,10 +53,22 @@ spec:
       tolerations:
 {{ toYaml $tolerations | indent 8 }}
 {{- end }}
+{{- if $svc.extraVolumes }}
+      volumes:
+{{ toYaml $svc.extraVolumes | indent 8 }}
+{{- end }}
+{{- if $svc.initContainers }}
+      initContainers:
+{{ toYaml $svc.initContainers | indent 8 }}
+{{- end }}
       containers:
         - name: {{ $name }}
           image: "{{ $svc.image.repository }}:{{ $svc.image.tag }}"
           imagePullPolicy: {{ $svc.image.pullPolicy | default "IfNotPresent" }}
+{{- if $svc.extraVolumeMounts }}
+          volumeMounts:
+{{ toYaml $svc.extraVolumeMounts | indent 12 }}
+{{- end }}
           ports:
             - name: http
               containerPort: {{ $svc.containerPort }}
