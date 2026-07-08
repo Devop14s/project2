@@ -101,6 +101,8 @@ externalServices:
     externalName: elasticsearch.yas-dev.svc.cluster.local
   redis:
     externalName: redis.yas-dev.svc.cluster.local
+  kafka:
+    externalName: kafka.yas-dev.svc.cluster.local
 
 EOF
 fi
@@ -195,6 +197,9 @@ EOF
     if [ "${selected_workload_type}" = "backend" ]; then
       cat >> "$output_file" <<EOF
     metricPort: ${selected_port}
+    probes:
+      mode: tcp
+      port: http
 EOF
       developer_env_overrides "$selected_service" >> "$output_file"
     fi
