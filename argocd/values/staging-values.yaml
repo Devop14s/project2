@@ -133,11 +133,17 @@ services:
       limits:
         cpu: 750m
         memory: 768Mi
+    hostAliases:
+      - ip: 10.43.109.124
+        hostnames:
+          - identity-dev.yas.local
     env:
       - name: JAVA_TOOL_OPTIONS
         value: "-Xmx192m -Xms64m -XX:MaxMetaspaceSize=128m -XX:ReservedCodeCacheSize=32m"
       - name: YAS_STOREFRONT_UI_URL
         value: http://yas-staging-storefront.yas-staging.svc.cluster.local:3000
+      - name: YAS_IDENTITY_INTERNAL_BASE_URL
+        value: http://identity-dev.yas.local
 
   backoffice-bff:
     enabled: true
@@ -160,11 +166,17 @@ services:
       limits:
         cpu: 750m
         memory: 768Mi
+    hostAliases:
+      - ip: 10.43.109.124
+        hostnames:
+          - identity-dev.yas.local
     env:
       - name: JAVA_TOOL_OPTIONS
         value: "-Xmx192m -Xms64m -XX:MaxMetaspaceSize=128m -XX:ReservedCodeCacheSize=32m"
       - name: YAS_BACKOFFICE_UI_URL
         value: http://yas-staging-backoffice.yas-staging.svc.cluster.local:3000
+      - name: YAS_IDENTITY_INTERNAL_BASE_URL
+        value: http://identity-dev.yas.local
 
   product:
     enabled: true

@@ -41,6 +41,10 @@ spec:
 {{- end }}
     spec:
       serviceAccountName: {{ $name }}
+{{- if $svc.hostAliases }}
+      hostAliases:
+{{ toYaml $svc.hostAliases | indent 8 }}
+{{- end }}
 {{- if $nodeSelector }}
       nodeSelector:
 {{ toYaml $nodeSelector | indent 8 }}
