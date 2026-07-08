@@ -194,7 +194,7 @@ EOF
 
     if [ "${selected_workload_type}" = "backend" ]; then
       cat >> "$output_file" <<EOF
-    metricPort: 8090
+    metricPort: ${selected_port}
 EOF
       developer_env_overrides "$selected_service" >> "$output_file"
     fi
