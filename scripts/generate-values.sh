@@ -97,6 +97,10 @@ if [ "$environment_name" = "developer" ]; then
 externalServices:
   identity:
     externalName: identity.yas-dev.svc.cluster.local
+  elasticsearch:
+    externalName: elasticsearch.yas-dev.svc.cluster.local
+  redis:
+    externalName: redis.yas-dev.svc.cluster.local
 
 EOF
 fi
