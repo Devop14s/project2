@@ -24,6 +24,7 @@ spring:
           keycloak:
             provider: keycloak
             authorization-grant-type: authorization_code
+            client-authentication-method: none
             redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
             client-id: storefront-bff
             scope: openid, profile, email, roles

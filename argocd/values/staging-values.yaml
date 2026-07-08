@@ -119,7 +119,7 @@ services:
     metricPort: 8087
     image:
       repository: luongtrz/yas-storefront-bff
-      tag: 20260709-bff-ui-route-fix2
+      tag: 20260709-bff-ui-route-fix3
     service:
       aliases:
         - storefront-bff
@@ -146,7 +146,7 @@ services:
     metricPort: 8087
     image:
       repository: luongtrz/yas-backoffice-bff
-      tag: 20260709-bff-ui-route-fix2
+      tag: 20260709-bff-ui-route-fix3
     service:
       aliases:
         - backoffice-bff
