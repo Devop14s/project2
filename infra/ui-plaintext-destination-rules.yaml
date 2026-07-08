@@ -1,0 +1,43 @@
+apiVersion: networking.istio.io/v1
+kind: DestinationRule
+metadata:
+  name: storefront-ui-no-mtls
+  namespace: yas-dev
+spec:
+  host: yas-dev-storefront.yas-dev.svc.cluster.local
+  trafficPolicy:
+    tls:
+      mode: DISABLE
+---
+apiVersion: networking.istio.io/v1
+kind: DestinationRule
+metadata:
+  name: backoffice-ui-no-mtls
+  namespace: yas-dev
+spec:
+  host: yas-dev-backoffice.yas-dev.svc.cluster.local
+  trafficPolicy:
+    tls:
+      mode: DISABLE
+---
+apiVersion: networking.istio.io/v1
+kind: DestinationRule
+metadata:
+  name: storefront-ui-no-mtls
+  namespace: yas-staging
+spec:
+  host: yas-staging-storefront.yas-staging.svc.cluster.local
+  trafficPolicy:
+    tls:
+      mode: DISABLE
+---
+apiVersion: networking.istio.io/v1
+kind: DestinationRule
+metadata:
+  name: backoffice-ui-no-mtls
+  namespace: yas-staging
+spec:
+  host: yas-staging-backoffice.yas-staging.svc.cluster.local
+  trafficPolicy:
+    tls:
+      mode: DISABLE

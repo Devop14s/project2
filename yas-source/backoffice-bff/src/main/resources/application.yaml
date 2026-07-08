@@ -26,7 +26,6 @@ spring:
             authorization-grant-type: authorization_code
             redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
             client-id: backoffice-bff
-            client-secret: TVacLC0cQ8tiiEKiTVerTb2YvwQ1TRJF #gitleaks:allow
             scope: openid, profile, email, roles
   data:
     redis:
