@@ -350,13 +350,7 @@ services:
 
   media:
     enabled: true
-    nodeSelector:
-      kubernetes.io/hostname: k3s-master
-    tolerations:
-      - key: node-role.kubernetes.io/control-plane
-        operator: Equal
-        value: "true"
-        effect: NoSchedule
+    schedulingProfile: ui-on-master
     containerPort: 8083
     metricPort: 8083
     image:
