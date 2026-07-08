@@ -90,6 +90,18 @@ global:
   domainName: ${domain_name}
   releaseName: ${release_name}
 
+EOF
+
+if [ "$environment_name" = "developer" ]; then
+  cat >> "$output_file" <<EOF
+externalServices:
+  identity:
+    externalName: identity.yas-dev.svc.cluster.local
+
+EOF
+fi
+
+cat >> "$output_file" <<EOF
 services:
 EOF
 
