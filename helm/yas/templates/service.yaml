@@ -1,5 +1,7 @@
 {{- range $name, $svc := .Values.services }}
 {{- if $svc.enabled }}
+{{- $metricPort := $svc.metricPort | default 8090 }}
+{{- $hasDistinctMetricPort := and (eq ($svc.workloadType | default "backend") "backend") (ne ($metricPort | toString) ($svc.containerPort | toString)) }}
 apiVersion: v1
 kind: Service
 metadata:
@@ -16,10 +18,10 @@ spec:
 {{- if eq ($svc.service.type | default "ClusterIP") "NodePort" }}
       nodePort: {{ $svc.service.nodePort }}
 {{- end }}
-{{- if eq ($svc.workloadType | default "backend") "backend" }}
+{{- if $hasDistinctMetricPort }}
     - name: metric
-      port: {{ $svc.metricPort | default 8090 }}
-      targetPort: {{ $svc.metricPort | default 8090 }}
+      port: {{ $metricPort }}
+      targetPort: {{ $metricPort }}
 {{- end }}
 ---
 {{- range $alias := $svc.service.aliases | default list }}

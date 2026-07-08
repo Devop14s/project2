@@ -12,6 +12,9 @@
 {{- $probes := $svc.probes | default dict }}
 {{- $probeMode := get $probes "mode" | default "" }}
 {{- $probePort := get $probes "port" | default "http" }}
+{{- $metricPort := $svc.metricPort | default 8090 }}
+{{- $hasDistinctMetricPort := and (eq $workloadType "backend") (ne ($metricPort | toString) ($svc.containerPort | toString)) }}
+{{- $metricPortName := ternary "metric" "http" $hasDistinctMetricPort }}
 {{- $replicaCount := ternary $svc.replicaCount 1 (hasKey $svc "replicaCount") }}
 {{- $environmentName := $.Values.global.environment | default "default" }}
 apiVersion: apps/v1
@@ -57,9 +60,9 @@ spec:
           ports:
             - name: http
               containerPort: {{ $svc.containerPort }}
-{{- if eq $workloadType "backend" }}
+{{- if $hasDistinctMetricPort }}
             - name: metric
-              containerPort: {{ $svc.metricPort | default 8090 }}
+              containerPort: {{ $metricPort }}
 {{- end }}
 {{- if eq $workloadType "ui" }}
           livenessProbe:
@@ -87,14 +90,14 @@ spec:
           livenessProbe:
             httpGet:
               path: /actuator/health/liveness
-              port: metric
+              port: {{ $metricPortName }}
             initialDelaySeconds: 90
             periodSeconds: 10
             failureThreshold: 5
           readinessProbe:
             httpGet:
               path: /actuator/health/readiness
-              port: metric
+              port: {{ $metricPortName }}
             initialDelaySeconds: 90
             periodSeconds: 10
             failureThreshold: 5
