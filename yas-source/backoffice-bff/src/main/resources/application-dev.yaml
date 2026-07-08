@@ -22,6 +22,6 @@ spring:
                 - RewritePath=/api/(?<segment>.*), /$\{segment}
                 - TokenRelay=
             - id: nextjs
-              uri: http://localhost:3000
+              uri: ${YAS_BACKOFFICE_UI_URL:http://localhost:3000}
               predicates:
                 - Path=/**
