@@ -117,6 +117,31 @@ ingress_host_for() {
   esac
 }
 
+developer_env_overrides() {
+  service="$1"
+
+  [ "$environment_name" = "developer" ] || return 0
+
+  db_suffix="$(printf '%s' "$deployer_id" | tr '[:upper:]' '[:lower:]' | tr -c 'a-z0-9' '_')"
+
+  case "$service" in
+    cart|order|customer|inventory|tax|media|search|product)
+      printf '    env:\n'
+      printf '      - name: SPRING_DATASOURCE_URL\n'
+      printf '        value: jdbc:postgresql://postgres.yas-dev.svc.cluster.local:5432/%s_%s\n' "$service" "$db_suffix"
+      printf '      - name: SPRING_DATASOURCE_USERNAME\n'
+      printf '        value: admin\n'
+      printf '      - name: SPRING_DATASOURCE_PASSWORD\n'
+      printf '        value: admin\n'
+      ;;
+    storefront-bff|backoffice-bff)
+      printf '    env:\n'
+      printf '      - name: YAS_IDENTITY_INTERNAL_BASE_URL\n'
+      printf '        value: http://identity.yas-dev.svc.cluster.local\n'
+      ;;
+  esac
+}
+
 iter_catalog_services "$all_services_file" | while IFS='|' read -r service path dockerfile port expose node_port workload_type; do
 
   selected_entry="$(grep "^${service}|" "$selected_services_file" || true)"
@@ -155,6 +180,7 @@ EOF
       cat >> "$output_file" <<EOF
     metricPort: 8090
 EOF
+      developer_env_overrides "$selected_service" >> "$output_file"
     fi
 
     if [ "$selected_expose" = "true" ]; then

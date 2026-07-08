@@ -75,6 +75,12 @@ return {
       sh 'jenkins/scripts/generate-values.sh'
     }
 
+    stage('Provision Databases') {
+      withCredentials([file(credentialsId: 'kubeconfig-file', variable: 'KUBECONFIG')]) {
+        sh 'jenkins/scripts/provision-dev-databases.sh'
+      }
+    }
+
     stage('Deploy') {
       withCredentials([file(credentialsId: 'kubeconfig-file', variable: 'KUBECONFIG')]) {
         sh 'jenkins/scripts/deploy-helm.sh'
