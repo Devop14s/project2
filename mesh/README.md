@@ -24,5 +24,6 @@ The current chart now creates one `ServiceAccount` per workload named after the 
 
 ## Supporting docs
 
-- [service-mesh-test-plan.md](</D:/App/project2/docs/service-mesh-test-plan.md>) describes the real runtime checks to run once Istio is installed on a cluster.
-- [service-mesh-results.md](</D:/App/project2/docs/service-mesh-results.md>) is the place to record what was actually executed versus what remains scaffold-only.
+- [../docs/service-mesh-test-plan.md](../docs/service-mesh-test-plan.md) describes the real runtime checks run against the live cluster.
+- [../docs/service-mesh-results.md](../docs/service-mesh-results.md) records what was actually executed and verified at runtime.
+- [../report/BAO-CAO-CHI-TIET.md](../report/BAO-CAO-CHI-TIET.md) has the full walkthrough with screenshots (section 11).

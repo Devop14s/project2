@@ -1,0 +1,32 @@
+<!doctype html><html><head><meta charset="utf-8"><title>21-virtualservice-retry-yaml</title>
+<style>
+body { margin:0; background:#0b1020; color:#e5e7eb; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+.wrap { padding: 24px; }
+h1 { font: 700 22px system-ui, sans-serif; margin: 0 0 16px; color:#fff; }
+pre { white-space: pre-wrap; word-break: break-word; line-height:1.45; font-size:16px; background:#111827; border:1px solid #374151; border-radius:12px; padding:20px; }
+</style></head><body><div class="wrap"><h1>21-virtualservice-retry-yaml</h1><pre>apiVersion: networking.istio.io/v1
+kind: VirtualService
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"networking.istio.io/v1","kind":"VirtualService","metadata":{"annotations":{},"name":"order-retry","namespace":"yas-dev"},"spec":{"hosts":["yas-dev-order.yas-dev.svc.cluster.local"],"http":[{"retries":{"attempts":3,"perTryTimeout":"2s","retryOn":"5xx,connect-failure,refused-stream"},"route":[{"destination":{"host":"yas-dev-order.yas-dev.svc.cluster.local","port":{"number":80}}}]}]}}
+  creationTimestamp: "2026-06-28T17:18:52Z"
+  generation: 2
+  name: order-retry
+  namespace: yas-dev
+  resourceVersion: "73061"
+  uid: d2f15d7f-b919-44d3-8127-69d14e829c4f
+spec:
+  hosts:
+  - yas-dev-order.yas-dev.svc.cluster.local
+  http:
+  - retries:
+      attempts: 3
+      perTryTimeout: 2s
+      retryOn: 5xx,connect-failure,refused-stream
+    route:
+    - destination:
+        host: yas-dev-order.yas-dev.svc.cluster.local
+        port:
+          number: 80
+</pre></div></body></html>

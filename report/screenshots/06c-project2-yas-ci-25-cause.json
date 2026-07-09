@@ -1,0 +1,277 @@
+{
+  "_class" : "org.jenkinsci.plugins.workflow.job.WorkflowRun",
+  "actions" : [
+    {
+      "_class" : "hudson.model.CauseAction",
+      "causes" : [
+        {
+          "_class" : "hudson.triggers.SCMTrigger$SCMTriggerCause",
+          "shortDescription" : "Started by an SCM change"
+        }
+      ]
+    },
+    {
+      
+    },
+    {
+      "_class" : "hudson.model.ParametersAction",
+      "parameters" : [
+        {
+          "_class" : "hudson.model.StringParameterValue",
+          "name" : "PIPELINE_TARGET",
+          "value" : "ci"
+        },
+        {
+          "_class" : "hudson.model.StringParameterValue",
+          "name" : "SERVICE_CATALOG",
+          "value" : "release-baseline"
+        },
+        {
+          "_class" : "hudson.model.StringParameterValue",
+          "name" : "SOURCE_ROOT",
+          "value" : ""
+        },
+        {
+          "_class" : "hudson.model.StringParameterValue",
+          "name" : "SOURCE_GIT_ROOT",
+          "value" : ""
+        },
+        {
+          "_class" : "hudson.model.StringParameterValue",
+          "name" : "SOURCE_REPO_URL",
+          "value" : "https://github.com/nashtech-garage/yas.git"
+        },
+        {
+          "_class" : "hudson.model.StringParameterValue",
+          "name" : "SOURCE_REPO_REF",
+          "value" : "main"
+        },
+        {
+          "_class" : "hudson.model.StringParameterValue",
+          "name" : "DOCKERHUB_NAMESPACE",
+          "value" : ""
+        },
+        {
+          "_class" : "hudson.model.StringParameterValue",
+          "name" : "RELEASE_VERSION",
+          "value" : "v1.0.0"
+        },
+        {
+          "_class" : "hudson.model.StringParameterValue",
+          "name" : "DEPLOYER_ID",
+          "value" : "dev1"
+        },
+        {
+          "_class" : "hudson.model.StringParameterValue",
+          "name" : "DOMAIN_NAME",
+          "value" : "storefront-dev1.yas.local"
+        },
+        {
+          "_class" : "hudson.model.StringParameterValue",
+          "name" : "BACKOFFICE_DOMAIN_NAME",
+          "value" : "backoffice-dev1.yas.local"
+        },
+        {
+          "_class" : "hudson.model.StringParameterValue",
+          "name" : "NAMESPACE",
+          "value" : ""
+        },
+        {
+          "_class" : "hudson.model.StringParameterValue",
+          "name" : "RELEASE_NAME",
+          "value" : ""
+        },
+        {
+          "_class" : "hudson.model.BooleanParameterValue",
+          "name" : "DELETE_NAMESPACE",
+          "value" : true
+        },
+        {
+          "_class" : "hudson.model.BooleanParameterValue",
+          "name" : "ALLOW_SHARED_ENVIRONMENT_CLEANUP",
+          "value" : false
+        },
+        {
+          "_class" : "hudson.model.BooleanParameterValue",
+          "name" : "ALLOW_SHARED_NAMESPACE_DELETE",
+          "value" : false
+        },
+        {
+          "_class" : "hudson.model.StringParameterValue",
+          "name" : "STOREFRONT_BRANCH",
+          "value" : "main"
+        },
+        {
+          "_class" : "hudson.model.StringParameterValue",
+          "name" : "BACKOFFICE_BRANCH",
+          "value" : "main"
+        },
+        {
+          "_class" : "hudson.model.StringParameterValue",
+          "name" : "STOREFRONT_BFF_BRANCH",
+          "value" : "main"
+        },
+        {
+          "_class" : "hudson.model.StringParameterValue",
+          "name" : "BACKOFFICE_BFF_BRANCH",
+          "value" : "main"
+        },
+        {
+          "_class" : "hudson.model.StringParameterValue",
+          "name" : "PRODUCT_BRANCH",
+          "value" : "main"
+        },
+        {
+          "_class" : "hudson.model.StringParameterValue",
+          "name" : "MEDIA_BRANCH",
+          "value" : "main"
+        },
+        {
+          "_class" : "hudson.model.StringParameterValue",
+          "name" : "CART_BRANCH",
+          "value" : "main"
+        },
+        {
+          "_class" : "hudson.model.StringParameterValue",
+          "name" : "CUSTOMER_BRANCH",
+          "value" : "main"
+        },
+        {
+          "_class" : "hudson.model.StringParameterValue",
+          "name" : "RATING_BRANCH",
+          "value" : "main"
+        },
+        {
+          "_class" : "hudson.model.StringParameterValue",
+          "name" : "LOCATION_BRANCH",
+          "value" : "main"
+        },
+        {
+          "_class" : "hudson.model.StringParameterValue",
+          "name" : "ORDER_BRANCH",
+          "value" : "main"
+        },
+        {
+          "_class" : "hudson.model.StringParameterValue",
+          "name" : "INVENTORY_BRANCH",
+          "value" : "main"
+        },
+        {
+          "_class" : "hudson.model.StringParameterValue",
+          "name" : "TAX_BRANCH",
+          "value" : "main"
+        },
+        {
+          "_class" : "hudson.model.StringParameterValue",
+          "name" : "SEARCH_BRANCH",
+          "value" : "main"
+        },
+        {
+          "_class" : "hudson.model.StringParameterValue",
+          "name" : "PROMOTION_BRANCH",
+          "value" : "main"
+        },
+        {
+          "_class" : "hudson.model.StringParameterValue",
+          "name" : "PAYMENT_BRANCH",
+          "value" : "main"
+        },
+        {
+          "_class" : "hudson.model.StringParameterValue",
+          "name" : "PAYMENT_PAYPAL_BRANCH",
+          "value" : "main"
+        },
+        {
+          "_class" : "hudson.model.StringParameterValue",
+          "name" : "RECOMMENDATION_BRANCH",
+          "value" : "main"
+        },
+        {
+          "_class" : "hudson.model.StringParameterValue",
+          "name" : "SAMPLEDATA_BRANCH",
+          "value" : "main"
+        },
+        {
+          "_class" : "hudson.model.StringParameterValue",
+          "name" : "WEBHOOK_BRANCH",
+          "value" : "main"
+        }
+      ]
+    },
+    {
+      "_class" : "jenkins.metrics.impl.TimeInQueueAction",
+      "blockedDurationMillis" : 0,
+      "blockedTimeMillis" : 0,
+      "buildableDurationMillis" : 0,
+      "buildableTimeMillis" : 0,
+      "buildingDurationMillis" : 17880,
+      "executingTimeMillis" : 17880,
+      "executorUtilization" : 1.0,
+      "subTaskCount" : 0,
+      "waitingDurationMillis" : 7412,
+      "waitingTimeMillis" : 7412
+    },
+    {
+      "_class" : "org.jenkinsci.plugins.workflow.libs.LibrariesAction"
+    },
+    {
+      
+    },
+    {
+      
+    },
+    {
+      
+    },
+    {
+      "_class" : "org.jenkinsci.plugins.displayurlapi.actions.RunDisplayAction"
+    },
+    {
+      "_class" : "org.jenkinsci.plugins.pipeline.modeldefinition.actions.RestartDeclarativePipelineAction"
+    },
+    {
+      
+    },
+    {
+      "_class" : "org.jenkinsci.plugins.workflow.job.views.FlowGraphAction"
+    },
+    {
+      
+    },
+    {
+      
+    }
+  ],
+  "artifacts" : [
+    
+  ],
+  "building" : false,
+  "description" : null,
+  "displayName" : "#25",
+  "duration" : 17880,
+  "estimatedDuration" : 114986,
+  "executor" : null,
+  "fullDisplayName" : "project2-yas-ci #25",
+  "id" : "25",
+  "keepLog" : false,
+  "number" : 25,
+  "queueId" : 50,
+  "result" : "FAILURE",
+  "timestamp" : 1783455853044,
+  "url" : "http://127.0.0.1:8080/job/project2-yas-ci/25/",
+  "changeSets" : [
+    
+  ],
+  "culprits" : [
+    
+  ],
+  "inProgress" : false,
+  "nextBuild" : {
+    "number" : 26,
+    "url" : "http://127.0.0.1:8080/job/project2-yas-ci/26/"
+  },
+  "previousBuild" : {
+    "number" : 24,
+    "url" : "http://127.0.0.1:8080/job/project2-yas-ci/24/"
+  }
+}

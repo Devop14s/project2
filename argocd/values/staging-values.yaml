@@ -119,7 +119,7 @@ services:
     metricPort: 8087
     image:
       repository: luongtrz/yas-storefront-bff
-      tag: 20260705-step2fix2
+      tag: 20260709-bff-ui-route-fix3
     service:
       aliases:
         - storefront-bff
@@ -133,9 +133,17 @@ services:
       limits:
         cpu: 750m
         memory: 768Mi
+    hostAliases:
+      - ip: 10.43.109.124
+        hostnames:
+          - identity-dev.yas.local
     env:
       - name: JAVA_TOOL_OPTIONS
         value: "-Xmx192m -Xms64m -XX:MaxMetaspaceSize=128m -XX:ReservedCodeCacheSize=32m"
+      - name: YAS_STOREFRONT_UI_URL
+        value: http://yas-staging-storefront.yas-staging.svc.cluster.local:3000
+      - name: YAS_IDENTITY_INTERNAL_BASE_URL
+        value: http://identity-dev.yas.local
 
   backoffice-bff:
     enabled: true
@@ -144,7 +152,7 @@ services:
     metricPort: 8087
     image:
       repository: luongtrz/yas-backoffice-bff
-      tag: 20260705-step2fix2
+      tag: 20260709-bff-ui-route-fix3
     service:
       aliases:
         - backoffice-bff
@@ -158,9 +166,17 @@ services:
       limits:
         cpu: 750m
         memory: 768Mi
+    hostAliases:
+      - ip: 10.43.109.124
+        hostnames:
+          - identity-dev.yas.local
     env:
       - name: JAVA_TOOL_OPTIONS
         value: "-Xmx192m -Xms64m -XX:MaxMetaspaceSize=128m -XX:ReservedCodeCacheSize=32m"
+      - name: YAS_BACKOFFICE_UI_URL
+        value: http://yas-staging-backoffice.yas-staging.svc.cluster.local:3000
+      - name: YAS_IDENTITY_INTERNAL_BASE_URL
+        value: http://identity-dev.yas.local
 
   product:
     enabled: true
@@ -192,6 +208,8 @@ services:
         value: admin
       - name: SPRING_DATASOURCE_PASSWORD
         value: admin
+      - name: YAS_SERVICES_MEDIA
+        value: http://media.yas-dev.svc.cluster.local/media
 
   cart:
     enabled: true
@@ -350,7 +368,7 @@ services:
 
   media:
     enabled: true
-    schedulingProfile: worker-large
+    schedulingProfile: ui-on-master
     containerPort: 8083
     metricPort: 8083
     image:
@@ -359,6 +377,15 @@ services:
     service:
       aliases:
         - media
+    extraVolumes:
+      - name: media-sample-images
+        hostPath:
+          path: /home/luong/project2/yas-source/sampledata/images
+          type: Directory
+    extraVolumeMounts:
+      - name: media-sample-images
+        mountPath: /images
+        readOnly: true
     probes:
       mode: tcp
       port: http

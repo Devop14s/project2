@@ -1,0 +1,15 @@
+NAME                                             READY   STATUS    RESTARTS   AGE
+yas-devjenkins-backoffice-6cc5fb557f-mhknz       1/1     Running   0          56m
+yas-devjenkins-backoffice-bff-b6776d47-hvcs4     1/1     Running   0          56m
+yas-devjenkins-cart-7d69c564fc-7dznm             1/1     Running   0          56m
+yas-devjenkins-customer-d67b6f749-w47sf          1/1     Running   0          56m
+yas-devjenkins-inventory-5857f99ff6-plrz7        1/1     Running   0          56m
+yas-devjenkins-media-775b9fd66d-pncbm            1/1     Running   0          56m
+yas-devjenkins-order-69f7d444f8-qflss            1/1     Running   0          56m
+yas-devjenkins-product-75f85ccf-nqf4p            1/1     Running   0          56m
+yas-devjenkins-sampledata-86f64769f4-dsbd9       1/1     Running   0          56m
+yas-devjenkins-search-7d4c7fd556-2bbrp           1/1     Running   0          56m
+yas-devjenkins-storefront-5df8bd946-h55qs        1/1     Running   0          56m
+yas-devjenkins-storefront-bff-6bd96c5d74-577kd   1/1     Running   0          56m
+yas-devjenkins-swagger-ui-6df74d55b6-l6d7j       1/1     Running   0          56m
+yas-devjenkins-tax-6c7649f797-hf7nv              1/1     Running   0          56m

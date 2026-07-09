@@ -24,9 +24,9 @@ spring:
           keycloak:
             provider: keycloak
             authorization-grant-type: authorization_code
+            client-authentication-method: none
             redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
             client-id: storefront-bff
-            client-secret: ZrU9I0q2uXBglBnmvyJdkl1lf0ncr8tn #gitleaks:allow
             scope: openid, profile, email, roles
   data:
     redis:

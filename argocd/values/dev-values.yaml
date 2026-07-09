@@ -114,20 +114,38 @@ services:
     metricPort: 8087
     image:
       repository: luongtrz/yas-storefront-bff
-      tag: 20260705-step2fix2
+      tag: 20260709-bff-ui-route-fix3
+    hostAliases:
+      - ip: 10.43.109.124
+        hostnames:
+          - identity-dev.yas.local
     probes:
       mode: tcp
       port: http
+    env:
+      - name: YAS_STOREFRONT_UI_URL
+        value: http://yas-dev-storefront.yas-dev.svc.cluster.local:3000
+      - name: YAS_IDENTITY_INTERNAL_BASE_URL
+        value: http://identity-dev.yas.local
   backoffice-bff:
     enabled: true
     containerPort: 8087
     metricPort: 8087
     image:
       repository: luongtrz/yas-backoffice-bff
-      tag: 20260705-step2fix2
+      tag: 20260709-bff-ui-route-fix3
+    hostAliases:
+      - ip: 10.43.109.124
+        hostnames:
+          - identity-dev.yas.local
     probes:
       mode: tcp
       port: http
+    env:
+      - name: YAS_BACKOFFICE_UI_URL
+        value: http://yas-dev-backoffice.yas-dev.svc.cluster.local:3000
+      - name: YAS_IDENTITY_INTERNAL_BASE_URL
+        value: http://identity-dev.yas.local
   product:
     enabled: true
     containerPort: 8080
@@ -150,12 +168,11 @@ services:
         value: admin
       - name: SPRING_DATASOURCE_PASSWORD
         value: admin
-      # Bypass the external API prefix: product expects the media root URL and
-      # appends /medias itself. Service-to-service traffic remains inside Istio.
       - name: YAS_SERVICES_MEDIA
-        value: http://media.yas-dev.svc.cluster.local
+        value: http://media.yas-dev.svc.cluster.local/media
   media:
     enabled: true
+    schedulingProfile: ui-on-master
     containerPort: 8083
     metricPort: 8083
     probes:
@@ -168,6 +185,15 @@ services:
     service:
       aliases:
         - media
+    extraVolumes:
+      - name: media-sample-images
+        hostPath:
+          path: /home/luong/project2/yas-source/sampledata/images
+          type: Directory
+    extraVolumeMounts:
+      - name: media-sample-images
+        mountPath: /images
+        readOnly: true
     env:
       - name: JAVA_TOOL_OPTIONS
         value: "-Xmx192m -Xms64m -XX:MaxMetaspaceSize=128m -XX:ReservedCodeCacheSize=32m"
@@ -177,6 +203,10 @@ services:
         value: admin
       - name: SPRING_DATASOURCE_PASSWORD
         value: admin
+      - name: SERVER_SERVLET_CONTEXT_PATH
+        value: /media
+      - name: YAS_PUBLICURL
+        value: http://api.yas.local/media
   cart:
     enabled: true
     containerPort: 8084

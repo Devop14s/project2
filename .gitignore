@@ -3,3 +3,6 @@
 
 jenkins_project2_home.tar.gz
 jenkins_project2_home.tar
+
+# Playwright MCP session artifacts (ephemeral, not part of the report)
+.playwright-mcp/

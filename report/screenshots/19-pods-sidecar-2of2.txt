@@ -1,0 +1,22 @@
+NAME                                      READY   STATUS      RESTARTS        AGE
+api-router-76db696b49-hbhfw               2/2     Running     4 (3h48m ago)   2d15h
+elasticsearch-0                           1/1     Running     2 (3h48m ago)   47h
+kafka-0                                   1/1     Running     9 (32m ago)     47h
+kafka-connect-85d9b597d-l4bqf             1/1     Running     2 (3h48m ago)   2d15h
+kafka-connect-configure-lkxtg             0/1     Completed   0               47h
+keycloak-7448c54f45-mlx9s                 1/1     Running     2 (3h48m ago)   2d15h
+postgres-0                                1/1     Running     7 (25m ago)     47h
+redis-7c59d49d89-gw95h                    1/1     Running     2 (3h48m ago)   2d15h
+yas-dev-backoffice-86d4dff554-7rxr4       1/1     Running     1 (19h ago)     20h
+yas-dev-backoffice-bff-7dd48b5ffc-kfnlm   2/2     Running     5 (3h48m ago)   45h
+yas-dev-cart-754779b4c9-srtb4             2/2     Running     6 (3h45m ago)   46h
+yas-dev-customer-5f99f5b4b7-bpzm8         2/2     Running     6 (3h45m ago)   46h
+yas-dev-inventory-597594b6fd-pv6mj        2/2     Running     6 (3h45m ago)   46h
+yas-dev-media-5848cc44c5-lxlnt            2/2     Running     6 (3h45m ago)   44h
+yas-dev-order-74ff8f7f84-24fhj            2/2     Running     6 (3h45m ago)   46h
+yas-dev-product-7c59757bc9-p5b86          2/2     Running     6 (3h45m ago)   44h
+yas-dev-search-cdf757dc9-fn857            2/2     Running     6 (3h46m ago)   46h
+yas-dev-storefront-55cbc9c757-2r8bm       1/1     Running     1 (19h ago)     20h
+yas-dev-storefront-bff-857fc59b48-spdf4   2/2     Running     5 (3h48m ago)   45h
+yas-dev-swagger-ui-5c8485b85f-8b8td       1/1     Running     1 (19h ago)     20h
+yas-dev-tax-85d74b76c7-k7r62              2/2     Running     6 (3h45m ago)   46h

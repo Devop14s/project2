@@ -1,0 +1,23 @@
+<!doctype html><html><head><meta charset="utf-8"><title>18-mtls-policies</title>
+<style>
+body { margin:0; background:#0b1020; color:#e5e7eb; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+.wrap { padding: 24px; }
+h1 { font: 700 22px system-ui, sans-serif; margin: 0 0 16px; color:#fff; }
+pre { white-space: pre-wrap; word-break: break-word; line-height:1.45; font-size:16px; background:#111827; border:1px solid #374151; border-radius:12px; padding:20px; }
+</style></head><body><div class="wrap"><h1>18-mtls-policies</h1><pre>NAME                                                         MODE         AGE
+peerauthentication.security.istio.io/api-router-public       PERMISSIVE   3d5h
+peerauthentication.security.istio.io/backoffice-bff-public   PERMISSIVE   3d8h
+peerauthentication.security.istio.io/storefront-bff-public   PERMISSIVE   3d8h
+peerauthentication.security.istio.io/yas-strict-mtls         STRICT       9d
+
+NAME                                                        HOST                                      AGE
+destinationrule.networking.istio.io/elasticsearch-no-mtls   elasticsearch.yas-dev.svc.cluster.local   9d
+destinationrule.networking.istio.io/identity                identity.yas-dev.svc.cluster.local        4d3h
+destinationrule.networking.istio.io/identity-short          identity                                  4d3h
+destinationrule.networking.istio.io/kafka-no-mtls           kafka.yas-dev.svc.cluster.local           9d
+destinationrule.networking.istio.io/postgres-no-mtls        postgres.yas-dev.svc.cluster.local        9d
+destinationrule.networking.istio.io/redis-no-mtls           redis.yas-dev.svc.cluster.local           3d5h
+destinationrule.networking.istio.io/redis-plaintext         redis.yas-dev.svc.cluster.local           3d5h
+destinationrule.networking.istio.io/redis-short-no-mtls     redis                                     3d5h
+destinationrule.networking.istio.io/yas-default-mtls        *.yas-dev.svc.cluster.local               9d
+</pre></div></body></html>

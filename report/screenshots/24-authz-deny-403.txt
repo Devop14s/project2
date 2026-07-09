@@ -1,0 +1,7 @@
+AuthorizationPolicy DENY test - 2026-07-08T16:05:58Z
+Client pod: yas-dev-product-7c59757bc9-p5b86 (product)
+Request: GET http://search.yas-dev.svc.cluster.local/search/storefront/catalog-search?page=0&size=1
+
+  HTTP/1.1 403 Forbidden
+wget: server returned error: HTTP/1.1 403 Forbidden
+command terminated with exit code 1

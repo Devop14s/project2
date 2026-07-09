@@ -203,6 +203,8 @@ services:
         value: admin
       - name: SPRING_DATASOURCE_PASSWORD
         value: admin
+      - name: YAS_SERVICES_MEDIA
+        value: http://media.yas-dev.svc.cluster.local/media
 
   cart:
     enabled: true
@@ -361,7 +363,7 @@ services:
 
   media:
     enabled: true
-    schedulingProfile: worker-large
+    schedulingProfile: ui-on-master
     containerPort: 8083
     metricPort: 8083
     image:
@@ -370,6 +372,15 @@ services:
     service:
       aliases:
         - media
+    extraVolumes:
+      - name: media-sample-images
+        hostPath:
+          path: /home/luong/project2/yas-source/sampledata/images
+          type: Directory
+    extraVolumeMounts:
+      - name: media-sample-images
+        mountPath: /images
+        readOnly: true
     probes:
       mode: tcp
       port: http

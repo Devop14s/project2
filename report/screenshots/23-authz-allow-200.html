@@ -1,0 +1,26 @@
+<!doctype html><html><head><meta charset="utf-8"><title>23-authz-allow-200</title>
+<style>
+body { margin:0; background:#0b1020; color:#e5e7eb; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+.wrap { padding: 24px; }
+h1 { font: 700 22px system-ui, sans-serif; margin: 0 0 16px; color:#fff; }
+pre { white-space: pre-wrap; word-break: break-word; line-height:1.45; font-size:16px; background:#111827; border:1px solid #374151; border-radius:12px; padding:20px; }
+</style></head><body><div class="wrap"><h1>23-authz-allow-200</h1><pre>AuthorizationPolicy ALLOW test - 2026-07-08T16:05:57Z
+Client pod: yas-dev-storefront-bff-857fc59b48-spdf4 (storefront-bff)
+Request: GET http://yas-dev-product.yas-dev.svc.cluster.local/product/storefront/products?size=1
+
+{"productContent":[{"id":1,"name":"iPhone 15","slug":"iphone-15","thumbnailUrl":"http://localhost:8083/medias/7/file/iphone15_thumbnail.jpg","price":799.0},{"id":2,"name":"iPhone 15 Pro","slug":"iphone-15-pro","thumbnailUrl":"http://localhost:8083/medias/12/file/15pro_thumbnail.jpg","price":899.0},{"id":3,"name":"iPhone 15 Plus","slug":"iphone-15-plus","thumbnailUrl":"http://localhost:8083/medias/17/file/iphone15_Plus_thumbnail.jpg","price":859.0}],"pageNo":0,"pageSize":5,"totalElements":3,"totalPages":1,"isLast":true}  HTTP/1.1 200 OK
+  vary: Origin,Access-Control-Request-Method,Access-Control-Request-Headers
+  x-content-type-options: nosniff
+  x-xss-protection: 0
+  cache-control: no-cache, no-store, max-age=0, must-revalidate
+  pragma: no-cache
+  expires: 0
+  x-frame-options: DENY
+  content-type: application/json
+  date: Wed, 08 Jul 2026 16:05:59 GMT
+  x-envoy-upstream-service-time: 74
+  server: envoy
+  connection: close
+  transfer-encoding: chunked
+  
+</pre></div></body></html>

@@ -1,0 +1,16 @@
+NAME                                                         MODE         AGE
+peerauthentication.security.istio.io/api-router-public       PERMISSIVE   3d5h
+peerauthentication.security.istio.io/backoffice-bff-public   PERMISSIVE   3d8h
+peerauthentication.security.istio.io/storefront-bff-public   PERMISSIVE   3d8h
+peerauthentication.security.istio.io/yas-strict-mtls         STRICT       9d
+
+NAME                                                        HOST                                      AGE
+destinationrule.networking.istio.io/elasticsearch-no-mtls   elasticsearch.yas-dev.svc.cluster.local   9d
+destinationrule.networking.istio.io/identity                identity.yas-dev.svc.cluster.local        4d3h
+destinationrule.networking.istio.io/identity-short          identity                                  4d3h
+destinationrule.networking.istio.io/kafka-no-mtls           kafka.yas-dev.svc.cluster.local           9d
+destinationrule.networking.istio.io/postgres-no-mtls        postgres.yas-dev.svc.cluster.local        9d
+destinationrule.networking.istio.io/redis-no-mtls           redis.yas-dev.svc.cluster.local           3d5h
+destinationrule.networking.istio.io/redis-plaintext         redis.yas-dev.svc.cluster.local           3d5h
+destinationrule.networking.istio.io/redis-short-no-mtls     redis                                     3d5h
+destinationrule.networking.istio.io/yas-default-mtls        *.yas-dev.svc.cluster.local               9d

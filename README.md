@@ -1,68 +1,68 @@
-# YAS CD Delivery Scaffold
+# YAS — CI/CD, GitOps & Service Mesh
 
-This repository currently contains the assignment brief and an executable scaffold for the delivery repo that would host the YAS CD work.
+Đồ án môn DevOps: xây dựng hệ thống CI/CD hoàn chỉnh để build, triển khai và vận hành ứng dụng microservice **YAS (Yet Another Shop)** trên Kubernetes, dùng Jenkins, ArgoCD (GitOps) và Istio Service Mesh.
 
-## Current scope
+Báo cáo nộp (kèm ảnh minh chứng) nằm trong [`report/`](report/) — xem [`report/22120061_22120062_22120199_22120363.docx`](report/22120061_22120062_22120199_22120363.docx) (bản nộp chính thức) hoặc [`report/BAO-CAO-CHI-TIET.md`](report/BAO-CAO-CHI-TIET.md) (bản chi tiết, có mục lục).
 
-- `plan/` contains the analysis and phased execution notes.
-- `jenkins/` contains pipeline and shell-script skeletons.
-- `helm/` contains a reusable Helm chart skeleton.
-- `argocd/` contains GitOps application manifests and overlays.
-- `mesh/` contains Istio and Kiali manifest skeletons.
-- `docs/` contains runbooks, templates, and tracking documents.
-- `scripts/` contains local validation helpers for this scaffold.
-- [docs/source-build-runtime-matrix.md](</D:/App/project2/docs/source-build-runtime-matrix.md>) records source-verified build commands and runtime ports from a local `yas-source-upstream/` clone.
-- [docs/status-report.md](</D:/App/project2/docs/status-report.md>) summarizes what is already implemented in this repository and what still depends on external runtime access.
-- [docs/remaining-work-plan.md](</D:/App/project2/docs/remaining-work-plan.md>) keeps the detailed next-phase execution plan for unfinished work.
-- [docs/handover-checklist.md](</D:/App/project2/docs/handover-checklist.md>) is the short operator checklist for moving this repo into a real registry, Jenkins, and cluster environment.
-- [docs/acceptance-checklist.md](</D:/App/project2/docs/acceptance-checklist.md>) is the final pass/fail gate to decide whether any remaining failure is infrastructure-only or still requires repo changes.
-- [docs/jenkins-bootstrap-runbook.md](</D:/App/project2/docs/jenkins-bootstrap-runbook.md>) is the first-run playbook for attaching a real Jenkins agent to this repo.
-- [docs/failure-triage.md](</D:/App/project2/docs/failure-triage.md>) is the fast classification checklist for the first failed real infrastructure run.
-- [infra-docs/README.md](</D:/App/project2/infra-docs/README.md>) is the dedicated infrastructure setup bundle for registry, cluster, Jenkins runtime, runtime blockers, and the first live run.
-- [work/service-verification.generated.md](</D:/App/project2/work/service-verification.generated.md>) is the current generated per-service verification snapshot, refreshed together with [work/status-report.generated.md](</D:/App/project2/work/status-report.generated.md>) by `powershell -ExecutionPolicy Bypass -File scripts\refresh-evidence.ps1 -SkipCommandChecks`.
-- [work/final-report-notes.generated.md](</D:/App/project2/work/final-report-notes.generated.md>) is the current generated drafting aid for the submission report and is refreshed by the same `refresh-evidence` flow.
-- [work/host-capabilities.generated.md](</D:/App/project2/work/host-capabilities.generated.md>) is the current generated host/runtime capability snapshot and is refreshed by the same `refresh-evidence` flow.
-- `jenkins/services.release-baseline.env` freezes the first deployable subset while `jenkins/services.env` keeps the full source-verified catalog.
+## Kiến trúc hạ tầng
 
-## Current limitation
+- Kubernetes cluster: k3s, 1 master (`k3s-master`) + 1 worker (`k3s-worker`), nối qua Tailscale.
+- 3 môi trường:
+  - **Developer sandbox** (`yas-user-<deployer-id>`): tạo/xóa theo yêu cầu qua Jenkins `developer_build` / `developer_cleanup`.
+  - **Dev** (`yas-dev`): Jenkins cập nhật manifest, ArgoCD tự đồng bộ (`prune` + `selfHeal`).
+  - **Staging** (`yas-staging`): Jenkins cập nhật manifest, ArgoCD đồng bộ thủ công.
+- 14 service bắt buộc (product, cart, order, customer, inventory, tax, media, search, storefront(-bff), backoffice(-bff), swagger-ui, sampledata) + hạ tầng phụ trợ (Keycloak, PostgreSQL, Kafka/Kafka Connect, Elasticsearch, Redis).
 
-The actual YAS application source repository is expected to be cloned locally under `yas-source-upstream/` as the clean authoritative checkout, while `yas-source/` remains an optional legacy fallback. This workspace has already verified real local builds for `storefront`, `backoffice`, `storefront-bff`, `backoffice-bff`, `product`, `payment`, `payment-paypal`, `recommendation`, `inventory`, and `order`; test-skipped packaging for `cart`, `customer`, `location`, `media`, `promotion`, `rating`, `tax`, `webhook`, `sampledata`, and `search`; and real local Docker image builds for the same verified services. Helm chart lint and template rendering were also validated locally with Helm 4.2.0, but the delivery repo still cannot yet:
+## CI/CD Pipeline (Jenkins)
 
-The Jenkins helper scripts now understand `SOURCE_ROOT` and `SOURCE_GIT_ROOT`, prefer `yas-source-upstream/` when it exists, and still fall back to a sibling or nested source checkout such as `yas-source/` instead of assuming the application code lives at the delivery-repo root.
+| Pipeline | Vai trò |
+|---|---|
+| `ci` | Build + push image Docker Hub theo tag `main`/`latest` hoặc commit id của từng nhánh |
+| `developer_build` | Triển khai môi trường riêng cho developer, nhận tham số nhánh nguồn theo từng service, trả về NodePort để test |
+| `developer_cleanup` | Xóa môi trường developer đã tạo, có cơ chế chặn xóa nhầm `yas-dev`/`yas-staging` |
+| `dev_gitops` / `staging_gitops` | Cập nhật file values GitOps rồi push, để ArgoCD đồng bộ xuống `yas-dev`/`yas-staging` |
 
-The top-level `Jenkinsfile` and the direct-load pipeline entrypoints now default `SOURCE_ROOT` to `yas-source-upstream/` and clone `https://github.com/nashtech-garage/yas.git` there automatically when that checkout is missing on the agent. They also expose `SOURCE_REPO_URL` and `SOURCE_REPO_REF`, so a mirror, fork, tag, or release branch can be injected later without changing repo code.
+Chi tiết từng stage, script, tham số: xem `jenkins/pipelines/`, `jenkins/scripts/`, và mục 6–10 trong `report/BAO-CAO-CHI-TIET.md`.
 
-- build and push a full real image set
-- deploy a working cluster release
+## GitOps (ArgoCD)
 
-## Suggested next steps
+- `argocd/app-dev.yaml`, `argocd/app-staging.yaml`: định nghĩa Application cho từng môi trường.
+- `argocd/values/`: file values riêng theo môi trường, được Jenkins cập nhật tự động sau mỗi lần release.
 
-1. Replace demo registry values such as `docker.io/example` and configure real Jenkins credentials.
-2. Validate one baseline service end to end: Docker build, image push, Helm deploy.
-3. Expand from one service to the frozen release subset in `jenkins/services.release-baseline.env`, which now disables out-of-scope services explicitly in generated deploy overlays.
+## Service Mesh (Istio + Kiali)
 
-## Repository layout
+- `mesh/`: `PeerAuthentication` (mTLS STRICT), `DestinationRule`, `AuthorizationPolicy` (allow/deny theo ServiceAccount), `VirtualService` (retry policy).
+- `infra/`: ngoại lệ mTLS cho hạ tầng không có sidecar (PostgreSQL, Kafka, Elasticsearch) và cho UI (Next.js) không hỗ trợ mTLS ngược.
+- Xem `mesh/README.md` để biết thứ tự apply, và `docs/service-mesh-test-plan.md` / `docs/service-mesh-results.md` cho test plan + kết quả thật.
 
-```text
-docs/               Runbooks, templates, and status tracking
-argocd/             ArgoCD application and values overlays
-mesh/               Istio and Kiali policy skeletons
-helm/yas/           Helm chart scaffold
-jenkins/pipelines/  Jenkins pipeline entrypoints
-jenkins/scripts/    Reusable pipeline shell scripts
-jenkins/services.env Service catalog used by scripts
-scripts/            Local preflight and repo validation tools
-plan/               Assignment analysis and execution plan
+## Helm chart
+
+- `helm/yas/`: chart dùng chung cho cả 3 tầng triển khai (developer sandbox, dev, staging), khác nhau qua file values (`values-dev-dual-worker.yaml`, `values-staging.yaml`, hoặc values sinh tự động bởi `developer_build`).
+
+## Chạy kiểm tra nhanh
+
+```bash
+bash run-dev.sh       # port-forward + curl-check toàn bộ endpoint yas-dev
+bash run-staging.sh   # port-forward + curl-check toàn bộ endpoint yas-staging
 ```
 
-## Cross-platform note
+## Cấu trúc repo
 
-Local helper scripts are provided in both `ps1` and `.sh` form under `scripts/` where practical, so the scaffold is usable on Windows and Linux/macOS hosts. The current cross-platform set covers:
+```text
+argocd/       Application manifest + values cho ArgoCD (dev, staging)
+docker/       Dockerfile phụ trợ
+docs/         Test plan & kết quả thật cho Service Mesh
+helm/yas/     Helm chart dùng chung cho 3 môi trường
+infra/        Ngoại lệ DestinationRule cho hạ tầng/UI không dùng mTLS
+jenkins/      Pipeline Jenkins (ci, developer_build, developer_cleanup, gitops) + script shell
+mesh/         Manifest Istio: PeerAuthentication, AuthorizationPolicy, VirtualService retry
+report/       Báo cáo nộp (.docx), báo cáo chi tiết (.md), ảnh + log minh chứng
+scripts/      Script hỗ trợ sinh values, kiểm tra local
+setup/        Script dựng cụm k3s (systemd, master, worker, kubeconfig, namespace)
+work/         Evidence runtime, script bootstrap Jenkins, artifact build
+yas-source/   Mã nguồn các service YAS (fork/checkout)
+```
 
-- preflight checks
-- local developer-build dry run
-- branch-tag resolution
-- generated-values rendering
-- GitOps values generation
-- Helm baseline values generation
-- GitOps values updates
+## Yêu cầu đề bài
+
+Xem [`Project02_HKII_25_26.md`](Project02_HKII_25_26.md) (đề bài) và [`Requirement-service.md`](Requirement-service.md) (danh mục service bắt buộc). Đối chiếu yêu cầu ↔ minh chứng chi tiết nằm ở mục 13–14 trong `report/BAO-CAO-CHI-TIET.md`.
