@@ -63,6 +63,8 @@ spec:
               - /login*
               - /logout*
               - /authentication
+              - /authentication/*
+              - /authentication/user
               - /profile*
               - /api/*
               - /catalog/*
