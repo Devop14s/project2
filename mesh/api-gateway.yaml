@@ -36,8 +36,6 @@ spec:
     - match:
         - uri:
             prefix: /media/
-      rewrite:
-        uri: /
       route:
         - destination:
             host: media.yas-dev.svc.cluster.local

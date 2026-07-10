@@ -12,7 +12,19 @@
 {{- $probes := $svc.probes | default dict }}
 {{- $probeMode := get $probes "mode" | default "" }}
 {{- $probePort := get $probes "port" | default "http" }}
+{{- $startupProbeInitialDelaySeconds := get $probes "startupInitialDelaySeconds" | default 10 }}
+{{- $startupProbePeriodSeconds := get $probes "startupPeriodSeconds" | default 10 }}
+{{- $startupProbeFailureThreshold := get $probes "startupFailureThreshold" | default 36 }}
+{{- $probeInitialDelaySeconds := get $probes "initialDelaySeconds" | default 10 }}
+{{- $probePeriodSeconds := get $probes "periodSeconds" | default 10 }}
+{{- $probeFailureThreshold := get $probes "failureThreshold" | default 5 }}
 {{- $metricPort := $svc.metricPort | default 8090 }}
+{{- $resolvedProbePort := $probePort }}
+{{- if eq ($probePort | toString) "http" }}
+{{- $resolvedProbePort = $svc.containerPort }}
+{{- else if eq ($probePort | toString) "metric" }}
+{{- $resolvedProbePort = $metricPort }}
+{{- end }}
 {{- $hasDistinctMetricPort := and (eq $workloadType "backend") (ne ($metricPort | toString) ($svc.containerPort | toString)) }}
 {{- $metricPortName := ternary "metric" "http" $hasDistinctMetricPort }}
 {{- $replicaCount := ternary $svc.replicaCount 1 (hasKey $svc "replicaCount") }}
@@ -90,33 +102,46 @@ spec:
               path: /
               port: http
 {{- else if eq $probeMode "tcp" }}
+          startupProbe:
+            tcpSocket:
+              port: {{ $resolvedProbePort }}
+            initialDelaySeconds: {{ $startupProbeInitialDelaySeconds }}
+            periodSeconds: {{ $startupProbePeriodSeconds }}
+            failureThreshold: {{ $startupProbeFailureThreshold }}
           livenessProbe:
             tcpSocket:
-              port: {{ $probePort }}
-            initialDelaySeconds: 90
-            periodSeconds: 10
-            failureThreshold: 5
+              port: {{ $resolvedProbePort }}
+            initialDelaySeconds: {{ $probeInitialDelaySeconds }}
+            periodSeconds: {{ $probePeriodSeconds }}
+            failureThreshold: {{ $probeFailureThreshold }}
           readinessProbe:
             tcpSocket:
-              port: {{ $probePort }}
-            initialDelaySeconds: 90
-            periodSeconds: 10
-            failureThreshold: 5
+              port: {{ $resolvedProbePort }}
+            initialDelaySeconds: {{ $probeInitialDelaySeconds }}
+            periodSeconds: {{ $probePeriodSeconds }}
+            failureThreshold: {{ $probeFailureThreshold }}
 {{- else }}
+          startupProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: {{ $metricPortName }}
+            initialDelaySeconds: {{ $startupProbeInitialDelaySeconds }}
+            periodSeconds: {{ $startupProbePeriodSeconds }}
+            failureThreshold: {{ $startupProbeFailureThreshold }}
           livenessProbe:
             httpGet:
               path: /actuator/health/liveness
               port: {{ $metricPortName }}
-            initialDelaySeconds: 90
-            periodSeconds: 10
-            failureThreshold: 5
+            initialDelaySeconds: {{ $probeInitialDelaySeconds }}
+            periodSeconds: {{ $probePeriodSeconds }}
+            failureThreshold: {{ $probeFailureThreshold }}
           readinessProbe:
             httpGet:
               path: /actuator/health/readiness
               port: {{ $metricPortName }}
-            initialDelaySeconds: 90
-            periodSeconds: 10
-            failureThreshold: 5
+            initialDelaySeconds: {{ $probeInitialDelaySeconds }}
+            periodSeconds: {{ $probePeriodSeconds }}
+            failureThreshold: {{ $probeFailureThreshold }}
 {{- end }}
 {{- if $svc.env }}
           env:
