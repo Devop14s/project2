@@ -51,6 +51,14 @@ spec:
               number: 80
     - match:
         - uri:
+            prefix: /location/
+      route:
+        - destination:
+            host: location.yas-dev.svc.cluster.local
+            port:
+              number: 80
+    - match:
+        - uri:
             prefix: /cart/
       route:
         - destination:
@@ -63,6 +71,14 @@ spec:
       route:
         - destination:
             host: order.yas-dev.svc.cluster.local
+            port:
+              number: 80
+    - match:
+        - uri:
+            prefix: /payment/
+      route:
+        - destination:
+            host: payment.yas-dev.svc.cluster.local
             port:
               number: 80
     - match:

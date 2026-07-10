@@ -74,6 +74,27 @@ spec:
               - cluster.local/ns/yas-dev/sa/api-router
               - cluster.local/ns/istio-system/sa/istio-ingressgateway-service-account
 
+# payment: storefront-bff, backoffice-bff, api-router, ingress
+---
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: payment-allow
+  namespace: yas-dev
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: payment
+  action: ALLOW
+  rules:
+    - from:
+        - source:
+            principals:
+              - cluster.local/ns/yas-dev/sa/storefront-bff
+              - cluster.local/ns/yas-dev/sa/backoffice-bff
+              - cluster.local/ns/yas-dev/sa/api-router
+              - cluster.local/ns/istio-system/sa/istio-ingressgateway-service-account
+
 # customer: storefront-bff, backoffice-bff, sampledata
 ---
 apiVersion: security.istio.io/v1
@@ -93,6 +114,28 @@ spec:
               - cluster.local/ns/yas-dev/sa/storefront-bff
               - cluster.local/ns/yas-dev/sa/backoffice-bff
               - cluster.local/ns/yas-dev/sa/sampledata
+              - cluster.local/ns/yas-dev/sa/api-router
+              - cluster.local/ns/istio-system/sa/istio-ingressgateway-service-account
+
+# location: storefront-bff, backoffice-bff, customer, api-router, ingress
+---
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: location-allow
+  namespace: yas-dev
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: location
+  action: ALLOW
+  rules:
+    - from:
+        - source:
+            principals:
+              - cluster.local/ns/yas-dev/sa/storefront-bff
+              - cluster.local/ns/yas-dev/sa/backoffice-bff
+              - cluster.local/ns/yas-dev/sa/customer
               - cluster.local/ns/yas-dev/sa/api-router
               - cluster.local/ns/istio-system/sa/istio-ingressgateway-service-account
 

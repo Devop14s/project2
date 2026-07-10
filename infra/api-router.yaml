@@ -23,11 +23,17 @@ data:
       location /customer/ {
         proxy_pass http://customer;
       }
+      location /location/ {
+        proxy_pass http://location;
+      }
       location /cart/ {
         proxy_pass http://cart;
       }
       location /order/ {
         proxy_pass http://order;
+      }
+      location /payment/ {
+        proxy_pass http://payment;
       }
       location /inventory/ {
         proxy_pass http://inventory;
@@ -135,8 +141,10 @@ spec:
               - /product/*
               - /media/*
               - /customer/*
+              - /location/*
               - /cart/*
               - /order/*
+              - /payment/*
               - /inventory/*
               - /tax/*
               - /search/*

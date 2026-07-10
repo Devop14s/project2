@@ -190,6 +190,8 @@ services:
         value: http://media.yas-dev.svc.cluster.local/media
       - name: SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI
         value: http://identity-dev.yas.local/realms/Yas
+      - name: SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWK_SET_URI
+        value: http://identity/realms/Yas/protocol/openid-connect/certs
   media:
     enabled: true
     schedulingProfile: ui-on-master
@@ -255,6 +257,8 @@ services:
         value: admin
       - name: SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI
         value: http://identity-dev.yas.local/realms/Yas
+      - name: SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWK_SET_URI
+        value: http://identity/realms/Yas/protocol/openid-connect/certs
   customer:
     enabled: true
     containerPort: 8088
@@ -283,10 +287,40 @@ services:
         value: admin
       - name: SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI
         value: http://identity-dev.yas.local/realms/Yas
+      - name: SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWK_SET_URI
+        value: http://identity/realms/Yas/protocol/openid-connect/certs
   rating:
     enabled: false
   location:
-    enabled: false
+    enabled: true
+    containerPort: 8086
+    metricPort: 8086
+    hostAliases:
+      - ip: 10.43.109.124
+        hostnames:
+          - identity-dev.yas.local
+    probes:
+      mode: tcp
+      port: http
+    image:
+      repository: luongtrz/yas-location
+      tag: main
+    service:
+      aliases:
+        - location
+    env:
+      - name: JAVA_TOOL_OPTIONS
+        value: "-Xmx192m -Xms64m -XX:MaxMetaspaceSize=128m -XX:ReservedCodeCacheSize=32m"
+      - name: SPRING_DATASOURCE_URL
+        value: jdbc:postgresql://postgres.yas-dev.svc.cluster.local:5432/location
+      - name: SPRING_DATASOURCE_USERNAME
+        value: admin
+      - name: SPRING_DATASOURCE_PASSWORD
+        value: admin
+      - name: SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI
+        value: http://identity-dev.yas.local/realms/Yas
+      - name: SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWK_SET_URI
+        value: http://identity/realms/Yas/protocol/openid-connect/certs
   order:
     enabled: true
     containerPort: 8085
@@ -300,7 +334,7 @@ services:
       port: http
     image:
       repository: luongtrz/yas-order
-      tag: 20260710-checkout-jackson
+      tag: 20260710-checkout-complete
     service:
       aliases:
         - order
@@ -315,6 +349,8 @@ services:
         value: admin
       - name: SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI
         value: http://identity-dev.yas.local/realms/Yas
+      - name: SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWK_SET_URI
+        value: http://identity/realms/Yas/protocol/openid-connect/certs
   inventory:
     enabled: true
     containerPort: 8090
@@ -365,6 +401,8 @@ services:
         value: admin
       - name: SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI
         value: http://identity-dev.yas.local/realms/Yas
+      - name: SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWK_SET_URI
+        value: http://identity/realms/Yas/protocol/openid-connect/certs
   search:
     enabled: true
     containerPort: 8092
@@ -392,7 +430,44 @@ services:
   promotion:
     enabled: false
   payment:
-    enabled: false
+    enabled: true
+    containerPort: 8081
+    metricPort: 8081
+    hostAliases:
+      - ip: 10.43.109.124
+        hostnames:
+          - identity-dev.yas.local
+      - ip: 100.96.101.91
+        hostnames:
+          - api.yas.local
+    probes:
+      mode: tcp
+      port: http
+    image:
+      repository: luongtrz/yas-payment
+      tag: 20260710-demo-checkout-v2
+    service:
+      aliases:
+        - payment
+    env:
+      - name: JAVA_TOOL_OPTIONS
+        value: "-Xmx192m -Xms64m -XX:MaxMetaspaceSize=128m -XX:ReservedCodeCacheSize=32m"
+      - name: SPRING_DATASOURCE_URL
+        value: jdbc:postgresql://postgres.yas-dev.svc.cluster.local:5432/payment
+      - name: SPRING_DATASOURCE_USERNAME
+        value: admin
+      - name: SPRING_DATASOURCE_PASSWORD
+        value: admin
+      - name: SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI
+        value: http://identity-dev.yas.local/realms/Yas
+      - name: SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWK_SET_URI
+        value: http://identity/realms/Yas/protocol/openid-connect/certs
+      - name: YAS_SERVICES_ORDER
+        value: http://api.yas.local/order
+      - name: YAS_SERVICES_MEDIA
+        value: http://api.yas.local/media
+      - name: YAS_PUBLIC_URL
+        value: http://storefront-dev.yas.local/complete-payment
   payment-paypal:
     enabled: false
   recommendation:
