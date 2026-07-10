@@ -144,16 +144,21 @@ pipeline {
           env.SERVICE_CATALOG = params.SERVICE_CATALOG
           env.SOURCE_REPO_URL = params.SOURCE_REPO_URL?.trim() ?: 'https://github.com/Devop14s/yas-group14.git'
           env.SOURCE_REPO_REF = params.SOURCE_REPO_REF?.trim() ?: 'main'
-          def defaultSourceRoot = params.PIPELINE_TARGET == 'ci' ? 'yas-source' : 'yas-source-upstream'
-          def defaultSourceGitRoot = params.PIPELINE_TARGET == 'ci' ? '.' : ''
-          def sourceContext = sourceBootstrap.ensureSourceCheckout(
-            sourceRootParam: params.SOURCE_ROOT?.trim() ?: defaultSourceRoot,
-            sourceGitRootParam: params.SOURCE_GIT_ROOT?.trim() ?: defaultSourceGitRoot,
-            sourceRepoUrl: env.SOURCE_REPO_URL,
-            sourceRepoRef: env.SOURCE_REPO_REF
-          )
-          env.SOURCE_ROOT = sourceContext.sourceRoot
-          env.SOURCE_GIT_ROOT = sourceContext.sourceGitRoot
+          def defaultSourceRoot = 'yas-source'
+          def defaultSourceGitRoot = '.'
+          if (params.PIPELINE_TARGET in ['ci', 'developer_build']) {
+            env.SOURCE_ROOT = params.SOURCE_ROOT?.trim() ?: defaultSourceRoot
+            env.SOURCE_GIT_ROOT = params.SOURCE_GIT_ROOT?.trim() ?: defaultSourceGitRoot
+          } else {
+            def sourceContext = sourceBootstrap.ensureSourceCheckout(
+              sourceRootParam: params.SOURCE_ROOT?.trim() ?: defaultSourceRoot,
+              sourceGitRootParam: params.SOURCE_GIT_ROOT?.trim() ?: defaultSourceGitRoot,
+              sourceRepoUrl: env.SOURCE_REPO_URL,
+              sourceRepoRef: env.SOURCE_REPO_REF
+            )
+            env.SOURCE_ROOT = sourceContext.sourceRoot
+            env.SOURCE_GIT_ROOT = sourceContext.sourceGitRoot
+          }
 
           env.RELEASE_VERSION = stagingTarget ? (params.RELEASE_VERSION?.trim() ?: 'v1.0.0') : ''
           env.DEPLOYER_ID = (developerBuildTarget || developerCleanupTarget) ? (params.DEPLOYER_ID?.trim() ?: 'dev1') : ''

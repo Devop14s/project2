@@ -36,11 +36,11 @@ if ! git -C "$SOURCE_GIT_ROOT" rev-parse --verify "origin/${MAIN_BRANCH_NAME}" >
   git -C "$SOURCE_GIT_ROOT" fetch origin "${MAIN_BRANCH_NAME}:refs/remotes/origin/${MAIN_BRANCH_NAME}" >/dev/null 2>&1 || true
 fi
 
-if git -C "$SOURCE_GIT_ROOT" rev-parse --verify "origin/${MAIN_BRANCH_NAME}" >/dev/null 2>&1; then
-  base_ref="$(git -C "$SOURCE_GIT_ROOT" merge-base "origin/${MAIN_BRANCH_NAME}" HEAD)"
+if git -C "$SOURCE_GIT_ROOT" rev-parse --verify "origin/${MAIN_BRANCH_NAME}" >/dev/null 2>&1 && \
+   base_ref="$(git -C "$SOURCE_GIT_ROOT" merge-base "origin/${MAIN_BRANCH_NAME}" HEAD 2>/dev/null)"; then
   git -C "$SOURCE_GIT_ROOT" diff --name-only "${base_ref}..HEAD" > "$CHANGED_PATHS_FILE"
 else
-  log "Warning: origin/${MAIN_BRANCH_NAME} not available; falling back to HEAD^ diff"
+  log "Warning: origin/${MAIN_BRANCH_NAME} unavailable or unrelated; falling back to HEAD^ diff"
   git -C "$SOURCE_GIT_ROOT" diff --name-only HEAD^..HEAD > "$CHANGED_PATHS_FILE"
 fi
 
@@ -48,8 +48,10 @@ selected_tmp="$(mktemp "${TMPDIR:-/tmp}/yas-selected-services.XXXXXX")"
 trap 'rm -f "$selected_tmp"' EXIT
 
 while IFS='|' read -r service path dockerfile port expose node_port workload_type; do
-  relative_path="${SOURCE_ROOT#./}/${path}"
-  if grep -q -E "^${relative_path}(/|$)" "$CHANGED_PATHS_FILE"; then
+  source_root_path="${SOURCE_ROOT#./}"
+  source_root_path="${source_root_path%/}"
+  source_root_name="$(basename "$source_root_path")"
+  if grep -q -E "^${source_root_path}/${path}(/|$)|^${source_root_name}/${path}(/|$)|^${path}(/|$)" "$CHANGED_PATHS_FILE"; then
     printf '%s|%s|%s|%s|%s|%s|%s\n' "$service" "$path" "$dockerfile" "$port" "$expose" "$node_port" "$workload_type" >> "$selected_tmp"
   fi
 done < <(iter_services)
