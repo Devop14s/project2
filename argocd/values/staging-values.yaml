@@ -171,7 +171,7 @@ services:
     metricPort: 8087
     image:
       repository: luongtrz/yas-backoffice-bff
-      tag: 20260709-bff-ui-route-fix3
+      tag: 20260711-auth-redirect
     service:
       aliases:
         - backoffice-bff

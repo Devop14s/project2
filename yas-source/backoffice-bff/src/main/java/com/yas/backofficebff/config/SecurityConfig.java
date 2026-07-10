@@ -1,11 +1,13 @@
 package com.yas.backofficebff.config;
 
+import java.net.URI;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.HttpStatus;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
@@ -39,6 +41,14 @@ public class SecurityConfig {
                 .pathMatchers("/health", "/actuator/prometheus", "/actuator/health/**").permitAll()
                 .anyExchange().hasAnyRole("ADMIN"))
             .oauth2Login(Customizer.withDefaults())
+            .exceptionHandling(exceptionHandling -> exceptionHandling
+                .accessDeniedHandler((exchange, denied) -> exchange.getSession()
+                    .flatMap(session -> {
+                        var response = exchange.getResponse();
+                        response.setStatusCode(HttpStatus.FOUND);
+                        response.getHeaders().setLocation(URI.create("/oauth2/authorization/api-client"));
+                        return session.invalidate().then(response.setComplete());
+                    })))
             .httpBasic(ServerHttpSecurity.HttpBasicSpec::disable)
             .formLogin(ServerHttpSecurity.FormLoginSpec::disable)
             .csrf(ServerHttpSecurity.CsrfSpec::disable)
