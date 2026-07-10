@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.context.annotation.Configuration;
@@ -15,12 +16,12 @@ import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMapper;
-import org.springframework.security.oauth2.client.oidc.web.server.logout.OidcClientInitiatedServerLogoutSuccessHandler;
-import org.springframework.security.oauth2.client.registration.ReactiveClientRegistrationRepository;
+import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.security.oauth2.core.oidc.user.OidcUserAuthority;
 import org.springframework.security.oauth2.core.user.OAuth2UserAuthority;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.authentication.logout.ServerLogoutSuccessHandler;
+import org.springframework.web.util.UriComponentsBuilder;
 
 @Configuration
 @EnableWebFluxSecurity
@@ -28,10 +29,10 @@ public class SecurityConfig {
     private static final String REALM_ACCESS_CLAIM = "realm_access";
     private static final String ROLES_CLAIM = "roles";
 
-    private final ReactiveClientRegistrationRepository clientRegistrationRepository;
+    private final String identityPublicBaseUrl;
 
-    public SecurityConfig(ReactiveClientRegistrationRepository clientRegistrationRepository) {
-        this.clientRegistrationRepository = clientRegistrationRepository;
+    public SecurityConfig(@Value("${yas.identity.public-base-url}") String identityPublicBaseUrl) {
+        this.identityPublicBaseUrl = identityPublicBaseUrl;
     }
 
     @Bean
@@ -59,11 +60,27 @@ public class SecurityConfig {
     }
 
     private ServerLogoutSuccessHandler oidcLogoutSuccessHandler() {
-        OidcClientInitiatedServerLogoutSuccessHandler oidcLogoutSuccessHandler =
-            new OidcClientInitiatedServerLogoutSuccessHandler(this.clientRegistrationRepository);
-        oidcLogoutSuccessHandler.setPostLogoutRedirectUri("{baseUrl}");
+        return (webFilterExchange, authentication) -> {
+            var exchange = webFilterExchange.getExchange();
+            var request = exchange.getRequest();
+            var response = exchange.getResponse();
+            var host = request.getHeaders().getHost();
+            var baseUrl = request.getURI().getScheme() + "://" + host;
+            var logoutUri = UriComponentsBuilder.fromUriString(identityPublicBaseUrl)
+                .path("/realms/Yas/protocol/openid-connect/logout")
+                .queryParam("client_id", "backoffice-bff")
+                .queryParam("post_logout_redirect_uri", baseUrl + "/");
 
-        return oidcLogoutSuccessHandler;
+            if (authentication != null && authentication.getPrincipal() instanceof OidcUser oidcUser
+                && oidcUser.getIdToken() != null) {
+                logoutUri.queryParam("id_token_hint", oidcUser.getIdToken().getTokenValue());
+            }
+
+            response.setStatusCode(HttpStatus.FOUND);
+            response.getHeaders().setLocation(logoutUri.build().encode().toUri());
+
+            return response.setComplete();
+        };
     }
 
     @Bean
