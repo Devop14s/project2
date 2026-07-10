@@ -21,7 +21,7 @@ pipeline {
     string(
       name: 'SOURCE_ROOT',
       defaultValue: '',
-      description: 'Optional relative path to the checked-out YAS source tree; leave blank to clone or reuse yas-source-upstream/ automatically'
+      description: 'Optional relative path to the checked-out YAS source tree; CI defaults to yas-source, developer_build defaults to a cloned source repo'
     )
     string(
       name: 'SOURCE_GIT_ROOT',
@@ -30,7 +30,7 @@ pipeline {
     )
     string(
       name: 'SOURCE_REPO_URL',
-      defaultValue: 'https://github.com/nashtech-garage/yas.git',
+      defaultValue: 'https://github.com/Devop14s/yas-group14.git',
       description: 'Source repository URL used when the Jenkins workspace must clone YAS on demand'
     )
     string(
@@ -142,11 +142,13 @@ pipeline {
           }
           env.PIPELINE_DISPATCH_MODE = 'true'
           env.SERVICE_CATALOG = params.SERVICE_CATALOG
-          env.SOURCE_REPO_URL = params.SOURCE_REPO_URL?.trim() ?: 'https://github.com/nashtech-garage/yas.git'
+          env.SOURCE_REPO_URL = params.SOURCE_REPO_URL?.trim() ?: 'https://github.com/Devop14s/yas-group14.git'
           env.SOURCE_REPO_REF = params.SOURCE_REPO_REF?.trim() ?: 'main'
+          def defaultSourceRoot = params.PIPELINE_TARGET == 'ci' ? 'yas-source' : 'yas-source-upstream'
+          def defaultSourceGitRoot = params.PIPELINE_TARGET == 'ci' ? '.' : ''
           def sourceContext = sourceBootstrap.ensureSourceCheckout(
-            sourceRootParam: params.SOURCE_ROOT,
-            sourceGitRootParam: params.SOURCE_GIT_ROOT,
+            sourceRootParam: params.SOURCE_ROOT?.trim() ?: defaultSourceRoot,
+            sourceGitRootParam: params.SOURCE_GIT_ROOT?.trim() ?: defaultSourceGitRoot,
             sourceRepoUrl: env.SOURCE_REPO_URL,
             sourceRepoRef: env.SOURCE_REPO_REF
           )

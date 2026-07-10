@@ -5,9 +5,9 @@ return {
         string(name: 'DEPLOYER_ID', defaultValue: 'dev1', description: 'Developer identifier used in namespace and hostname'),
         choice(name: 'SERVICE_CATALOG', choices: ['release-baseline', 'full'], description: 'Service catalog to verify and deploy from prebuilt image tags'),
         string(name: 'DOCKERHUB_NAMESPACE', defaultValue: '', description: 'Docker registry namespace, for example docker.io/your-org'),
-        string(name: 'SOURCE_ROOT', defaultValue: '', description: 'Optional relative path to the YAS source tree; leave blank to clone or reuse yas-source-upstream/ automatically'),
+        string(name: 'SOURCE_ROOT', defaultValue: 'yas-source-upstream', description: 'Source checkout directory used for branch resolution'),
         string(name: 'SOURCE_GIT_ROOT', defaultValue: '', description: 'Optional separate Git checkout used for branch resolution'),
-        string(name: 'SOURCE_REPO_URL', defaultValue: 'https://github.com/nashtech-garage/yas.git', description: 'Source repository URL used when the job must clone YAS on demand'),
+        string(name: 'SOURCE_REPO_URL', defaultValue: 'https://github.com/Devop14s/yas-group14.git', description: 'Source repository URL used when the job must clone YAS on demand'),
         string(name: 'SOURCE_REPO_REF', defaultValue: 'main', description: 'Source branch, tag, or ref used when the job must clone YAS on demand'),
         string(name: 'DOMAIN_NAME', defaultValue: 'storefront-dev1.yas.local', description: 'Hostname shown to the developer'),
         string(name: 'BACKOFFICE_DOMAIN_NAME', defaultValue: 'backoffice-dev1.yas.local', description: 'Hostname shown for the backoffice UI'),
@@ -42,10 +42,10 @@ return {
       def sourceBootstrap = load('jenkins/pipelines/source-bootstrap.groovy')
       env.SERVICE_CATALOG = env.SERVICE_CATALOG?.trim() ?: 'full'
       env.DOCKERHUB_NAMESPACE = env.DOCKERHUB_NAMESPACE?.trim() ?: params.DOCKERHUB_NAMESPACE?.trim()
-      env.SOURCE_REPO_URL = env.SOURCE_REPO_URL?.trim() ?: params.SOURCE_REPO_URL?.trim() ?: 'https://github.com/nashtech-garage/yas.git'
+      env.SOURCE_REPO_URL = env.SOURCE_REPO_URL?.trim() ?: params.SOURCE_REPO_URL?.trim() ?: 'https://github.com/Devop14s/yas-group14.git'
       env.SOURCE_REPO_REF = env.SOURCE_REPO_REF?.trim() ?: params.SOURCE_REPO_REF?.trim() ?: 'main'
       def sourceContext = sourceBootstrap.ensureSourceCheckout(
-        sourceRootParam: env.SOURCE_ROOT?.trim() ?: params.SOURCE_ROOT?.trim(),
+        sourceRootParam: env.SOURCE_ROOT?.trim() ?: params.SOURCE_ROOT?.trim() ?: 'yas-source-upstream',
         sourceGitRootParam: env.SOURCE_GIT_ROOT?.trim() ?: params.SOURCE_GIT_ROOT?.trim(),
         sourceRepoUrl: env.SOURCE_REPO_URL,
         sourceRepoRef: env.SOURCE_REPO_REF

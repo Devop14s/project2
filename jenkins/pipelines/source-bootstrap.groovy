@@ -27,7 +27,7 @@ Map ensureSourceCheckout(Map options = [:]) {
   String sourceGitRootParam = options.sourceGitRootParam?.trim()
   String sourceRepoUrl = options.sourceRepoUrl?.trim()
   if (!sourceRepoUrl) {
-    sourceRepoUrl = 'https://github.com/nashtech-garage/yas.git'
+    sourceRepoUrl = 'https://github.com/Devop14s/yas-group14.git'
   }
 
   String sourceRepoRef = options.sourceRepoRef?.trim()
@@ -38,7 +38,9 @@ Map ensureSourceCheckout(Map options = [:]) {
   String workspaceRoot = pwd()
   String sourceRootPath = isAbsolutePath(sourceRootParam) ? sourceRootParam : "${workspaceRoot}/${sourceRootParam}"
 
-  if (!fileExists("${sourceRootPath}/.git")) {
+  if (sourceGitRootParam && fileExists(sourceRootPath)) {
+    echo "Using existing source root ${sourceRootPath} with separate Git root ${sourceGitRootParam}"
+  } else if (!fileExists("${sourceRootPath}/.git")) {
     echo "Bootstrapping YAS source checkout into ${sourceRootPath} from ${sourceRepoUrl} (${sourceRepoRef})"
     dir(sourceRootPath) {
       checkout([
