@@ -75,6 +75,8 @@ services:
     ingress:
       enabled: true
       host: backoffice-staging.yas.local
+      defaultServiceName: backoffice-bff
+      defaultServicePort: 80
       extraPaths:
         - path: /oauth2
           serviceName: backoffice-bff

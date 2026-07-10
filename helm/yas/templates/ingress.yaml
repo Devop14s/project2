@@ -22,9 +22,9 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: {{ $.Release.Name }}-{{ $name }}
+                name: {{ $svc.ingress.defaultServiceName | default (printf "%s-%s" $.Release.Name $name) }}
                 port:
-                  number: {{ $svc.service.port }}
+                  number: {{ $svc.ingress.defaultServicePort | default $svc.service.port }}
 ---
 {{- end }}
 {{- end }}
