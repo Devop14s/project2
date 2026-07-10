@@ -40,6 +40,7 @@ spec:
               - /login*
               - /logout*
               - /api/*
+              - /authentication
               - /actuator/health
               - /actuator/health/liveness
               - /actuator/health/readiness

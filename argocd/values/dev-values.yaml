@@ -17,9 +17,16 @@ services:
     schedulingProfile: ui-on-master
     podAnnotations:
       sidecar.istio.io/inject: "false"
+    hostAliases:
+      - ip: 100.96.101.91
+        hostnames:
+          - api.yas.local
     image:
       repository: luongtrz/yas-storefront
       tag: main
+    env:
+      - name: API_BASE_PATH
+        value: http://api.yas.local
     ingress:
       enabled: true
       host: storefront-dev.yas.local
@@ -53,6 +60,10 @@ services:
     schedulingProfile: ui-on-master
     podAnnotations:
       sidecar.istio.io/inject: "false"
+    hostAliases:
+      - ip: 100.96.101.91
+        hostnames:
+          - api.yas.local
     image:
       repository: luongtrz/yas-backoffice
       tag: main
@@ -153,6 +164,10 @@ services:
     enabled: true
     containerPort: 8080
     metricPort: 8080
+    hostAliases:
+      - ip: 10.43.109.124
+        hostnames:
+          - identity-dev.yas.local
     probes:
       mode: tcp
       port: http
@@ -173,6 +188,8 @@ services:
         value: admin
       - name: YAS_SERVICES_MEDIA
         value: http://media.yas-dev.svc.cluster.local/media
+      - name: SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI
+        value: http://identity-dev.yas.local/realms/Yas
   media:
     enabled: true
     schedulingProfile: ui-on-master
@@ -214,6 +231,10 @@ services:
     enabled: true
     containerPort: 8084
     metricPort: 8084
+    hostAliases:
+      - ip: 10.43.109.124
+        hostnames:
+          - identity-dev.yas.local
     probes:
       mode: tcp
       port: http
@@ -232,10 +253,16 @@ services:
         value: admin
       - name: SPRING_DATASOURCE_PASSWORD
         value: admin
+      - name: SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI
+        value: http://identity-dev.yas.local/realms/Yas
   customer:
     enabled: true
     containerPort: 8088
     metricPort: 8088
+    hostAliases:
+      - ip: 10.43.109.124
+        hostnames:
+          - identity-dev.yas.local
     probes:
       mode: tcp
       port: http
@@ -254,6 +281,8 @@ services:
         value: admin
       - name: SPRING_DATASOURCE_PASSWORD
         value: admin
+      - name: SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI
+        value: http://identity-dev.yas.local/realms/Yas
   rating:
     enabled: false
   location:
@@ -262,12 +291,16 @@ services:
     enabled: true
     containerPort: 8085
     metricPort: 8085
+    hostAliases:
+      - ip: 10.43.109.124
+        hostnames:
+          - identity-dev.yas.local
     probes:
       mode: tcp
       port: http
     image:
       repository: luongtrz/yas-order
-      tag: main
+      tag: 20260710-checkout-jackson
     service:
       aliases:
         - order
@@ -280,6 +313,8 @@ services:
         value: admin
       - name: SPRING_DATASOURCE_PASSWORD
         value: admin
+      - name: SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI
+        value: http://identity-dev.yas.local/realms/Yas
   inventory:
     enabled: true
     containerPort: 8090
@@ -306,6 +341,10 @@ services:
     enabled: true
     containerPort: 8091
     metricPort: 8091
+    hostAliases:
+      - ip: 10.43.109.124
+        hostnames:
+          - identity-dev.yas.local
     probes:
       mode: tcp
       port: http
@@ -324,6 +363,8 @@ services:
         value: admin
       - name: SPRING_DATASOURCE_PASSWORD
         value: admin
+      - name: SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI
+        value: http://identity-dev.yas.local/realms/Yas
   search:
     enabled: true
     containerPort: 8092
