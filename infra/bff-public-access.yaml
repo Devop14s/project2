@@ -62,6 +62,7 @@ spec:
               - /oauth2/*
               - /login*
               - /logout*
+              - /authentication
               - /profile*
               - /api/*
               - /catalog/*
