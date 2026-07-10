@@ -80,6 +80,9 @@ services:
         - path: /logout
           serviceName: yas-dev-backoffice-bff
           servicePort: 80
+        - path: /authentication
+          serviceName: yas-dev-backoffice-bff
+          servicePort: 80
         - path: /api
           serviceName: yas-dev-backoffice-bff
           servicePort: 80

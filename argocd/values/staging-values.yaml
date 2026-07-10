@@ -85,6 +85,9 @@ services:
         - path: /logout
           serviceName: backoffice-bff
           servicePort: 80
+        - path: /authentication
+          serviceName: backoffice-bff
+          servicePort: 80
         - path: /api
           serviceName: backoffice-bff
           servicePort: 80
