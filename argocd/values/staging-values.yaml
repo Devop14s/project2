@@ -36,6 +36,9 @@ services:
         - path: /api
           serviceName: storefront-bff
           servicePort: 80
+        - path: /authentication
+          serviceName: storefront-bff
+          servicePort: 80
         - path: /actuator/health
           serviceName: storefront-bff
           servicePort: 80

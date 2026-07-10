@@ -36,6 +36,9 @@ services:
         - path: /api
           serviceName: yas-dev-storefront-bff
           servicePort: 80
+        - path: /authentication
+          serviceName: yas-dev-storefront-bff
+          servicePort: 80
         - path: /actuator/health
           serviceName: yas-dev-storefront-bff
           servicePort: 80
