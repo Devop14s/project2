@@ -64,8 +64,11 @@ public class SecurityConfig {
             var exchange = webFilterExchange.getExchange();
             var request = exchange.getRequest();
             var response = exchange.getResponse();
-            var host = request.getHeaders().getHost();
-            var baseUrl = request.getURI().getScheme() + "://" + host;
+            var forwardedProto = firstForwardedHeader(request.getHeaders().getFirst("X-Forwarded-Proto"));
+            var forwardedHost = firstForwardedHeader(request.getHeaders().getFirst("X-Forwarded-Host"));
+            var host = forwardedHost != null ? forwardedHost : request.getHeaders().getFirst("Host");
+            var scheme = forwardedProto != null ? forwardedProto : request.getURI().getScheme();
+            var baseUrl = scheme + "://" + host;
             var logoutUri = UriComponentsBuilder.fromUriString(identityPublicBaseUrl)
                 .path("/realms/Yas/protocol/openid-connect/logout")
                 .queryParam("client_id", "backoffice-bff")
@@ -81,6 +84,14 @@ public class SecurityConfig {
 
             return response.setComplete();
         };
+    }
+
+    private String firstForwardedHeader(String headerValue) {
+        if (headerValue == null || headerValue.isBlank()) {
+            return null;
+        }
+
+        return headerValue.split(",", 2)[0].trim();
     }
 
     @Bean

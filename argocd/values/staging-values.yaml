@@ -171,7 +171,7 @@ services:
     metricPort: 8087
     image:
       repository: luongtrz/yas-backoffice-bff
-      tag: 20260711-keycloak-logout
+      tag: 20260711-keycloak-logout-v2
     service:
       aliases:
         - backoffice-bff
