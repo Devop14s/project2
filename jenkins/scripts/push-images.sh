@@ -67,15 +67,6 @@ while IFS='|' read -r service path dockerfile port expose node_port workload_typ
   printf '%s\n' "$image" >> "$IMAGE_LIST_FILE"
   record_repo_digest "$repo_name" "$TAG"
 
-  # Also push with 'main' tag so developer_build can resolve branch=main images
-  if [[ "$TAG" != "main" ]]; then
-    main_image="${repo_name}:main"
-    docker tag "$image" "$main_image"
-    log "Pushing ${main_image}"
-    docker push "$main_image"
-    docker rmi "$main_image" >/dev/null 2>&1 || true
-  fi
-
   docker rmi "$image" >/dev/null 2>&1 || true
 done < <(iter_services)
 docker image prune -f >/dev/null 2>&1 || true

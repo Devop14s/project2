@@ -37,8 +37,15 @@ return {
 
       stage('Resolve Commit Metadata') {
         sh 'jenkins/scripts/write-commit-metadata.sh'
-        env.RELEASE_VERSION = readFile('work/commit_short_sha.txt').trim()
+        def sourceBranch = env.BRANCH_NAME?.trim() ?: env.SOURCE_REPO_REF?.trim()
+        env.RELEASE_VERSION = sourceBranch == 'main' ? 'main' : readFile('work/commit_short_sha.txt').trim()
         echo "Resolved image tag: ${env.RELEASE_VERSION}"
+      }
+
+      stage('Select Changed Services') {
+        sh 'jenkins/scripts/select-changed-services.sh'
+        env.SERVICES_FILE = readFile('work/ci-services-file.txt').trim()
+        echo "CI service selection: ${env.SERVICES_FILE}"
       }
 
       stage('Docker Login') {
