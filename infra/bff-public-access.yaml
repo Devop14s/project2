@@ -36,6 +36,7 @@ spec:
     - to:
         - operation:
             paths:
+              - /
               - /oauth2/*
               - /login*
               - /logout*
@@ -59,6 +60,7 @@ spec:
     - to:
         - operation:
             paths:
+              - /
               - /oauth2/*
               - /login*
               - /logout*
