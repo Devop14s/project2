@@ -38,7 +38,9 @@ Map ensureSourceCheckout(Map options = [:]) {
   String workspaceRoot = pwd()
   String sourceRootPath = isAbsolutePath(sourceRootParam) ? sourceRootParam : "${workspaceRoot}/${sourceRootParam}"
 
-  if (!fileExists("${sourceRootPath}/.git")) {
+  if (sourceGitRootParam && fileExists(sourceRootPath)) {
+    echo "Using existing source root ${sourceRootPath} with separate Git root ${sourceGitRootParam}"
+  } else if (!fileExists("${sourceRootPath}/.git")) {
     echo "Bootstrapping YAS source checkout into ${sourceRootPath} from ${sourceRepoUrl} (${sourceRepoRef})"
     dir(sourceRootPath) {
       checkout([
