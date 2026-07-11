@@ -133,7 +133,7 @@ services:
     metricPort: 8087
     image:
       repository: luongtrz/yas-storefront-bff
-      tag: 20260709-bff-ui-route-fix3
+      tag: 26a58a104274
     hostAliases:
       - ip: 10.43.134.90
         hostnames:
