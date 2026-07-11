@@ -51,7 +51,22 @@ data:
           "standardFlowEnabled": true,
           "directAccessGrantsEnabled": true,
           "redirectUris": ["*"],
-          "webOrigins": ["*"]
+          "webOrigins": ["*"],
+          "protocolMappers": [
+            {
+              "name": "realm roles",
+              "protocol": "openid-connect",
+              "protocolMapper": "oidc-usermodel-realm-role-mapper",
+              "consentRequired": false,
+              "config": {
+                "id.token.claim": "true",
+                "access.token.claim": "true",
+                "userinfo.token.claim": "true",
+                "claim.name": "realm_access.roles",
+                "multivalued": "true"
+              }
+            }
+          ]
         },
         {
           "clientId": "swagger-ui",
