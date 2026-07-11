@@ -24,6 +24,14 @@ data:
       "resetPasswordAllowed": true,
       "loginWithEmailAllowed": true,
       "duplicateEmailsAllowed": false,
+      "roles": {
+        "realm": [
+          {
+            "name": "ADMIN",
+            "description": "Backoffice administrator role"
+          }
+        ]
+      },
       "clients": [
         {
           "clientId": "storefront-bff",
@@ -70,7 +78,7 @@ data:
               "temporary": false
             }
           ],
-          "realmRoles": ["offline_access", "uma_authorization", "default-roles-yas"]
+          "realmRoles": ["offline_access", "uma_authorization", "default-roles-yas", "ADMIN"]
         }
       ]
     }
