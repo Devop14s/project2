@@ -134,6 +134,10 @@ services:
     image:
       repository: luongtrz/yas-storefront-bff
       tag: 20260709-bff-ui-route-fix3
+    hostAliases:
+      - ip: 10.43.134.90
+        hostnames:
+          - identity-dev.yas.local
     probes:
       mode: tcp
       port: http
@@ -141,7 +145,7 @@ services:
       - name: YAS_STOREFRONT_UI_URL
         value: http://yas-dev-storefront.yas-dev.svc.cluster.local:3000
       - name: YAS_IDENTITY_INTERNAL_BASE_URL
-        value: http://identity
+        value: http://identity-dev.yas.local
   backoffice-bff:
     enabled: true
     containerPort: 8087
@@ -149,6 +153,10 @@ services:
     image:
       repository: luongtrz/yas-backoffice-bff
       tag: 20260711-keycloak-logout-v2
+    hostAliases:
+      - ip: 10.43.134.90
+        hostnames:
+          - identity-dev.yas.local
     probes:
       mode: tcp
       port: http
@@ -156,7 +164,7 @@ services:
       - name: YAS_BACKOFFICE_UI_URL
         value: http://yas-dev-backoffice.yas-dev.svc.cluster.local:3000
       - name: YAS_IDENTITY_INTERNAL_BASE_URL
-        value: http://identity
+        value: http://identity-dev.yas.local
   product:
     enabled: true
     containerPort: 8080
